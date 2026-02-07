@@ -96,7 +96,18 @@ def main():
             <div style='text-align: center; font-size: 0.8em; color: #888;'>
                 <strong>Created by</strong><br>
                 Andre D Paredes<br>
-                <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a>
+                <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a><br>
+                <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a> (MDA)
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        st.markdown("---")
+        st.markdown(
+            """
+            <div style='text-align: center; font-size: 0.8em; color: #888;'>
+                <strong>Request Data</strong><br>
+                <a href="https://mdausa.tfaforms.net/389761" target="_blank">MDA Data Request Form</a>
             </div>
             """,
             unsafe_allow_html=True
@@ -319,7 +330,7 @@ def main():
         f"<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
         f"Snapshot: {metadata['generated_timestamp']}<br>"
         f"<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-        f"<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a> | "
+        f"<a href='mailto:andre.paredes@ymail.com'>andre.paredes@ymail.com</a> | "
         f"<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
         f"</div>",
         unsafe_allow_html=True
