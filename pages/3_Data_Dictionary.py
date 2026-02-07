@@ -94,6 +94,11 @@ header_left, header_right = st.columns([3, 1])
 with header_left:
     st.title("Data Dictionary Explorer")
     st.markdown("### Browse and search MOVR field definitions")
+    _source = DataDictionaryAPI.get_data_source()
+    if _source == "curated_snapshot":
+        st.caption("Source: Curated dictionary with clinical domain classification")
+    else:
+        st.caption("Source: Raw data dictionary (parquet)")
 
 with header_right:
     st.markdown(
@@ -110,7 +115,7 @@ with header_right:
 
 
 # ---------------------------------------------------------------------------
-# MOVR Data Overview
+# MOVR Data Overview (from curated snapshot)
 # ---------------------------------------------------------------------------
 st.markdown("---")
 st.subheader("MOVR Data Overview")
@@ -119,90 +124,60 @@ st.markdown(
     """
     The MOVR registry captures clinical data for **7 neuromuscular diseases**.
     Each disease functions as its own sub-registry with **shared** data forms
-    (demographics, encounters, medications) and **disease-specific** diagnosis
-    fields. The eCRFs (electronic Case Report Forms) and data dictionary were
-    developed by the [Muscular Dystrophy Association](https://www.mda.org/science/movr2).
+    and **disease-specific** eCRFs (electronic Case Report Forms). The eCRFs
+    and data dictionary were developed by the
+    [Muscular Dystrophy Association](https://www.mda.org/science/movr2).
     """
 )
 
-# Hardcoded data overview table by disease
-# Grounded in config/disease_filters.yaml and config/export_tables.yaml
-_data_overview = {
-    "Data Category": [
-        "Demographics (age, gender, race, vital status)",
-        "Diagnosis — General (date, age, family history)",
-        "Diagnosis — Genetic Confirmation",
-        "Diagnosis — Subtype / Classification",
-        "Diagnosis — Clinical (biopsy, onset, symptoms)",
-        "Gene/Protein Data",
-        "Encounter — Core (visits, ambulatory status)",
-        "Medications & Treatments",
-        "Functional Assessments",
-        "Cardiac Assessments",
-        "Pulmonary / Respiratory",
-        "Surgical Procedures",
-    ],
-    "ALS": [
-        "Yes", "alsdgnag, alsonsag", "genemut", "—", "—", "Yes",
-        "Yes", "Yes", "ALSFRS-R", "—",
-        "PFT, Pulm Devices, Trach", "Feeding Tube",
-    ],
-    "DMD": [
-        "Yes", "dmddgnag, dmdfam", "dmdgntcf", "—", "—", "Yes",
-        "Yes", "Yes (steroids)", "6MWT, 10MWT, NSAA, PUL", "Echo, MRI, EKG",
-        "—", "Scoliosis, Tendon Release",
-    ],
-    "BMD": [
-        "Yes", "bmddgnag, bmdfam", "bmdgntcf", "—", "—", "Yes",
-        "Yes", "Yes", "—", "—",
-        "—", "—",
-    ],
-    "SMA": [
-        "Yes", "smadgnag", "smadgcnf", "smaclass (I–IV)", "—", "Yes",
-        "Yes", "Yes (Spinraza)", "CHOP INTEND, HFMSE, RULM", "—",
-        "PFT, Pulm Devices", "Feeding Tube",
-    ],
-    "LGMD": [
-        "Yes", "lgdgag, dymonag, lgfam", "lggntcf, lgidvar",
-        "lgtype (20+ subtypes)", "lgmscbp, sym1st", "Yes",
-        "Yes (curramb)", "Yes", "6MWT, MFM", "Echo",
-        "PFT", "Muscle Biopsy",
-    ],
-    "FSHD": [
-        "Yes", "fshdgnag", "fshdel (4q35)", "—", "—", "Yes",
-        "Yes", "Yes", "—", "—",
-        "—", "—",
-    ],
-    "Pompe": [
-        "Yes", "pomdgag", "pomgntcf",
-        "pomclass (Infantile/Late-Onset)", "—", "GAA enzyme activity",
-        "Yes", "Yes (ERT)", "—", "—",
-        "—", "—",
-    ],
-}
+# Build domain × disease matrix from curated snapshot
+domain_summary = DataDictionaryAPI.get_domain_summary()
+if domain_summary:
+    overview_data = {
+        "Clinical Domain": [d["domain"] for d in domain_summary],
+        "Fields": [d["field_count"] for d in domain_summary],
+    }
+    for disease in ["ALS", "BMD", "DMD", "SMA", "LGMD", "FSHD", "Pompe"]:
+        overview_data[disease] = [d.get(disease, 0) for d in domain_summary]
 
-_overview_df = pd.DataFrame(_data_overview)
+    overview_df = pd.DataFrame(overview_data)
 
-st.dataframe(
-    _overview_df,
-    use_container_width=True,
-    hide_index=True,
-    height=470,
-)
+    st.markdown("#### Clinical Domain Coverage by Disease")
+    st.caption(
+        "Fields classified into 19 clinical domains from a neuromuscular specialist perspective. "
+        "Counts show fields applicable to each disease within that domain."
+    )
 
-st.caption(
-    "**Yes** = shared fields collected across all diseases. "
-    "Specific field names shown are the MOVR column names from the diagnosis eCRF (see full dictionary below). "
-    "Disease-specific diagnosis fields use prefixes: als*, dmd*, bmd*, sma*, lg*, fshd*, pom*. "
-    "Assessment and encounter tables sourced from export_tables.yaml."
-)
+    st.dataframe(
+        overview_df,
+        use_container_width=True,
+        hide_index=True,
+        height=720,
+    )
+
+    curated_meta = DataDictionaryAPI.get_curated_metadata()
+    if curated_meta:
+        corrections = curated_meta.get("mislabel_corrections_applied", 0)
+        rate = curated_meta.get("classification_rate", 0)
+        st.markdown(
+            f"<div style='background-color: #E8F5E9; border-left: 4px solid #4CAF50; padding: 10px 14px; "
+            f"border-radius: 0 4px 4px 0; margin: 0.5rem 0 0.5rem 0; font-size: 0.9em;'>"
+            f"<strong>Curated Dictionary:</strong> {rate}% of fields classified into clinical domains. "
+            f"{corrections} mislabeled field corrections applied (FSHD fields incorrectly marked for LGMD). "
+            f"All encounter data is <strong>longitudinal</strong> — each row represents a clinic visit. "
+            f"Discontinuation data exists but was <strong>poorly captured</strong> across sites."
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+else:
+    st.info("Curated domain classification not available. Showing raw dictionary.")
 
 st.markdown(
     """
     <div style='background-color: #FFF3E0; border-left: 4px solid #FF9800; padding: 10px 14px;
     border-radius: 0 4px 4px 0; margin: 0.5rem 0 1rem 0; font-size: 0.9em;'>
-    <strong>Tip:</strong> Use the filters below to explore the full data dictionary.
-    Select a disease to see only fields applicable to that registry.
+    <strong>Tip:</strong> Use the sidebar filters to explore the full data dictionary.
+    Filter by Clinical Domain, Disease, Form, or search by keyword.
     </div>
     """,
     unsafe_allow_html=True,
@@ -226,28 +201,41 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # 2. Form filter (File/Form - Demographics, Diagnosis, etc.)
+    # 2. Clinical Domain filter (NEW - from curated snapshot)
+    clinical_domains = DataDictionaryAPI.get_clinical_domains()
+    if clinical_domains:
+        domain_options = ["All"] + clinical_domains
+        selected_domain = st.selectbox(
+            "2. Clinical Domain",
+            options=domain_options,
+            key="dd_domain_filter",
+            help="Filter by clinical domain (e.g., Cardiology, Pulmonary)"
+        )
+    else:
+        selected_domain = "All"
+
+    # 3. Form filter (File/Form - Demographics, Diagnosis, etc.)
     forms = ["All"] + DataDictionaryAPI.get_forms()
     selected_form = st.selectbox(
-        "2. Form",
+        "3. Form",
         options=forms,
         key="dd_form_filter",
         help="Filter by form type (Demographics, Diagnosis, Encounter, etc.)"
     )
 
-    # 3. Excel Tab filter (more specific sheet names)
+    # 4. Excel Tab filter (more specific sheet names)
     excel_tabs = ["All"] + DataDictionaryAPI.get_excel_tabs()
     selected_excel_tab = st.selectbox(
-        "3. Excel Tab / Sheet",
+        "4. Excel Tab / Sheet",
         options=excel_tabs,
         key="dd_excel_tab_filter",
         help="Filter by specific Excel sheet name"
     )
 
-    # 4. Field type filter
+    # 5. Field type filter
     field_types = ["All"] + DataDictionaryAPI.get_field_types()
     selected_field_type = st.selectbox(
-        "4. Field Type",
+        "5. Field Type",
         options=field_types,
         key="dd_type_filter",
         help="Filter by data type (DATE, DECIMAL, RADIO BUTTON, etc.)"
@@ -255,7 +243,7 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # 5. Search box (at bottom for refinement)
+    # 6. Search box (at bottom for refinement)
     search_text = st.text_input(
         "Search Fields",
         placeholder="Search name, description...",
@@ -284,6 +272,7 @@ with st.spinner("Loading data dictionary..."):
             excel_tab_filter=selected_excel_tab if selected_excel_tab != "All" else None,
             disease_filter=selected_disease if selected_disease != "All" else None,
             field_type_filter=selected_field_type if selected_field_type != "All" else None,
+            clinical_domain_filter=selected_domain if selected_domain != "All" else None,
         )
         summary_stats = DataDictionaryAPI.get_summary_stats()
     except Exception as e:
@@ -296,7 +285,7 @@ with st.spinner("Loading data dictionary..."):
 # ---------------------------------------------------------------------------
 st.markdown("---")
 
-col1, col2, col3, col4, col5 = st.columns(5)
+col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
     st.metric(
@@ -306,27 +295,35 @@ with col1:
     )
 
 with col2:
+    _domain_count = len(DataDictionaryAPI.get_clinical_domains())
+    st.metric(
+        "Clinical Domains",
+        _domain_count if _domain_count else "—",
+        help="Clinical domain categories"
+    )
+
+with col3:
     st.metric(
         "Forms",
         summary_stats['form_count'],
         help="Number of form types"
     )
 
-with col3:
+with col4:
     st.metric(
         "Excel Tabs",
         summary_stats['excel_tab_count'],
         help="Number of Excel sheets/tabs"
     )
 
-with col4:
+with col5:
     st.metric(
         "Field Types",
         summary_stats['field_type_count'],
         help="Unique field types"
     )
 
-with col5:
+with col6:
     st.metric(
         "Matching",
         f"{len(filtered_df):,}",
@@ -338,6 +335,8 @@ with col5:
 active_filters = []
 if selected_disease != "All":
     active_filters.append(f"Disease: {selected_disease}")
+if selected_domain != "All":
+    active_filters.append(f"Domain: {selected_domain}")
 if selected_form != "All":
     active_filters.append(f"Form: {selected_form}")
 if selected_excel_tab != "All":
@@ -403,7 +402,7 @@ else:
         )
 
     # Prepare display dataframe
-    display_cols = ["Field Name", "Description", "File/Form", "Excel Tab", "Field Type", "Required"]
+    display_cols = ["Field Name", "Description", "Clinical Domain", "File/Form", "Excel Tab", "Field Type", "Required"]
     if selected_disease != "All":
         display_cols.extend(["Valid", "Validity Note"])
     available_cols = [c for c in display_cols if c in filtered_df.columns]

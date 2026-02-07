@@ -2,9 +2,12 @@
 Data Dictionary API Layer
 
 Provides a facade over the core data dictionary module for web display.
+Supports curated snapshot (stats/curated_dictionary.json) with fallback
+to raw parquet (data/datadictionary.parquet).
 """
 
 import sys
+import json
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 import pandas as pd
@@ -13,6 +16,8 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.data_processing.data_dictionary import DataDictionary
+
+CURATED_SNAPSHOT_PATH = Path(__file__).parent.parent / "stats" / "curated_dictionary.json"
 
 
 # Known mislabeled fields - marked for wrong disease in data dictionary
@@ -47,6 +52,9 @@ class DataDictionaryAPI:
 
     _instance: Optional["DataDictionaryAPI"] = None
     _dd: Optional[DataDictionary] = None
+    _curated_snapshot: Optional[dict] = None
+    _curated_df: Optional[pd.DataFrame] = None
+    _data_source: str = "unknown"
 
     @classmethod
     def _get_dd(cls) -> DataDictionary:
@@ -57,14 +65,97 @@ class DataDictionaryAPI:
         return cls._dd
 
     @classmethod
+    def _load_curated_snapshot(cls) -> Optional[dict]:
+        """Load curated dictionary snapshot if available."""
+        if cls._curated_snapshot is not None:
+            return cls._curated_snapshot
+        if CURATED_SNAPSHOT_PATH.exists():
+            with open(CURATED_SNAPSHOT_PATH) as f:
+                cls._curated_snapshot = json.load(f)
+            return cls._curated_snapshot
+        return None
+
+    @classmethod
+    def _get_curated_df(cls) -> Optional[pd.DataFrame]:
+        """Build a DataFrame from the curated snapshot."""
+        if cls._curated_df is not None:
+            return cls._curated_df
+        snapshot = cls._load_curated_snapshot()
+        if not snapshot:
+            return None
+        fields = snapshot.get("fields", [])
+        if not fields:
+            return None
+        df = pd.DataFrame(fields)
+        # Rename to match raw parquet column names for compatibility
+        col_map = {
+            "field_name": "Field Name",
+            "description": "Description",
+            "display_label": "Display Label",
+            "file_form": "File/Form",
+            "excel_tab": "Excel Tab",
+            "clinical_domain": "Clinical Domain",
+            "field_type": "Field Type",
+            "numeric_ranges": "Numeric Ranges",
+            "is_required": "Required",
+        }
+        df.rename(columns=col_map, inplace=True)
+        # Convert disease booleans to "Yes"/""
+        disease_cols = ["ALS", "BMD", "DMD", "SMA", "LGMD", "FSHD", "Pompe"]
+        for col_lower in [d.lower() for d in disease_cols]:
+            col_upper = [d for d in disease_cols if d.lower() == col_lower]
+            if col_upper and col_lower in df.columns:
+                df[col_upper[0]] = df[col_lower].apply(lambda x: "Yes" if x else "")
+                if col_lower != col_upper[0]:
+                    df.drop(columns=[col_lower], inplace=True)
+        cls._curated_df = df
+        return cls._curated_df
+
+    @classmethod
+    def get_data_source(cls) -> str:
+        """Return whether using curated snapshot or raw parquet."""
+        cls.load_dictionary()  # ensure source is resolved
+        return cls._data_source
+
+    @classmethod
     def load_dictionary(cls) -> pd.DataFrame:
         """
-        Load the full data dictionary as a DataFrame.
+        Load the data dictionary as a DataFrame.
+        Tries curated snapshot first, falls back to raw parquet.
 
         Returns:
             DataFrame with all fields and metadata
         """
+        curated = cls._get_curated_df()
+        if curated is not None:
+            cls._data_source = "curated_snapshot"
+            return curated.copy()
+        cls._data_source = "raw_parquet"
         return cls._get_dd()._data.copy()
+
+    @classmethod
+    def get_clinical_domains(cls) -> List[str]:
+        """Return list of clinical domains from curated snapshot."""
+        snapshot = cls._load_curated_snapshot()
+        if snapshot:
+            return snapshot.get("canonical_domains", [])
+        return []
+
+    @classmethod
+    def get_domain_summary(cls) -> List[dict]:
+        """Return domain × disease summary from curated snapshot."""
+        snapshot = cls._load_curated_snapshot()
+        if snapshot:
+            return snapshot.get("domain_summary", [])
+        return []
+
+    @classmethod
+    def get_curated_metadata(cls) -> dict:
+        """Return metadata from curated snapshot."""
+        snapshot = cls._load_curated_snapshot()
+        if snapshot:
+            return snapshot.get("metadata", {})
+        return {}
 
     @classmethod
     def get_forms(cls) -> List[str]:
@@ -129,6 +220,7 @@ class DataDictionaryAPI:
         excel_tab_filter: Optional[str] = None,
         disease_filter: Optional[str] = None,
         field_type_filter: Optional[str] = None,
+        clinical_domain_filter: Optional[str] = None,
     ) -> pd.DataFrame:
         """
         Search and filter the data dictionary.
@@ -178,6 +270,11 @@ class DataDictionaryAPI:
         if field_type_filter and field_type_filter != "All":
             if "Field Type" in df.columns:
                 df = df[df["Field Type"] == field_type_filter]
+
+        # Apply clinical domain filter
+        if clinical_domain_filter and clinical_domain_filter != "All":
+            if "Clinical Domain" in df.columns:
+                df = df[df["Clinical Domain"] == clinical_domain_filter]
 
         return df
 
@@ -272,13 +369,18 @@ class DataDictionaryAPI:
         Returns:
             List of column names
         """
-        return [
+        cols = [
             "Field Name",
             "Description",
+            "Clinical Domain",
             "File/Form",
             "Excel Tab",
             "Field Type",
         ]
+        # Only include Clinical Domain if curated snapshot is loaded
+        if cls.get_data_source() != "curated_snapshot":
+            cols.remove("Clinical Domain")
+        return cols
 
     @classmethod
     def check_field_validity(cls, field_name: str, disease: str) -> dict:
