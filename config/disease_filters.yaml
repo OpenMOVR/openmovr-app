@@ -1,0 +1,222 @@
+# OpenMOVR Disease Filter Configuration
+# Defines available filters per disease for the Disease Explorer page.
+# Each filter specifies: field (column name), label (display), widget (type), source_table (data source).
+# Widget types: multiselect, range_slider, date_range, checkbox
+
+universal_filters:
+  demographics:
+    - field: "calculated_age"
+      label: "Age Range"
+      widget: "range_slider"
+      source_table: "demographics"
+      compute_from: "dob"
+      min_default: 0
+      max_default: 100
+      step: 1
+
+    - field: "gender"
+      label: "Gender"
+      widget: "multiselect"
+      source_table: "demographics"
+
+    - field: "ethnic"
+      label: "Race/Ethnicity"
+      widget: "multiselect"
+      source_table: "demographics"
+
+disease_filters:
+  DMD:
+    diagnosis:
+      - field: "dmdgntcf"
+        label: "Genetic Confirmation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "dmddgnag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 60
+        step: 1
+
+      - field: "dmdfam"
+        label: "Family History"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+    clinical:
+      - field: "glcouse"
+        label: "Steroid Use"
+        widget: "multiselect"
+        source_table: "encounters"
+
+  BMD:
+    diagnosis:
+      - field: "bmdgntcf"
+        label: "Genetic Confirmation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "bmddgnag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 80
+        step: 1
+
+      - field: "bmdfam"
+        label: "Family History"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+  ALS:
+    diagnosis:
+      - field: "alsdgnag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 95
+        step: 1
+
+      - field: "alsonsag"
+        label: "Symptom Onset Age"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 95
+        step: 1
+
+      - field: "genemut"
+        label: "Gene Mutation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+  SMA:
+    diagnosis:
+      - field: "smaclass"
+        label: "SMA Classification"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "smadgcnf"
+        label: "Genetic Confirmation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "smadgnag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 80
+        step: 1
+
+  LGMD:
+    diagnosis:
+      # Primary subtype classification - key filter for PAG presentations
+      - field: "lgtype"
+        label: "LGMD Subtype"
+        widget: "multiselect"
+        source_table: "diagnosis"
+        description: "LGMD subtype and associated gene"
+
+      # Genetic confirmation status
+      - field: "lggntcf"
+        label: "Genetic Confirmation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      # Gene/protein identification
+      - field: "lgidvar"
+        label: "Gene/Protein"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      # Muscle biopsy performed
+      - field: "lgmscbp"
+        label: "Muscle Biopsy"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      # Family history
+      - field: "lgfam"
+        label: "Family History"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      # Age at diagnosis
+      - field: "lgdgag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 80
+        step: 1
+
+      # Symptom onset age
+      - field: "dymonag"
+        label: "Symptom Onset Age"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 80
+        step: 1
+
+      # Symptom onset first signs
+      - field: "sym1st"
+        label: "First Symptoms"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+    clinical:
+      # Current ambulatory status
+      - field: "curramb"
+        label: "Ambulatory Status"
+        widget: "multiselect"
+        source_table: "encounters"
+
+  FSHD:
+    diagnosis:
+      - field: "fshdel"
+        label: "4q35 Deletion"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "fshdelsz"
+        label: "Deletion Size (kb)"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 100
+        step: 1
+
+      - field: "fshdgnag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 80
+        step: 1
+
+  POM:
+    diagnosis:
+      - field: "pomclass"
+        label: "Pompe Classification"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "pomgntcf"
+        label: "Genetic Confirmation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "pomdgag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
+        source_table: "diagnosis"
+        min_default: 0
+        max_default: 80
+        step: 1

@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "source": "datadictionary.parquet",
+    "generated_at": "2026-01-14T10:18:58.533960",
+    "total_fields": 0
+  },
+  "key_fields": {
+    "participant_id": "FACPATID",
+    "case_id": "CASE_ID",
+    "facility_id": "FACILITY_DISPLAY_ID",
+    "form_name": "SCHEDULED_FORM_NAME",
+    "legacy_flag": "USNDR"
+  },
+  "data_types": {
+    "demographics": [
+      "Demographics_MainData"
+    ],
+    "encounters": [
+      "Encounter_MainData",
+      "Encounter_*"
+    ],
+    "diagnosis": [
+      "Diagnosis_MainData",
+      "Diagnosis_*"
+    ],
+    "longitudinal": [
+      "Encounter_*",
+      "Log_*"
+    ]
+  },
+  "enrollment_requirements": {
+    "required_forms": [
+      "Demographics_MainData",
+      "Diagnosis_MainData",
+      "Encounter_MainData"
+    ],
+    "minimum_records": 1
+  },
+  "fields": {}
+}

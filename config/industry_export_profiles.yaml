@@ -1,0 +1,335 @@
+# Industry Export Profiles Configuration
+# =======================================
+#
+# This file defines PHI (Protected Health Information) profiles for industry data exports.
+# Each profile specifies which PHI fields to include and how to handle date shifting.
+#
+# Usage in scripts:
+#   from src.config.export_config import load_export_profile
+#   config = load_export_profile('deidentified')  # or 'full_phi', 'dates_only', etc.
+#
+# Or via command line:
+#   python scripts/run_industry_export.py --disease ALS --profile deidentified
+#
+# IMPORTANT: PHI exports require approval. Document approval_code and approved_by.
+
+# =============================================================================
+# PHI FIELD DEFINITIONS
+# =============================================================================
+# These are the PHI fields available in Demographics_PHI.xlsx
+# Demographics_noPHI.xlsx has same columns but values are NULL
+
+phi_field_groups:
+  # Direct identifiers - highest risk
+  direct_identifiers:
+    - firstname
+    - lastname
+    - fname      # first name variant
+    - mname      # middle name
+    - sname      # suffix name
+
+  # Contact information
+  contact:
+    - street
+    - phnum      # phone number
+    - eaddress   # email address
+
+  # Location - can be partially de-identified
+  location:
+    - city
+    - city1
+    - state
+    - zip
+    - country
+    - country1
+
+  # Dates - can be shifted or kept as-is
+  dates:
+    - dob
+    - dob1
+    - dob.P      # date precision
+    - dob1.P
+
+  # Internal identifiers (typically not PHI but included for completeness)
+  internal_ids:
+    - guid1
+
+# =============================================================================
+# EXPORT PROFILES
+# =============================================================================
+
+profiles:
+  # --------------------------------------------------------------------------
+  # DEIDENTIFIED (Default) - Standard industry export
+  # --------------------------------------------------------------------------
+  deidentified:
+    description: "Fully de-identified export with date shifting. Safe for external sharing."
+    phi_level: "none"
+    shift_dates: true
+    date_shift_config:
+      year_shift_range: 1
+      day_shift_range: 7
+      bidirectional: true
+    include_phi_fields: []
+    exclude_phi_fields: "all"  # Remove all PHI
+    requires_approval: false
+    source_demographics: "Demographics_noPHI.xlsx"
+
+  # --------------------------------------------------------------------------
+  # DATES_ONLY - No date shifting, but no other PHI
+  # --------------------------------------------------------------------------
+  dates_only:
+    description: "Real dates preserved, no other PHI. Use when exact dates are critical."
+    phi_level: "dates"
+    shift_dates: false
+    include_phi_fields:
+      - dob
+      - dob.P
+    exclude_phi_fields:
+      - firstname
+      - lastname
+      - fname
+      - mname
+      - sname
+      - street
+      - city
+      - city1
+      - state
+      - zip
+      - country
+      - country1
+      - phnum
+      - eaddress
+      - guid1
+    requires_approval: true
+    approval_justification_required: true
+    source_demographics: "Demographics_noPHI.xlsx"
+
+  # --------------------------------------------------------------------------
+  # LOCATION_ONLY - Geographic analysis without direct identifiers
+  # --------------------------------------------------------------------------
+  location_only:
+    description: "Geographic data (state, zip) without names or contact info. For regional analysis."
+    phi_level: "location"
+    shift_dates: true
+    date_shift_config:
+      year_shift_range: 1
+      day_shift_range: 7
+      bidirectional: true
+    include_phi_fields:
+      - state
+      - zip
+      - country
+    exclude_phi_fields:
+      - firstname
+      - lastname
+      - fname
+      - mname
+      - sname
+      - street
+      - city
+      - city1
+      - country1
+      - phnum
+      - eaddress
+      - guid1
+      - dob
+      - dob1
+      - dob.P
+      - dob1.P
+    requires_approval: true
+    source_demographics: "Demographics_PHI.xlsx"
+
+  # --------------------------------------------------------------------------
+  # ZIP_ONLY - Minimal geographic for regional statistics
+  # --------------------------------------------------------------------------
+  zip_only:
+    description: "Only ZIP codes included. Minimal PHI for geographic distribution analysis."
+    phi_level: "minimal_location"
+    shift_dates: true
+    date_shift_config:
+      year_shift_range: 1
+      day_shift_range: 7
+      bidirectional: true
+    include_phi_fields:
+      - zip
+      - state
+    exclude_phi_fields:
+      - firstname
+      - lastname
+      - fname
+      - mname
+      - sname
+      - street
+      - city
+      - city1
+      - country
+      - country1
+      - phnum
+      - eaddress
+      - guid1
+      - dob
+      - dob1
+      - dob.P
+      - dob1.P
+    requires_approval: true
+    source_demographics: "Demographics_PHI.xlsx"
+
+  # --------------------------------------------------------------------------
+  # CONTACT_INFO - For patient outreach/recontact studies
+  # --------------------------------------------------------------------------
+  contact_info:
+    description: "Contact information for patient recontact studies. High PHI level."
+    phi_level: "contact"
+    shift_dates: false  # Usually need real dates for recontact
+    include_phi_fields:
+      - firstname
+      - lastname
+      - street
+      - city
+      - state
+      - zip
+      - country
+      - phnum
+      - eaddress
+      - dob
+    exclude_phi_fields: []
+    requires_approval: true
+    approval_justification_required: true
+    irb_approval_required: true
+    source_demographics: "Demographics_PHI.xlsx"
+
+  # --------------------------------------------------------------------------
+  # GEO_WITH_DATES - Location + real dates, no contact info
+  # --------------------------------------------------------------------------
+  geo_with_dates:
+    description: "Geographic data and real dates, no names or contact info. For regional/temporal analysis."
+    phi_level: "geo_dates"
+    shift_dates: false
+    include_phi_fields:
+      - state
+      - zip
+      - city
+      - country
+      - dob
+      - dob.P
+    exclude_phi_fields:
+      - firstname
+      - lastname
+      - fname
+      - mname
+      - sname
+      - street
+      - city1
+      - country1
+      - phnum
+      - eaddress
+      - guid1
+    requires_approval: true
+    approval_justification_required: true
+    source_demographics: "Demographics_PHI.xlsx"
+
+  # --------------------------------------------------------------------------
+  # FULL_PHI - Complete PHI for internal/IRB-approved studies
+  # --------------------------------------------------------------------------
+  full_phi:
+    description: "All PHI fields included. For internal use or IRB-approved research only."
+    phi_level: "full"
+    shift_dates: false
+    include_phi_fields: "all"
+    exclude_phi_fields: []
+    requires_approval: true
+    approval_justification_required: true
+    irb_approval_required: true
+    source_demographics: "Demographics_PHI.xlsx"
+
+  # --------------------------------------------------------------------------
+  # LINKAGE - For data linkage studies (names + DOB only)
+  # --------------------------------------------------------------------------
+  linkage:
+    description: "Names and DOB for record linkage. No contact info."
+    phi_level: "linkage"
+    shift_dates: false  # Need exact DOB for linkage
+    include_phi_fields:
+      - firstname
+      - lastname
+      - fname
+      - mname
+      - sname
+      - dob
+      - dob.P
+      - state  # Sometimes needed for linkage disambiguation
+    exclude_phi_fields:
+      - street
+      - city
+      - city1
+      - zip
+      - country
+      - country1
+      - phnum
+      - eaddress
+      - guid1
+    requires_approval: true
+    approval_justification_required: true
+    source_demographics: "Demographics_PHI.xlsx"
+
+# =============================================================================
+# IQVIA SYSTEM FIELDS (Always excluded)
+# =============================================================================
+# These are vendor/system fields that should never be in external exports
+
+iqvia_system_fields:
+  - MASTER_PATIENT_ID
+  - FORM_VERSION
+  - FORM_STATUS
+  - FACILITY_NAME
+  - CREATED_DT
+  - MODIFIED_DT
+  - CREATED_BY
+  - UPDATED_BY
+  - UPLOADED_BY
+  - Access Case
+
+# =============================================================================
+# DATE SHIFTING PRESETS
+# =============================================================================
+
+date_shift_presets:
+  standard:
+    description: "Standard shift preserving seasonality"
+    year_shift_range: 1
+    day_shift_range: 7
+    bidirectional: true
+
+  minimal:
+    description: "Minimal shift - days only"
+    year_shift_range: 0
+    day_shift_range: 30
+    bidirectional: true
+
+  aggressive:
+    description: "Maximum de-identification"
+    year_shift_range: 2
+    day_shift_range: 14
+    bidirectional: true
+
+  none:
+    description: "No date shifting (real dates)"
+    year_shift_range: 0
+    day_shift_range: 0
+    bidirectional: false
+
+# =============================================================================
+# SOURCE DATA PATHS
+# =============================================================================
+
+source_data:
+  base_path: "../source-movr-data"
+  files:
+    demographics_phi: "Demographics_PHI.xlsx"
+    demographics_nophi: "Demographics_noPHI.xlsx"
+    diagnosis: "Diagnosis.xlsx"
+    discontinuation: "Discontinuation.xlsx"
+    encounter: "Encounter.xlsx"
+    log: "Log.xlsx"
+    data_dictionary: "MDA MOVR_Data Dictionary_All 3_20250418_wranges.xlsx"

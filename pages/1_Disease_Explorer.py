@@ -1,0 +1,456 @@
+"""
+Disease Explorer Page
+
+Explore disease-specific cohorts with cascading filters and interactive charts.
+"""
+
+import sys
+from pathlib import Path
+
+# Add both webapp and parent directory to path FIRST (before other imports)
+app_dir = Path(__file__).parent.parent
+# App root is parent of pages/
+sys.path.insert(0, str(app_dir))
+# src is in app root
+
+import streamlit as st
+import pandas as pd
+import yaml
+
+from api import CohortAPI
+from components.charts import (
+    create_age_distribution_chart,
+    create_categorical_bar_chart,
+    create_categorical_donut_chart,
+    create_numeric_histogram_chart,
+    create_facility_distribution_mini_chart,
+)
+from components.tables import display_cohort_summary, display_data_preview, create_download_button
+from components.filters import disease_selector, include_usndr_toggle, DiseaseFilterRenderer
+from utils.cache import get_cached_disease_cohort, get_cached_base_cohort
+from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES
+
+
+# Page configuration
+st.set_page_config(
+    page_title="Disease Explorer - OpenMOVR",
+    page_icon=PAGE_ICON,
+    layout="wide"
+)
+
+# Custom CSS to add branding above page navigation
+st.markdown(
+    """
+    <style>
+    [data-testid="stSidebarNav"] {
+        padding-top: 0rem;
+    }
+    [data-testid="stSidebarNav"]::before {
+        content: "OpenMOVR App";
+        display: block;
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #1E88E5;
+        text-align: center;
+        padding: 1rem 0 0.5rem 0;
+    }
+    [data-testid="stSidebarNav"]::after {
+        content: "MOVR Data Hub | MOVR 1.0";
+        display: block;
+        font-size: 0.8em;
+        color: #666;
+        text-align: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Contact info function for sidebar (called at end of sidebar content)
+def _render_sidebar_contact():
+    st.sidebar.markdown("---")
+    st.sidebar.markdown(
+        """
+        <div style='text-align: center; font-size: 0.8em; color: #888;'>
+            <strong>Created by</strong><br>
+            Andre D Paredes<br>
+            <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Header with branding
+header_left, header_right = st.columns([3, 1])
+
+with header_left:
+    st.title("Disease Explorer")
+    st.markdown("### Explore disease-specific cohorts and patient data")
+
+with header_right:
+    st.markdown(
+        """
+        <div style='text-align: right; padding-top: 10px;'>
+            <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
+            <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
+                MOVR Data Hub | MOVR 1.0
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# ---------------------------------------------------------------------------
+# Load filter config (shared with DiseaseFilterRenderer)
+# ---------------------------------------------------------------------------
+_PROJECT_ROOT = Path(__file__).parent.parent.parent
+_FILTER_CONFIG_PATH = _PROJECT_ROOT / "config" / "disease_filters.yaml"
+
+
+@st.cache_data
+def _load_filter_config():
+    with open(_FILTER_CONFIG_PATH, "r") as f:
+        return yaml.safe_load(f)
+
+
+# ---------------------------------------------------------------------------
+# Sidebar — disease selector + USNDR toggle + cascading filters
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.header("Filters")
+
+    available_diseases = CohortAPI.get_available_diseases()
+    sorted_diseases = [d for d in DISEASE_DISPLAY_ORDER if d in available_diseases]
+    sorted_diseases.extend([d for d in available_diseases if d not in sorted_diseases])
+
+    selected_disease = disease_selector(
+        sorted_diseases,
+        label="Select Disease",
+        key="disease_select_explorer"
+    )
+
+    st.markdown("---")
+
+    include_usndr = include_usndr_toggle(
+        label="Include USNDR Legacy Patients",
+        default=False,
+        key="usndr_toggle_explorer"
+    )
+
+# Load disease cohort
+with st.spinner(f"Loading {selected_disease} cohort..."):
+    try:
+        base_cohort = get_cached_base_cohort(include_usndr=include_usndr)
+        disease_cohort = get_cached_disease_cohort(selected_disease)
+    except Exception as e:
+        st.error(f"Error loading {selected_disease} cohort: {e}")
+        st.stop()
+
+# Render cascading filters in sidebar (after cohort is loaded)
+with st.sidebar:
+    st.markdown("---")
+    renderer = DiseaseFilterRenderer()
+    active_filters = renderer.render_filters(
+        disease=selected_disease,
+        cohort=disease_cohort,
+    )
+
+    # Contact info at bottom
+    _render_sidebar_contact()
+
+# Apply filters
+if active_filters:
+    with st.spinner("Applying filters..."):
+        filtered_cohort = CohortAPI.apply_filters(disease_cohort, active_filters)
+else:
+    filtered_cohort = disease_cohort
+
+# Summaries
+cohort_summary = CohortAPI.get_cohort_summary(filtered_cohort)
+total_unfiltered = disease_cohort.get("count", 0)
+total_filtered = cohort_summary["total_patients"]
+
+
+# ===================================================================
+# METRICS ROW
+# ===================================================================
+st.markdown("---")
+st.subheader(f"{selected_disease} Cohort Summary")
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    delta = None
+    if active_filters:
+        diff = total_filtered - total_unfiltered
+        delta = f"{diff:,}" if diff != 0 else None
+    st.metric(
+        "Total Patients",
+        f"{total_filtered:,}",
+        delta=delta,
+        help=f"Number of {selected_disease} patients" + (" (filtered)" if active_filters else ""),
+    )
+
+with col2:
+    st.metric("Facilities", cohort_summary['facility_count'],
+              help="Facilities with this disease")
+
+with col3:
+    st.metric("Encounters", f"{cohort_summary['encounter_records']:,}",
+              help="Total encounter records")
+
+with col4:
+    st.metric("Medications", f"{cohort_summary['medication_records']:,}",
+              help="Total medication records")
+
+if active_filters:
+    st.info(
+        f"Showing **{total_filtered:,}** of **{total_unfiltered:,}** "
+        f"{selected_disease} patients ({len(active_filters)} filter(s) active)"
+    )
+
+
+# ===================================================================
+# DEMOGRAPHICS OVERVIEW — Charts (all diseases)
+# ===================================================================
+st.markdown("---")
+st.subheader("Demographics Overview")
+
+demo_df = filtered_cohort.get("demographics", pd.DataFrame())
+
+if not demo_df.empty:
+    # Row 1: Age + Gender
+    col_age, col_gender = st.columns(2)
+
+    with col_age:
+        fig = create_age_distribution_chart(demo_df, title="Patient Age Distribution")
+        if fig:
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.caption("Age distribution: no DOB data available")
+
+    with col_gender:
+        if "gender" in demo_df.columns:
+            fig = create_categorical_donut_chart(
+                demo_df["gender"], title="Gender Distribution"
+            )
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.caption("Gender: no data available")
+        else:
+            st.caption("Gender field not found")
+
+    # Row 2: Race/Ethnicity + Facility
+    col_eth, col_fac = st.columns(2)
+
+    with col_eth:
+        if "ethnic" in demo_df.columns:
+            fig = create_categorical_bar_chart(
+                demo_df["ethnic"],
+                title="Race / Ethnicity",
+                color_scale=COLOR_SCHEMES.get("demographics", "Purples"),
+            )
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.caption("Race/Ethnicity: no data available")
+        else:
+            st.caption("Race/Ethnicity field not found")
+
+    with col_fac:
+        fig = create_facility_distribution_mini_chart(
+            demo_df, title="Top Facilities (This Cohort)"
+        )
+        if fig:
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.caption("Facility distribution: no data available")
+else:
+    st.warning("No demographics data available for this cohort.")
+
+
+# ===================================================================
+# DISEASE-SPECIFIC DIAGNOSIS PROFILE — Dynamic charts
+# ===================================================================
+filter_config = _load_filter_config()
+disease_cfg = filter_config.get("disease_filters", {}).get(selected_disease, {})
+
+# Collect all chart-worthy filter definitions (diagnosis + clinical)
+all_chart_defs = []
+for category in ("diagnosis", "clinical"):
+    for fdef in disease_cfg.get(category, []):
+        all_chart_defs.append((category, fdef))
+
+if all_chart_defs:
+    st.markdown("---")
+    st.subheader(f"{selected_disease} Diagnosis Profile")
+
+    # Map source_table config key → cohort dict key
+    _TABLE_MAP = {
+        "demographics": "demographics",
+        "diagnosis": "diagnosis",
+        "encounters": "encounters",
+        "medications": "medications",
+    }
+
+    # Render 2 charts per row
+    for i in range(0, len(all_chart_defs), 2):
+        cols = st.columns(2)
+        for j, col in enumerate(cols):
+            idx = i + j
+            if idx >= len(all_chart_defs):
+                break
+
+            category, fdef = all_chart_defs[idx]
+            field = fdef["field"]
+            label = fdef["label"]
+            widget = fdef["widget"]
+            source = fdef["source_table"]
+
+            # Pick color based on category
+            if category == "clinical":
+                cscale = COLOR_SCHEMES.get("clinical", "Blues")
+            else:
+                cscale = COLOR_SCHEMES.get("diagnosis", "Greens")
+
+            df_key = _TABLE_MAP.get(source, source)
+            df = filtered_cohort.get(df_key, pd.DataFrame())
+
+            with col:
+                if isinstance(df, pd.DataFrame) and not df.empty and field in df.columns:
+                    if widget == "multiselect":
+                        fig = create_categorical_bar_chart(
+                            df[field],
+                            title=f"{label} Distribution",
+                            color_scale=cscale,
+                        )
+                    elif widget == "range_slider":
+                        fig = create_numeric_histogram_chart(
+                            df[field],
+                            title=f"{label} Distribution",
+                            color="#00CC96" if category == "diagnosis" else "#636EFA",
+                        )
+                    elif widget == "checkbox":
+                        mapped = df[field].map(
+                            {True: "Yes", False: "No", 1: "Yes", 0: "No"}
+                        ).fillna(df[field].astype(str))
+                        fig = create_categorical_bar_chart(
+                            mapped, title=label, color_scale=cscale
+                        )
+                    else:
+                        fig = None
+
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                    else:
+                        st.caption(f"{label}: insufficient data for chart")
+                else:
+                    st.caption(f"{label}: no data available")
+
+
+# ===================================================================
+# DATA TABLES — Existing tabs (demographics, encounters, medications)
+# ===================================================================
+st.markdown("---")
+st.subheader("Data Tables")
+
+tab1, tab2, tab3, tab4 = st.tabs([
+    "Summary",
+    "Demographics",
+    "Encounters",
+    "Medications"
+])
+
+with tab1:
+    st.markdown("#### Cohort Statistics")
+    display_cohort_summary(cohort_summary)
+
+    if cohort_summary.get('dstype_distribution'):
+        st.markdown("#### Disease Type Distribution")
+        dstype_data = [
+            {'Type': k, 'Count': v}
+            for k, v in cohort_summary['dstype_distribution'].items()
+        ]
+        st.table(dstype_data)
+
+with tab2:
+    st.markdown(f"#### Demographics ({selected_disease})")
+    demographics_df = filtered_cohort['demographics']
+    if not demographics_df.empty:
+        display_data_preview(demographics_df, max_rows=100, show_info=True)
+        create_download_button(
+            demographics_df,
+            filename=f"{selected_disease}_demographics.csv",
+            label=f"Download {selected_disease} Demographics",
+            key="download_demographics"
+        )
+    else:
+        st.warning("No demographics data available.")
+
+with tab3:
+    st.markdown(f"#### Encounters ({selected_disease})")
+    encounters_df = filtered_cohort['encounters']
+    if not encounters_df.empty:
+        display_data_preview(encounters_df, max_rows=100, show_info=True)
+        create_download_button(
+            encounters_df,
+            filename=f"{selected_disease}_encounters.csv",
+            label=f"Download {selected_disease} Encounters",
+            key="download_encounters"
+        )
+    else:
+        st.warning("No encounters data available.")
+
+with tab4:
+    st.markdown(f"#### Medications ({selected_disease})")
+    medications_df = filtered_cohort['medications']
+    if not medications_df.empty:
+        display_data_preview(medications_df, max_rows=100, show_info=True)
+        create_download_button(
+            medications_df,
+            filename=f"{selected_disease}_medications.csv",
+            label=f"Download {selected_disease} Medications",
+            key="download_medications"
+        )
+    else:
+        st.warning("No medications data available.")
+
+# ===================================================================
+# PATIENT IDS
+# ===================================================================
+st.markdown("---")
+patient_ids = filtered_cohort['patient_ids']
+with st.expander(f"Patient IDs ({len(patient_ids):,} patients)", expanded=False):
+
+    st.text_area(
+        "Patient IDs (FACPATIDs)",
+        value="\n".join(patient_ids[:100]),
+        height=300,
+        help=f"Showing first 100 of {len(patient_ids):,} patient IDs"
+    )
+
+    patient_ids_text = "\n".join(patient_ids)
+    st.download_button(
+        label=f"Download All {len(patient_ids):,} Patient IDs",
+        data=patient_ids_text,
+        file_name=f"{selected_disease}_patient_ids.txt",
+        mime="text/plain",
+        key="download_patient_ids"
+    )
+
+# Footer
+st.markdown("---")
+st.markdown(
+    "<div style='text-align: center; color: #666;'>"
+    "<strong>OpenMOVR App</strong> | MOVR Data Hub (MOVR 1.0)<br>"
+    "Use the sidebar to select different diseases and apply filters<br>"
+    "<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
+    "<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a></span>"
+    "</div>",
+    unsafe_allow_html=True
+)

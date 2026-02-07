@@ -1,0 +1,312 @@
+# Export Table Configurations for Industry Data Cuts
+# ===================================================
+# This file defines standard table sets for different types of data exports.
+# Use these configurations to maintain consistency across exports.
+
+# COMPREHENSIVE SET - All available tables for maximum data sharing
+comprehensive:
+  description: "Complete dataset including all demographics, diagnosis, encounters, logs, and derived tables"
+  tables:
+    # Core Demographics
+    - Demographics_MainData
+
+    # Diagnosis Tables
+    - Diagnosis_MainData
+    - Diagnosis_GeneproteinRG
+    - Diagnosis_GAAenzymeactivityRG
+    - Diagnosis_FamilyHistory
+    - Diagnosis_ClinvarSymedical
+
+    # Encounter Tables
+    - Encounter_MainData
+    - Encounter_Medication
+    - Encounter_Hospitalization
+    - Encounter_AssistiveDevice
+    - Encounter_PulmonaryDevice
+    - Encounter_FeedingTubePlacement
+    - Encounter_Tracheostomy
+    - Encounter_ScoliosisSurgery
+    - Encounter_MuscleBiopsy
+    - Encounter_NPI
+    - Encounter_TrialDetails
+    - Encounter_TendonReleaseSurgery
+    - Encounter_SurgeryOther
+    - Encounter_SpinrazaMaintenanceDose
+    - Encounter_ICDPlacement
+    - Encounter_FundoplicationNissen
+    - Encounter_FractureRepair
+
+    # Log Tables
+    - Log_Surgery
+    - Log_PulmonaryDevice
+    - Log_Medication
+    - Log_MainData
+    - Log_Hospitalization
+    - Log_ERTAntibodyTiters
+    - Log_EnzymeReplacementTherapy
+    - Log_CardiacDevice
+    - Log_AssistiveDevice
+
+    # Discontinuation
+    - Discontinuation_MainData
+
+    # MDA Custom Tables
+    - Combo_Drugs  # MDA_MOVR_Medications_Combined (standardized medications)
+
+# STANDARD SET - Most common tables for typical industry collaborations
+standard:
+  description: "Standard dataset for most industry collaborations (core demographics, diagnosis, encounters, medications)"
+  tables:
+    # Core Demographics
+    - Demographics_MainData
+
+    # Diagnosis
+    - Diagnosis_MainData
+    - Diagnosis_GeneproteinRG
+    - Diagnosis_FamilyHistory
+
+    # Encounters
+    - Encounter_MainData
+    - Encounter_Medication
+    - Encounter_VitalSigns
+    - Encounter_TrialDetails
+
+    # Logs
+    - Log_Medication
+    - Log_MainData
+    - Log_Surgery
+
+    # MDA Custom
+    - Combo_Drugs
+
+# MINIMAL SET - Core tables only for basic data sharing
+minimal:
+  description: "Minimal dataset with only core demographics, diagnosis, and encounters"
+  tables:
+    - Demographics_MainData
+    - Diagnosis_MainData
+    - Encounter_MainData
+
+# SMA-SPECIFIC - Tables relevant for SMA disease
+sma_specific:
+  description: "SMA-focused tables including Spinraza treatments and SMA-relevant assessments"
+  tables:
+    # Core
+    - Demographics_MainData
+    - Diagnosis_MainData
+    - Diagnosis_GeneproteinRG
+    - Diagnosis_FamilyHistory
+
+    # Encounters
+    - Encounter_MainData
+    - Encounter_Medication
+    - Encounter_VitalSigns
+    - Encounter_PulmonaryDevice
+    - Encounter_FeedingTubePlacement
+    - Encounter_SpinrazaMaintenanceDose  # SMA-specific
+    - Encounter_TrialDetails
+    - Encounter_AssistiveDevice
+
+    # Logs
+    - Log_Medication
+    - Log_MainData
+    - Log_PulmonaryDevice
+    - Log_AssistiveDevice
+
+    # MDA Custom
+    - Combo_Drugs
+
+# DMD-SPECIFIC - Tables relevant for DMD/BMD
+dmd_specific:
+  description: "DMD/BMD-focused tables including cardiac assessments and steroid treatments"
+  tables:
+    # Core
+    - Demographics_MainData
+    - Diagnosis_MainData
+    - Diagnosis_GeneproteinRG
+    - Diagnosis_FamilyHistory
+
+    # Encounters
+    - Encounter_MainData
+    - Encounter_Medication
+    - Encounter_VitalSigns
+    - Encounter_CardiacEcho
+    - Encounter_CardiacMRI
+    - Encounter_CardiacEKG
+    - Encounter_6MWT
+    - Encounter_10MWT
+    - Encounter_NSAA
+    - Encounter_PUL
+    - Encounter_TrialDetails
+    - Encounter_ScoliosisSurgery
+    - Encounter_TendonReleaseSurgery
+
+    # Logs
+    - Log_Medication
+    - Log_MainData
+    - Log_Surgery
+    - Log_CardiacDevice
+
+    # MDA Custom
+    - Combo_Drugs
+
+# LGMD-SPECIFIC - Tables relevant for LGMD
+lgmd_specific:
+  description: "LGMD-focused tables including muscle assessments and genetic testing"
+  tables:
+    # Core
+    - Demographics_MainData
+    - Diagnosis_MainData
+    - Diagnosis_GeneproteinRG
+    - Diagnosis_FamilyHistory
+
+    # Encounters
+    - Encounter_MainData
+    - Encounter_Medication
+    - Encounter_VitalSigns
+    - Encounter_MuscleBiopsy
+    - Encounter_CardiacEcho
+    - Encounter_PulmonaryFunction
+    - Encounter_6MWT
+    - Encounter_MFM
+    - Encounter_TrialDetails
+
+    # Logs
+    - Log_Medication
+    - Log_MainData
+    - Log_Surgery
+
+    # MDA Custom
+    - Combo_Drugs
+
+# ALS-SPECIFIC - Tables relevant for ALS
+als_specific:
+  description: "ALS-focused tables including ALSFRS-R and respiratory assessments"
+  tables:
+    # Core
+    - Demographics_MainData
+    - Diagnosis_MainData
+    - Diagnosis_GeneproteinRG
+    - Diagnosis_FamilyHistory
+
+    # Encounters
+    - Encounter_MainData
+    - Encounter_Medication
+    - Encounter_VitalSigns
+    - Encounter_ALSFRS
+    - Encounter_PulmonaryFunction
+    - Encounter_PulmonaryDevice
+    - Encounter_FeedingTubePlacement
+    - Encounter_Tracheostomy
+    - Encounter_TrialDetails
+
+    # Logs
+    - Log_Medication
+    - Log_MainData
+    - Log_PulmonaryDevice
+
+    # MDA Custom
+    - Combo_Drugs
+
+# FUNCTIONAL ASSESSMENTS - Tables with functional/clinical assessments
+functional_assessments:
+  description: "All functional assessment tables (motor function, respiratory, cardiac)"
+  tables:
+    # Motor Function
+    - Encounter_6MWT
+    - Encounter_10MWT
+    - Encounter_MFM
+    - Encounter_HFMSE
+    - Encounter_RULM
+    - Encounter_NSAA
+    - Encounter_PUL
+    - Encounter_ALSFRS
+    - Encounter_CHOP_INTEND
+
+    # Respiratory
+    - Encounter_PulmonaryFunction
+    - Encounter_PulmonaryDevice
+
+    # Cardiac
+    - Encounter_CardiacEcho
+    - Encounter_CardiacMRI
+    - Encounter_CardiacEKG
+
+    # Other
+    - Encounter_VitalSigns
+
+# MEDICATIONS ONLY - Just medication-related tables
+medications_only:
+  description: "Medication data only (raw encounter/log data plus standardized)"
+  tables:
+    - Encounter_Medication
+    - Log_Medication
+    - Combo_Drugs  # Recommended: standardized medication names
+
+# GENETIC DATA - Genetic testing and family history
+genetic_data:
+  description: "Genetic testing results and family history"
+  tables:
+    - Diagnosis_GeneproteinRG
+    - Diagnosis_GAAenzymeactivityRG
+    - Diagnosis_FamilyHistory
+    - Diagnosis_ClinvarSymedical
+    - Encounter_MuscleBiopsy
+
+# TRIAL HISTORY - Clinical trial participation
+trial_history:
+  description: "Clinical trial participation details"
+  tables:
+    - Encounter_TrialDetails
+    - Discontinuation_MainData
+
+# TABLE DESCRIPTIONS - Detailed descriptions for documentation
+table_descriptions:
+  Demographics_MainData: "Core demographics including age, gender, race, ethnicity"
+  Diagnosis_MainData: "Primary diagnosis information and disease classifications"
+  Diagnosis_GeneproteinRG: "Genetic testing results and gene/protein analysis"
+  Diagnosis_GAAenzymeactivityRG: "GAA enzyme activity results (Pompe disease)"
+  Diagnosis_FamilyHistory: "Family history of genetic conditions"
+  Diagnosis_ClinvarSymedical: "ClinVar and Symedical genetic variant information"
+  Encounter_MainData: "Core encounter data including visit dates and types"
+  Encounter_Medication: "Medications documented at clinical encounters"
+  Encounter_VitalSigns: "Vital signs measured at encounters (BP, HR, height, weight)"
+  Encounter_Hospitalization: "Hospitalization events and details"
+  Encounter_AssistiveDevice: "Assistive devices used (wheelchairs, walkers, etc.)"
+  Encounter_PulmonaryDevice: "Pulmonary/respiratory devices (ventilators, BiPAP, etc.)"
+  Encounter_FeedingTubePlacement: "Feeding tube placements and types"
+  Encounter_Tracheostomy: "Tracheostomy procedures"
+  Encounter_ScoliosisSurgery: "Scoliosis surgical interventions"
+  Encounter_MuscleBiopsy: "Muscle biopsy results"
+  Encounter_NPI: "NPI (National Provider Identifier) data"
+  Encounter_TrialDetails: "Clinical trial participation details"
+  Encounter_TendonReleaseSurgery: "Tendon release surgical procedures"
+  Encounter_SurgeryOther: "Other surgical procedures"
+  Encounter_SpinrazaMaintenanceDose: "Spinraza (nusinersen) maintenance dosing (SMA)"
+  Encounter_ICDPlacement: "ICD (implantable cardioverter-defibrillator) placements"
+  Encounter_FundoplicationNissen: "Nissen fundoplication procedures"
+  Encounter_FractureRepair: "Fracture repair surgeries"
+  Encounter_6MWT: "6-Minute Walk Test results"
+  Encounter_10MWT: "10-Meter Walk Test results"
+  Encounter_MFM: "Motor Function Measure scores"
+  Encounter_HFMSE: "Hammersmith Functional Motor Scale Expanded scores"
+  Encounter_RULM: "Revised Upper Limb Module scores"
+  Encounter_NSAA: "North Star Ambulatory Assessment scores"
+  Encounter_PUL: "Performance of Upper Limb scores"
+  Encounter_ALSFRS: "ALS Functional Rating Scale scores"
+  Encounter_CHOP_INTEND: "CHOP INTEND (Children's Hospital of Philadelphia Infant Test of Neuromuscular Disorders)"
+  Encounter_PulmonaryFunction: "Pulmonary function test results (FVC, FEV1, etc.)"
+  Encounter_CardiacEcho: "Cardiac echocardiogram results"
+  Encounter_CardiacMRI: "Cardiac MRI results"
+  Encounter_CardiacEKG: "Cardiac EKG/ECG results"
+  Log_Surgery: "Longitudinal surgery log with start/end dates"
+  Log_PulmonaryDevice: "Longitudinal pulmonary device usage log"
+  Log_Medication: "Longitudinal medication log with start/end dates"
+  Log_MainData: "Core longitudinal log data"
+  Log_Hospitalization: "Longitudinal hospitalization log"
+  Log_ERTAntibodyTiters: "Enzyme replacement therapy antibody titers (Pompe)"
+  Log_EnzymeReplacementTherapy: "Enzyme replacement therapy details (Pompe)"
+  Log_CardiacDevice: "Longitudinal cardiac device usage log"
+  Log_AssistiveDevice: "Longitudinal assistive device usage log"
+  Discontinuation_MainData: "Study discontinuation data and reasons"
+  Combo_Drugs: "MDA custom table - standardized medication data combining Encounter_Medication and Log_Medication with cleaned drug names"

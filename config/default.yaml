@@ -1,0 +1,40 @@
+# Default configuration for MOVR Clinical Analytics
+
+database:
+  host: localhost
+  port: 5432
+  database: movr
+  username: ""
+  password: ""
+
+paths:
+  data_dir: data
+  config_dir: config
+  output_dir: output  
+  notebook_dir: notebooks
+
+analytics:
+  default_chunk_size: 10000
+  parallel_workers: 4
+  cache_enabled: true
+  debug_mode: false
+  strict_validation: true
+  allow_missing_values: false
+  save_intermediate: false
+  output_formats:
+    - csv
+    - parquet
+
+custom:
+  # Add your custom configuration here
+  project_name: "MOVR Clinical Analytics"
+  version: "1.0.0"
+  
+  # Analysis settings
+  confidence_level: 0.95
+  significance_threshold: 0.05
+  
+  # Visualization settings  
+  figure_dpi: 300
+  figure_format: "png"
+  color_palette: "viridis"

@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data files - DO NOT COMMIT (may contain PHI)
+data/*.parquet
+
+# Cache
+.cache/
+data/.cache/
+
+# Outputs
+output/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
