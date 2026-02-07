@@ -17,13 +17,14 @@ import streamlit as st
 import pandas as pd
 
 from api.data_dictionary import DataDictionaryAPI
-from config.settings import PAGE_ICON
+from config.settings import PAGE_ICON, LOGO_PNG
 
+_logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
 
 # Page configuration
 st.set_page_config(
-    page_title="Data Dictionary - OpenMOVR",
-    page_icon=PAGE_ICON,
+    page_title="Data Dictionary - OpenMOVR App",
+    page_icon=str(_logo_path) if _logo_path.exists() else PAGE_ICON,
     layout="wide"
 )
 
@@ -61,6 +62,21 @@ st.markdown(
 # Contact info function for end of sidebar
 def _render_sidebar_contact():
     st.sidebar.markdown("---")
+    if LOGO_PNG.exists():
+        st.sidebar.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        st.sidebar.image(str(LOGO_PNG), width=160)
+        st.sidebar.markdown("</div>", unsafe_allow_html=True)
+    st.sidebar.markdown(
+        """
+        <div style='text-align: center; font-size: 0.8em; color: #888;'>
+            <strong>Open Source Project</strong><br>
+            <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a><br>
+            <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.sidebar.markdown("---")
     st.sidebar.markdown(
         """
         <div style='text-align: center; font-size: 0.8em; color: #888;'>
@@ -85,12 +101,112 @@ with header_right:
         <div style='text-align: right; padding-top: 10px;'>
             <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
             <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                MOVR Data Hub | MOVR 1.0
+                Gen1 | v0.1.0 (Prototype)
             </span>
         </div>
         """,
         unsafe_allow_html=True
     )
+
+
+# ---------------------------------------------------------------------------
+# MOVR Data Overview
+# ---------------------------------------------------------------------------
+st.markdown("---")
+st.subheader("MOVR Data Overview")
+
+st.markdown(
+    """
+    The MOVR registry captures clinical data for **7 neuromuscular diseases**.
+    Each disease functions as its own sub-registry with **shared** data forms
+    (demographics, encounters, medications) and **disease-specific** diagnosis
+    fields. The eCRFs (electronic Case Report Forms) and data dictionary were
+    developed by the [Muscular Dystrophy Association](https://www.mda.org/science/movr2).
+    """
+)
+
+# Hardcoded data overview table by disease
+# Grounded in config/disease_filters.yaml and config/export_tables.yaml
+_data_overview = {
+    "Data Category": [
+        "Demographics (age, gender, race, vital status)",
+        "Diagnosis — General (date, age, family history)",
+        "Diagnosis — Genetic Confirmation",
+        "Diagnosis — Subtype / Classification",
+        "Diagnosis — Clinical (biopsy, onset, symptoms)",
+        "Gene/Protein Data",
+        "Encounter — Core (visits, ambulatory status)",
+        "Medications & Treatments",
+        "Functional Assessments",
+        "Cardiac Assessments",
+        "Pulmonary / Respiratory",
+        "Surgical Procedures",
+    ],
+    "ALS": [
+        "Yes", "alsdgnag, alsonsag", "genemut", "—", "—", "Yes",
+        "Yes", "Yes", "ALSFRS-R", "—",
+        "PFT, Pulm Devices, Trach", "Feeding Tube",
+    ],
+    "DMD": [
+        "Yes", "dmddgnag, dmdfam", "dmdgntcf", "—", "—", "Yes",
+        "Yes", "Yes (steroids)", "6MWT, 10MWT, NSAA, PUL", "Echo, MRI, EKG",
+        "—", "Scoliosis, Tendon Release",
+    ],
+    "BMD": [
+        "Yes", "bmddgnag, bmdfam", "bmdgntcf", "—", "—", "Yes",
+        "Yes", "Yes", "—", "—",
+        "—", "—",
+    ],
+    "SMA": [
+        "Yes", "smadgnag", "smadgcnf", "smaclass (I–IV)", "—", "Yes",
+        "Yes", "Yes (Spinraza)", "CHOP INTEND, HFMSE, RULM", "—",
+        "PFT, Pulm Devices", "Feeding Tube",
+    ],
+    "LGMD": [
+        "Yes", "lgdgag, dymonag, lgfam", "lggntcf, lgidvar",
+        "lgtype (20+ subtypes)", "lgmscbp, sym1st", "Yes",
+        "Yes (curramb)", "Yes", "6MWT, MFM", "Echo",
+        "PFT", "Muscle Biopsy",
+    ],
+    "FSHD": [
+        "Yes", "fshdgnag", "fshdel (4q35)", "—", "—", "Yes",
+        "Yes", "Yes", "—", "—",
+        "—", "—",
+    ],
+    "Pompe": [
+        "Yes", "pomdgag", "pomgntcf",
+        "pomclass (Infantile/Late-Onset)", "—", "GAA enzyme activity",
+        "Yes", "Yes (ERT)", "—", "—",
+        "—", "—",
+    ],
+}
+
+_overview_df = pd.DataFrame(_data_overview)
+
+st.dataframe(
+    _overview_df,
+    use_container_width=True,
+    hide_index=True,
+    height=470,
+)
+
+st.caption(
+    "**Yes** = shared fields collected across all diseases. "
+    "Specific field names shown are the MOVR column names from the diagnosis eCRF (see full dictionary below). "
+    "Disease-specific diagnosis fields use prefixes: als*, dmd*, bmd*, sma*, lg*, fshd*, pom*. "
+    "Assessment and encounter tables sourced from export_tables.yaml."
+)
+
+st.markdown(
+    """
+    <div style='background-color: #FFF3E0; border-left: 4px solid #FF9800; padding: 10px 14px;
+    border-radius: 0 4px 4px 0; margin: 0.5rem 0 1rem 0; font-size: 0.9em;'>
+    <strong>Tip:</strong> Use the filters below to explore the full data dictionary.
+    Select a disease to see only fields applicable to that registry.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -483,9 +599,11 @@ st.markdown("---")
 st.markdown(
     "<div style='text-align: center; color: #666;'>"
     "<strong>OpenMOVR App</strong> | MOVR Data Hub (MOVR 1.0)<br>"
+    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
     "Use the sidebar to filter fields by form, disease, or type<br>"
     "<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-    "<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a></span>"
+    "<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a> | "
+    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
     "</div>",
     unsafe_allow_html=True
 )

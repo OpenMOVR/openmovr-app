@@ -150,7 +150,7 @@ def chart_type_selector(chart_types: List[str],
 # ---------------------------------------------------------------------------
 
 # Resolve config path relative to project root
-_PROJECT_ROOT = Path(__file__).parent.parent.parent
+_PROJECT_ROOT = Path(__file__).parent.parent
 _DEFAULT_FILTER_CONFIG = _PROJECT_ROOT / "config" / "disease_filters.yaml"
 
 # Maximum unique values before switching a multiselect to text search

@@ -26,10 +26,11 @@ from components.charts import (
 from components.tables import display_disease_table, display_facility_table
 
 
-# Page configuration
+# Page configuration — use logo as favicon
+_logo_path = Path(__file__).parent / "assets" / "movr_logo_clean_nobackground.png"
 st.set_page_config(
     page_title=PAGE_TITLE,
-    page_icon=PAGE_ICON,
+    page_icon=str(_logo_path) if _logo_path.exists() else PAGE_ICON,
     layout=LAYOUT,
     initial_sidebar_state=INITIAL_SIDEBAR_STATE
 )
@@ -69,8 +70,26 @@ def main():
         unsafe_allow_html=True
     )
 
-    # Contact info at bottom of sidebar
+    # Sidebar: logo (centered) + contact
     with st.sidebar:
+        if LOGO_PNG.exists():
+            st.markdown(
+                "<div style='text-align: center;'>",
+                unsafe_allow_html=True
+            )
+            st.image(str(LOGO_PNG), width=160)
+            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown(
+            """
+            <div style='text-align: center; font-size: 0.8em; color: #888;'>
+                <strong>Open Source Project</strong><br>
+                <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a><br>
+                <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         st.markdown("---")
         st.markdown(
             """
@@ -83,7 +102,7 @@ def main():
             unsafe_allow_html=True
         )
 
-    # Header with branding
+    # Header with logo + branding
     header_left, header_right = st.columns([3, 1])
 
     with header_left:
@@ -92,16 +111,35 @@ def main():
 
     with header_right:
         st.markdown(
-            """
+            f"""
             <div style='text-align: right; padding-top: 10px;'>
                 <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
                 <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                    MOVR Data Hub | MOVR 1.0
+                    Gen1 | v{APP_VERSION} (Prototype)
+                </span><br>
+                <span style='font-size: 0.75em; color: #999; margin-top: 4px; display: inline-block;'>
+                    {STUDY_NAME} | {STUDY_PROTOCOL}<br>
+                    Study: {STUDY_START} &ndash; {STUDY_END}
                 </span>
             </div>
             """,
             unsafe_allow_html=True
         )
+
+    # Orientation blurb
+    st.markdown(
+        f"""
+        <div style='background-color: #E3F2FD; border-left: 4px solid #1E88E5; padding: 12px 16px;
+        border-radius: 0 4px 4px 0; margin: 0.5rem 0 1rem 0; font-size: 0.95em;'>
+        Analytics dashboard for the <strong>{STUDY_NAME}</strong> clinical registry
+        ({STUDY_PROTOCOL} study protocol, {STUDY_START} &ndash; {STUDY_END}).
+        Explore disease distributions, facility data, and disease-specific profiles
+        for rare neuromuscular diseases.
+        See <strong>About</strong> for study details and version history.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # Check if snapshot exists
     if not StatsAPI.snapshot_exists():
@@ -275,11 +313,14 @@ def main():
     st.markdown("---")
     st.markdown(
         f"<div style='text-align: center; color: #666;'>"
-        f"<strong>OpenMOVR App</strong> v{APP_VERSION} | "
-        f"MOVR Data Hub (MOVR 1.0) | "
+        f"<strong>OpenMOVR App</strong> Gen1 | v{APP_VERSION} (Prototype)<br>"
+        f"{STUDY_NAME} Study Protocol ({STUDY_PROTOCOL}) | "
+        f"{STUDY_START} &ndash; {STUDY_END} ({STUDY_STATUS})<br>"
+        f"<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
         f"Snapshot: {metadata['generated_timestamp']}<br>"
         f"<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-        f"<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a></span>"
+        f"<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a> | "
+        f"<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
         f"</div>",
         unsafe_allow_html=True
     )

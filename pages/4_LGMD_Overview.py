@@ -26,13 +26,14 @@ from components.charts import (
     create_categorical_bar_chart,
     create_categorical_donut_chart,
 )
-from config.settings import PAGE_ICON
+from config.settings import PAGE_ICON, LOGO_PNG
 
+_logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
 
 # Page configuration
 st.set_page_config(
-    page_title="LGMD Overview - OpenMOVR",
-    page_icon=PAGE_ICON,
+    page_title="LGMD Overview - OpenMOVR App",
+    page_icon=str(_logo_path) if _logo_path.exists() else PAGE_ICON,
     layout="wide"
 )
 
@@ -70,6 +71,21 @@ st.markdown(
 # Contact info function for end of sidebar
 def _render_sidebar_contact():
     st.sidebar.markdown("---")
+    if LOGO_PNG.exists():
+        st.sidebar.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        st.sidebar.image(str(LOGO_PNG), width=160)
+        st.sidebar.markdown("</div>", unsafe_allow_html=True)
+    st.sidebar.markdown(
+        """
+        <div style='text-align: center; font-size: 0.8em; color: #888;'>
+            <strong>Open Source Project</strong><br>
+            <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a><br>
+            <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.sidebar.markdown("---")
     st.sidebar.markdown(
         """
         <div style='text-align: center; font-size: 0.8em; color: #888;'>
@@ -94,7 +110,7 @@ with header_right:
         <div style='text-align: right; padding-top: 10px;'>
             <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
             <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                MOVR Data Hub | MOVR 1.0
+                Gen1 | v0.1.0 (Prototype)
             </span>
         </div>
         """,
@@ -945,9 +961,11 @@ st.markdown("---")
 st.markdown(
     "<div style='text-align: center; color: #666;'>"
     "<strong>OpenMOVR App</strong> | MOVR Data Hub (MOVR 1.0)<br>"
+    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
     "LGMD Registry Data<br>"
     "<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-    "<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a></span>"
+    "<a href='mailto:aparedes@mdausa.org'>aparedes@mdausa.org</a> | "
+    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
     "</div>",
     unsafe_allow_html=True
 )

@@ -9,19 +9,21 @@ from pathlib import Path
 # App metadata
 APP_TITLE = "OpenMOVR App"
 APP_ICON = ""  # No icon in titles
-APP_VERSION = "0.2.0"
+APP_VERSION = "0.1.0"
 
 # Layout settings
 LAYOUT = "wide"
 INITIAL_SIDEBAR_STATE = "expanded"
 
 # Page configuration
-PAGE_TITLE = "OpenMOVR"
-PAGE_ICON = "📊"
+PAGE_TITLE = "OpenMOVR App"
+PAGE_ICON = "📊"  # Fallback emoji; pages use logo PNG when available
 
 # Paths
-WEBAPP_ROOT = Path(__file__).parent.parent
-PROJECT_ROOT = WEBAPP_ROOT.parent
+PROJECT_ROOT = Path(__file__).parent.parent
+ASSETS_DIR = PROJECT_ROOT / "assets"
+LOGO_PNG = ASSETS_DIR / "movr_logo_clean_nobackground.png"
+LOGO_JPG = ASSETS_DIR / "movr_logo_clean.jpg"
 DATA_DIR = PROJECT_ROOT / "data"
 STATS_DIR = PROJECT_ROOT / "stats"
 REPORTS_DIR = PROJECT_ROOT / "reports"
@@ -47,6 +49,13 @@ COLOR_SCHEMES = {
     'diagnosis': 'Greens',
     'clinical': 'Blues',
 }
+
+# Study metadata
+STUDY_NAME = "MOVR Data Hub"
+STUDY_PROTOCOL = "MOVR 1.0"
+STUDY_START = "November 1, 2018"
+STUDY_END = "April 1, 2025"
+STUDY_STATUS = "Concluded"
 
 # Feature flags (for gradual rollout)
 FEATURES = {
