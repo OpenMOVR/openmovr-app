@@ -21,6 +21,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 
 from api import CohortAPI
+from components.tables import static_table
 from components.charts import (
     create_age_distribution_chart,
     create_categorical_bar_chart,
@@ -64,10 +65,9 @@ st.markdown(
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
     }
-    [data-testid="stTable"] thead tr th:first-child,
-    [data-testid="stTable"] tbody tr td:first-child {
-        display: none;
-    }
+    .clean-table { width: 100%; border-collapse: collapse; }
+    .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
+    .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
     </style>
     """,
     unsafe_allow_html=True
@@ -417,7 +417,7 @@ if has_subtype_data:
         st.markdown("**Subtype Breakdown**")
         display_df = subtype_counts[['Subtype', 'Patients', 'Percentage']].copy()
         display_df['Percentage'] = display_df['Percentage'].apply(lambda x: f"{x}%")
-        st.table(display_df)
+        static_table(display_df)
 else:
     st.info("Subtype data not available.")
 
@@ -824,7 +824,7 @@ if not facilities_df.empty:
         st.markdown("**All Care Sites**")
         display_fac = facilities_df[['Location', 'patient_count']].copy()
         display_fac.columns = ['Care Site', 'Patients']
-        st.table(display_fac)
+        static_table(display_fac)
 else:
     st.info("Facility data not available.")
 

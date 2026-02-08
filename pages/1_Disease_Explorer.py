@@ -26,7 +26,7 @@ from components.charts import (
     create_numeric_histogram_chart,
     create_facility_distribution_mini_chart,
 )
-from components.tables import display_cohort_summary
+from components.tables import display_cohort_summary, static_table
 from utils.cache import get_cached_snapshot
 from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES, LOGO_PNG
 
@@ -65,10 +65,9 @@ st.markdown(
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
     }
-    [data-testid="stTable"] thead tr th:first-child,
-    [data-testid="stTable"] tbody tr td:first-child {
-        display: none;
-    }
+    .clean-table { width: 100%; border-collapse: collapse; }
+    .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
+    .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
     </style>
     """,
     unsafe_allow_html=True
@@ -263,7 +262,7 @@ if not _has_parquet:
         table_df.columns = ['Disease', 'Patients', '%']
         table_df['%'] = table_df['%'].apply(lambda x: f"{x:.1f}%")
         # Bold the selected disease
-        st.table(table_df)
+        static_table(table_df)
 
     # ===================================================================
     # UNAVAILABLE SECTIONS (snapshot mode)
@@ -579,7 +578,7 @@ else:
                 {'Type': k, 'Count': v}
                 for k, v in cohort_summary['dstype_distribution'].items()
             ]
-            st.table(dstype_data)
+            static_table(dstype_data)
 
     with tab2:
         st.markdown(f"#### Demographics ({selected_disease})")

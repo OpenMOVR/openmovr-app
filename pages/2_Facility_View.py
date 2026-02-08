@@ -18,6 +18,7 @@ import pandas as pd
 
 from api import StatsAPI
 from components.charts import create_site_map
+from components.tables import static_table
 from utils.cache import get_cached_facility_stats, get_cached_snapshot
 from config.settings import PAGE_ICON, DEFAULT_TOP_N_FACILITIES, LOGO_PNG
 
@@ -56,10 +57,9 @@ st.markdown(
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
     }
-    [data-testid="stTable"] thead tr th:first-child,
-    [data-testid="stTable"] tbody tr td:first-child {
-        display: none;
-    }
+    .clean-table { width: 100%; border-collapse: collapse; }
+    .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
+    .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
     </style>
     """,
     unsafe_allow_html=True
@@ -209,7 +209,7 @@ if site_locations:
                 {"State": k, "Sites": v["Sites"], "Patients": v["Patients"]}
                 for k, v in state_counts.items()
             ]).sort_values("Patients", ascending=False).reset_index(drop=True)
-            st.table(state_df)
+            static_table(state_df)
 
         with col2:
             st.markdown("#### By Region")
@@ -224,7 +224,7 @@ if site_locations:
                 {"Region": k, "Sites": v["Sites"], "Patients": v["Patients"]}
                 for k, v in region_counts.items()
             ]).sort_values("Patients", ascending=False).reset_index(drop=True)
-            st.table(region_df)
+            static_table(region_df)
 else:
     st.info("Site geographic data not available.")
 
@@ -265,11 +265,11 @@ if site_locations:
             if isinstance(by_ds, dict) and by_ds:
                 row_data["Diseases"] = ", ".join(sorted(by_ds.keys()))
             display_rows.append(row_data)
-        st.table(pd.DataFrame(display_rows))
+        static_table(pd.DataFrame(display_rows))
     else:
         st.warning("No sites found matching your search.")
 else:
-    st.table(
+    static_table(
         facility_df[['FACILITY_DISPLAY_ID', 'patient_count']].rename(
             columns={'FACILITY_DISPLAY_ID': 'Site ID', 'patient_count': 'Patients'}
         )
@@ -290,7 +290,7 @@ with col1:
     )
     range_counts = facility_df['patient_range'].value_counts().sort_index()
     range_df = pd.DataFrame({'Patient Range': range_counts.index, 'Site Count': range_counts.values})
-    st.table(range_df)
+    static_table(range_df)
 
 with col2:
     st.markdown("#### Key Statistics")
@@ -305,7 +305,7 @@ with col2:
             f"{facility_df['patient_count'].sum():,} patients",
         ]
     }
-    st.table(pd.DataFrame(stats_data))
+    static_table(pd.DataFrame(stats_data))
 
 # Footer
 st.markdown("---")

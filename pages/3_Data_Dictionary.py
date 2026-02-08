@@ -17,6 +17,7 @@ import streamlit as st
 import pandas as pd
 
 from api.data_dictionary import DataDictionaryAPI
+from components.tables import static_table
 from config.settings import PAGE_ICON, LOGO_PNG
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -54,10 +55,9 @@ st.markdown(
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
     }
-    [data-testid="stTable"] thead tr th:first-child,
-    [data-testid="stTable"] tbody tr td:first-child {
-        display: none;
-    }
+    .clean-table { width: 100%; border-collapse: collapse; }
+    .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
+    .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
     </style>
     """,
     unsafe_allow_html=True
@@ -163,7 +163,7 @@ _dx_overview = {
     ],
 }
 
-st.table(pd.DataFrame(_dx_overview))
+static_table(pd.DataFrame(_dx_overview))
 
 # --- Encounter & Longitudinal Data ---
 st.markdown("#### Encounter & Longitudinal Data (805 fields — per clinic visit)")
@@ -191,7 +191,7 @@ _enc_overview = {
     ],
 }
 
-st.table(pd.DataFrame(_enc_overview))
+static_table(pd.DataFrame(_enc_overview))
 
 st.markdown(
     """
@@ -220,7 +220,7 @@ if domain_summary:
         "Counts show fields applicable to each disease within that domain."
     )
 
-    st.table(overview_df)
+    static_table(overview_df)
 
     curated_meta = DataDictionaryAPI.get_curated_metadata()
     if curated_meta:
@@ -528,7 +528,7 @@ else:
         )
 
     # Display table (static — no CSV export on public pages)
-    st.table(display_df)
+    static_table(display_df)
 
     caption_parts = ["'* REQUIRED' = mandatory field"]
     if selected_disease != "All":
@@ -646,7 +646,7 @@ if disease_coverage:
         st.bar_chart(coverage_df.set_index("Disease")["Fields"])
 
     with col_table:
-        st.table(coverage_df)
+        static_table(coverage_df)
 else:
     st.info("No disease coverage data available.")
 

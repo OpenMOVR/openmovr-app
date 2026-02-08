@@ -9,6 +9,12 @@ import pandas as pd
 from typing import List, Dict, Any, Optional
 
 
+def static_table(df: pd.DataFrame) -> None:
+    """Render a DataFrame as a static HTML table with no index column."""
+    html = df.to_html(index=False, classes="clean-table", border=0)
+    st.markdown(html, unsafe_allow_html=True)
+
+
 def display_disease_table(disease_data: List[Dict[str, Any]],
                          show_columns: Optional[List[str]] = None) -> None:
     """
@@ -39,7 +45,7 @@ def display_disease_table(disease_data: List[Dict[str, Any]],
     }
     df = df.rename(columns=column_renames)
 
-    st.table(df)
+    static_table(df)
 
 
 def display_facility_table(facility_data: List[Dict[str, Any]],
@@ -66,7 +72,7 @@ def display_facility_table(facility_data: List[Dict[str, Any]],
         'patient_count': 'Patient Count'
     })
 
-    st.table(df)
+    static_table(df)
 
 
 def display_cohort_summary(cohort_summary: Dict[str, Any]) -> None:
@@ -96,7 +102,7 @@ def display_cohort_summary(cohort_summary: Dict[str, Any]) -> None:
         })
 
     df = pd.DataFrame(summary_data)
-    st.table(df)
+    static_table(df)
 
 
 def display_data_preview(df: pd.DataFrame,

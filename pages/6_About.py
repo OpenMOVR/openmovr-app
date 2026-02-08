@@ -39,10 +39,9 @@ st.markdown(
         font-size: 0.8em; color: #666; text-align: center;
         padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #ddd;
     }
-    [data-testid="stTable"] thead tr th:first-child,
-    [data-testid="stTable"] tbody tr td:first-child {
-        display: none;
-    }
+    .clean-table { width: 100%; border-collapse: collapse; }
+    .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
+    .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
     </style>
     """,
     unsafe_allow_html=True,

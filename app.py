@@ -23,7 +23,7 @@ from components.charts import (
     create_disease_distribution_chart,
     create_site_map,
 )
-from components.tables import display_disease_table
+from components.tables import display_disease_table, static_table
 
 
 # Page configuration — use logo as favicon
@@ -65,11 +65,10 @@ def main():
             margin-bottom: 1rem;
             border-bottom: 1px solid #ddd;
         }
-        /* Hide row numbers on static tables (public pages) */
-        [data-testid="stTable"] thead tr th:first-child,
-        [data-testid="stTable"] tbody tr td:first-child {
-            display: none;
-        }
+        /* Clean table styling (index-free static tables) */
+        .clean-table { width: 100%; border-collapse: collapse; }
+        .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
+        .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
         </style>
         """,
         unsafe_allow_html=True
@@ -328,7 +327,7 @@ def main():
                         "With 3+ Visits": f"{info['patients_3plus']:,}",
                     })
             if enc_data:
-                st.table(pd.DataFrame(enc_data))
+                static_table(pd.DataFrame(enc_data))
 
     # Clinical Data Highlights
     st.markdown("---")
@@ -353,7 +352,7 @@ def main():
                         "Data Points": f"{info.get('data_points', 0):,}",
                         "Longitudinal (2+)": f"{info['patients_longitudinal']:,}",
                     })
-                st.table(pd.DataFrame(func_data))
+                static_table(pd.DataFrame(func_data))
 
         with col_right:
             st.markdown("##### Timed Function Tests")
@@ -373,7 +372,7 @@ def main():
                         "Data Points": f"{info.get('data_points', 0):,}",
                     })
             if timed_data:
-                st.table(pd.DataFrame(timed_data))
+                static_table(pd.DataFrame(timed_data))
 
         # --- Row 2: Medications (main focus) ---
         st.markdown("##### Medications & Treatments")
@@ -400,7 +399,7 @@ def main():
                                 "Patients": t['patients'],
                             })
                     if gt_rows:
-                        st.table(pd.DataFrame(gt_rows))
+                        static_table(pd.DataFrame(gt_rows))
 
                 # Drug class breakdown table
                 med_rows = []
@@ -418,7 +417,7 @@ def main():
                             "Records": f"{cls['records']:,}",
                         })
                 if med_rows:
-                    st.table(pd.DataFrame(med_rows))
+                    static_table(pd.DataFrame(med_rows))
 
             with col_right:
                 total_pts = meds.get('total_patients', 0)
@@ -436,7 +435,7 @@ def main():
                         {"Medication": m['name'], "Patients": f"{m['patients']:,}"}
                         for m in top_meds[:10]
                     ]
-                    st.table(pd.DataFrame(top_rows))
+                    static_table(pd.DataFrame(top_rows))
 
             # Footnotes
             footnotes = []
@@ -466,7 +465,7 @@ def main():
                 trial_rows = []
                 for cat, pts in trials['patient_breakdown'].items():
                     trial_rows.append({"Status": cat, "Participants": f"{pts:,}"})
-                st.table(pd.DataFrame(trial_rows))
+                static_table(pd.DataFrame(trial_rows))
             else:
                 st.caption("Clinical trial data not available.")
 
@@ -482,7 +481,7 @@ def main():
                 {"Domain": "Echo", "Participants": f"{cardiac.get('echo', 0):,}"},
                 {"Domain": "Cardiomyopathy", "Participants": f"{cardiac.get('cardiomyopathy', 0):,}"},
             ]
-            st.table(pd.DataFrame(pc_rows))
+            static_table(pd.DataFrame(pc_rows))
 
         # --- Row 4: Devices & Hospitalizations | Surgeries ---
         col_left, col_right = st.columns(2)
@@ -496,7 +495,7 @@ def main():
                 {"Category": "Assistive Devices", "Participants": f"{devs.get('assistive_patients', 0):,}", "Records": f"{devs.get('assistive_records', 0):,}"},
                 {"Category": "Pulmonary Devices", "Participants": f"{devs.get('pulmonary_patients', 0):,}", "Records": f"{devs.get('pulmonary_records', 0):,}"},
             ]
-            st.table(pd.DataFrame(hd_rows))
+            static_table(pd.DataFrame(hd_rows))
             st.caption("Combined from encounter and log tables.")
 
         with col_right:
@@ -508,7 +507,7 @@ def main():
                 surg_types = surg.get('types', {})
                 if surg_types:
                     surg_rows = [{"Type": k, "Count": f"{v:,}"} for k, v in surg_types.items() if k.strip()]
-                    st.table(pd.DataFrame(surg_rows))
+                    static_table(pd.DataFrame(surg_rows))
             else:
                 st.caption("Surgery data not available.")
 
