@@ -26,7 +26,7 @@ from components.charts import (
     create_numeric_histogram_chart,
     create_facility_distribution_mini_chart,
 )
-from components.tables import display_cohort_summary, display_data_preview, create_download_button
+from components.tables import display_cohort_summary
 from utils.cache import get_cached_snapshot
 from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES, LOGO_PNG
 
@@ -557,13 +557,13 @@ else:
 
 
     # ===================================================================
-    # DATA TABLES — Existing tabs (demographics, encounters, medications)
+    # DATA SUMMARY TABS
     # ===================================================================
     st.markdown("---")
-    st.subheader("Data Tables")
+    st.subheader("Data Summary")
 
     tab1, tab2, tab3, tab4 = st.tabs([
-        "Summary",
+        "Cohort",
         "Demographics",
         "Encounters",
         "Medications"
@@ -585,66 +585,50 @@ else:
         st.markdown(f"#### Demographics ({selected_disease})")
         demographics_df = filtered_cohort['demographics']
         if not demographics_df.empty:
-            display_data_preview(demographics_df, max_rows=100, show_info=True)
-            create_download_button(
-                demographics_df,
-                filename=f"{selected_disease}_demographics.csv",
-                label=f"Download {selected_disease} Demographics",
-                key="download_demographics"
-            )
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Patients", f"{len(demographics_df):,}")
+            with col2:
+                st.metric("Fields", f"{len(demographics_df.columns):,}")
+            with col3:
+                completeness = demographics_df.notna().mean().mean()
+                st.metric("Completeness", f"{completeness:.0%}")
         else:
-            st.warning("No demographics data available.")
+            st.caption("No demographics data available.")
 
     with tab3:
         st.markdown(f"#### Encounters ({selected_disease})")
         encounters_df = filtered_cohort['encounters']
         if not encounters_df.empty:
-            display_data_preview(encounters_df, max_rows=100, show_info=True)
-            create_download_button(
-                encounters_df,
-                filename=f"{selected_disease}_encounters.csv",
-                label=f"Download {selected_disease} Encounters",
-                key="download_encounters"
-            )
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Records", f"{len(encounters_df):,}")
+            with col2:
+                n_pts = encounters_df['FACPATID'].nunique() if 'FACPATID' in encounters_df.columns else 0
+                st.metric("Patients", f"{n_pts:,}")
+            with col3:
+                mean_enc = len(encounters_df) / max(n_pts, 1)
+                st.metric("Mean Visits / Patient", f"{mean_enc:.1f}")
         else:
-            st.warning("No encounters data available.")
+            st.caption("No encounter data available.")
 
     with tab4:
         st.markdown(f"#### Medications ({selected_disease})")
         medications_df = filtered_cohort['medications']
         if not medications_df.empty:
-            display_data_preview(medications_df, max_rows=100, show_info=True)
-            create_download_button(
-                medications_df,
-                filename=f"{selected_disease}_medications.csv",
-                label=f"Download {selected_disease} Medications",
-                key="download_medications"
-            )
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Records", f"{len(medications_df):,}")
+            with col2:
+                n_pts = medications_df['FACPATID'].nunique() if 'FACPATID' in medications_df.columns else 0
+                st.metric("Patients", f"{n_pts:,}")
         else:
-            st.warning("No medications data available.")
+            st.caption("No medication data available.")
 
-    # ===================================================================
-    # PATIENT IDS
-    # ===================================================================
-    st.markdown("---")
-    patient_ids = filtered_cohort['patient_ids']
-    with st.expander(f"Patient IDs ({len(patient_ids):,} patients)", expanded=False):
-
-        st.text_area(
-            "Patient IDs (FACPATIDs)",
-            value="\n".join(patient_ids[:100]),
-            height=300,
-            help=f"Showing first 100 of {len(patient_ids):,} patient IDs"
-        )
-
-        patient_ids_text = "\n".join(patient_ids)
-        st.download_button(
-            label=f"Download All {len(patient_ids):,} Patient IDs",
-            data=patient_ids_text,
-            file_name=f"{selected_disease}_patient_ids.txt",
-            mime="text/plain",
-            key="download_patient_ids"
-        )
+    st.caption(
+        "Full data tables and CSV downloads are available in the "
+        "**Download Center** (provisioned access required)."
+    )
 
 # Footer
 st.markdown("---")
