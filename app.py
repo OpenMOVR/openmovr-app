@@ -322,9 +322,11 @@ def main():
     # Clinical Data Highlights
     st.markdown("---")
     st.subheader("Clinical Data Highlights")
+    st.caption("Unique participants with at least one recorded value per domain.")
 
     clinical = snapshot.get('clinical_availability', {})
     if clinical:
+        # Functional Assessments (with longitudinal counts)
         st.markdown("##### Functional Assessments")
         func_scores = clinical.get('functional_scores', {})
         if func_scores:
@@ -333,24 +335,53 @@ def main():
                 with fcols[i]:
                     st.metric(
                         info.get('label', key),
-                        f"{info['patients']:,} patients",
+                        f"{info['patients']:,}",
                         help=f"{info['patients_longitudinal']:,} with repeat assessments"
                     )
                     st.caption(f"{info['patients_longitudinal']:,} longitudinal")
 
+        # Timed Tests | Medications
         col_left, col_right = st.columns(2)
-
         with col_left:
-            st.markdown("##### Pulmonary & Cardiac")
+            st.markdown("##### Timed Function Tests")
+            timed = clinical.get('timed_tests', {})
+            t1, t2, t3 = st.columns(3)
+            with t1:
+                st.metric("10m Walk/Run", f"{timed.get('walk_run_10m', 0):,}")
+            with t2:
+                st.metric("Stair Climb", f"{timed.get('stair_climb', 0):,}")
+            with t3:
+                st.metric("Rise from Supine", f"{timed.get('rise_from_supine', 0):,}")
+
+        with col_right:
+            st.markdown("##### Medications & Treatments")
+            meds = clinical.get('medications', {})
+            m1, m2, m3, m4 = st.columns(4)
+            with m1:
+                st.metric("Glucocorticoids", f"{meds.get('glucocorticoid', 0):,}")
+            with m2:
+                st.metric("Disease-Modifying", f"{meds.get('disease_modifying_therapy', 0):,}")
+            with m3:
+                st.metric("ERT (Pompe)", f"{meds.get('ert_current', 0):,}")
+            with m4:
+                st.metric("Med Reviews", f"{meds.get('medication_reviewed', 0):,}")
+
+        # Pulmonary | Cardiology
+        col_left, col_right = st.columns(2)
+        with col_left:
+            st.markdown("##### Pulmonary & Respiratory")
             pulm = clinical.get('pulmonary', {})
-            cardiac = clinical.get('cardiac', {})
             p1, p2, p3 = st.columns(3)
             with p1:
-                st.metric("PFTs Performed", f"{pulm.get('pft_performed', 0):,}")
+                st.metric("PFTs", f"{pulm.get('pft_performed', 0):,}")
             with p2:
-                st.metric("FVC Results", f"{pulm.get('fvc', 0):,}")
+                st.metric("FVC", f"{pulm.get('fvc', 0):,}")
             with p3:
-                st.metric("FEV1 Results", f"{pulm.get('fev1', 0):,}")
+                st.metric("FEV1", f"{pulm.get('fev1', 0):,}")
+
+        with col_right:
+            st.markdown("##### Cardiology")
+            cardiac = clinical.get('cardiac', {})
             c1, c2, c3 = st.columns(3)
             with c1:
                 st.metric("ECG", f"{cardiac.get('ecg', 0):,}")
@@ -359,30 +390,71 @@ def main():
             with c3:
                 st.metric("Cardiomyopathy", f"{cardiac.get('cardiomyopathy', 0):,}")
 
+        # Mobility | Vital Signs
+        col_left, col_right = st.columns(2)
+        with col_left:
+            st.markdown("##### Mobility & Ambulation")
+            mob = clinical.get('mobility', {})
+            mb1, mb2, mb3, mb4 = st.columns(4)
+            with mb1:
+                st.metric("Ambulatory Status", f"{mob.get('ambulatory_status', 0):,}")
+            with mb2:
+                st.metric("Wheelchair", f"{mob.get('wheelchair', 0):,}")
+            with mb3:
+                st.metric("Assistive Device", f"{mob.get('assistive_device', 0):,}")
+            with mb4:
+                st.metric("Falls Reported", f"{mob.get('falls', 0):,}")
+
         with col_right:
-            st.markdown("##### Medications & Care")
-            meds = clinical.get('medications', {})
-            timed = clinical.get('timed_tests', {})
+            st.markdown("##### Vital Signs & Anthropometrics")
+            vitals = clinical.get('vital_signs', {})
+            v1, v2, v3 = st.columns(3)
+            with v1:
+                st.metric("Height", f"{vitals.get('height', 0):,}")
+            with v2:
+                st.metric("Weight", f"{vitals.get('weight', 0):,}")
+            with v3:
+                st.metric("BMI", f"{vitals.get('bmi', 0):,}")
+
+        # Nutrition | Orthopedic
+        col_left, col_right = st.columns(2)
+        with col_left:
+            st.markdown("##### Nutrition & GI")
+            nutr = clinical.get('nutrition', {})
+            n1, n2, n3 = st.columns(3)
+            with n1:
+                st.metric("Nutrition Therapy", f"{nutr.get('nutritional_supplementation', 0):,}")
+            with n2:
+                st.metric("Feeding Method", f"{nutr.get('feeding_method', 0):,}")
+            with n3:
+                st.metric("Feeding Tube", f"{nutr.get('feeding_tube', 0):,}")
+
+        with col_right:
+            st.markdown("##### Orthopedic & Surgical")
+            ortho = clinical.get('orthopedic', {})
+            o1, o2 = st.columns(2)
+            with o1:
+                st.metric("Scoliosis", f"{ortho.get('scoliosis', 0):,}")
+            with o2:
+                st.metric("Spinal X-ray", f"{ortho.get('spinal_xray', 0):,}")
+
+        # Hospitalizations & Care
+        col_left, col_right = st.columns(2)
+        with col_left:
+            st.markdown("##### Hospitalizations")
+            hosp = clinical.get('hospitalizations', {})
+            st.metric("Patients with Hospitalizations", f"{hosp.get('hospitalizations', 0):,}")
+
+        with col_right:
+            st.markdown("##### Multidisciplinary Care")
             care = clinical.get('care', {})
-            m1, m2 = st.columns(2)
-            with m1:
-                st.metric("Glucocorticoid Data", f"{meds.get('glucocorticoid', 0):,}")
-            with m2:
-                st.metric("Ambulatory Status", f"{meds.get('ambulatory_status', 0):,}")
-            t1, t2, t3 = st.columns(3)
-            with t1:
-                st.metric("10m Walk/Run", f"{timed.get('walk_run_10m', 0):,}")
-            with t2:
-                st.metric("Stair Climb", f"{timed.get('stair_climb', 0):,}")
-            with t3:
-                st.metric("Rise from Supine", f"{timed.get('rise_from_supine', 0):,}")
-            cr1, cr2 = st.columns(2)
+            cr1, cr2, cr3 = st.columns(3)
             with cr1:
                 st.metric("Care Plans", f"{care.get('multidisciplinary_plan', 0):,}")
             with cr2:
-                st.metric("Hospitalizations", f"{care.get('hospitalizations', 0):,}")
-
-        st.caption("Patient counts reflect MOVR study participants with at least one non-empty value in the field.")
+                st.metric("Seen By", f"{care.get('specialists_seen', 0):,}")
+            with cr3:
+                st.metric("Referred To", f"{care.get('specialists_referred', 0):,}")
 
     # Footer
     st.markdown("---")

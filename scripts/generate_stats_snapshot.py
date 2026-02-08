@@ -164,6 +164,11 @@ def _compute_clinical_availability(base_cohort: dict) -> dict:
             "chop_intend": {"patients": _patients_with('cittlscr'), "patients_longitudinal": _patients_multi('cittlscr'), "label": "CHOP-INTEND"},
             "rulm": {"patients": _patients_with('rulmcs'), "patients_longitudinal": _patients_multi('rulmcs'), "label": "RULM"},
         },
+        "timed_tests": {
+            "walk_run_10m": _patients_with('ttwr10m'),
+            "stair_climb": _patients_with('ttcstr'),
+            "rise_from_supine": _patients_with('ttrsupn'),
+        },
         "pulmonary": {
             "pft_performed": _patients_with('pftest'),
             "fvc": _patients_with('fvcrslt'),
@@ -176,16 +181,37 @@ def _compute_clinical_availability(base_cohort: dict) -> dict:
         },
         "medications": {
             "glucocorticoid": _patients_with('glcouse'),
-            "ambulatory_status": _patients_with('curramb'),
+            "disease_modifying_therapy": _patients_with('dmthrpy'),
+            "ert_current": _patients_with('ertcurr'),
+            "medication_reviewed": _patients_with('medrev'),
         },
-        "timed_tests": {
-            "walk_run_10m": _patients_with('ttwr10m'),
-            "stair_climb": _patients_with('ttcstr'),
-            "rise_from_supine": _patients_with('ttrsupn'),
+        "mobility": {
+            "ambulatory_status": _patients_with('curramb'),
+            "wheelchair": _patients_with('whlchr'),
+            "assistive_device": _patients_with('asstdvc'),
+            "falls": _patients_with('apprxfall'),
+        },
+        "vital_signs": {
+            "height": _patients_with('height'),
+            "weight": _patients_with('wgt'),
+            "bmi": _patients_with('bmi'),
+        },
+        "nutrition": {
+            "nutritional_supplementation": _patients_with('nutrthrp'),
+            "feeding_method": _patients_with('feedmthd'),
+            "feeding_tube": _patients_with('feedtube'),
+        },
+        "orthopedic": {
+            "scoliosis": _patients_with('scliosis'),
+            "spinal_xray": _patients_with('xrybtwvt'),
+        },
+        "hospitalizations": {
+            "hospitalizations": _patients_with('hospbtwvt'),
         },
         "care": {
             "multidisciplinary_plan": _patients_with('mltcrpl'),
-            "hospitalizations": _patients_with('hospbtwvt'),
+            "specialists_seen": _patients_with('ptsn'),
+            "specialists_referred": _patients_with('rfrto'),
         },
     }
 

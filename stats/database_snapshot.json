@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-07T17:58:19.950460",
-    "generated_timestamp": "2026-02-07 17:58:19",
+    "generated_at": "2026-02-07T18:22:07.069369",
+    "generated_timestamp": "2026-02-07 18:22:07",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -556,6 +556,11 @@
         "label": "RULM"
       }
     },
+    "timed_tests": {
+      "walk_run_10m": 381,
+      "stair_climb": 225,
+      "rise_from_supine": 202
+    },
     "pulmonary": {
       "pft_performed": 3345,
       "fvc": 2038,
@@ -568,16 +573,37 @@
     },
     "medications": {
       "glucocorticoid": 820,
-      "ambulatory_status": 2246
+      "disease_modifying_therapy": 515,
+      "ert_current": 29,
+      "medication_reviewed": 1405
     },
-    "timed_tests": {
-      "walk_run_10m": 381,
-      "stair_climb": 225,
-      "rise_from_supine": 202
+    "mobility": {
+      "ambulatory_status": 2246,
+      "wheelchair": 1244,
+      "assistive_device": 2356,
+      "falls": 1045
+    },
+    "vital_signs": {
+      "height": 2870,
+      "weight": 3169,
+      "bmi": 2828
+    },
+    "nutrition": {
+      "nutritional_supplementation": 3221,
+      "feeding_method": 939,
+      "feeding_tube": 301
+    },
+    "orthopedic": {
+      "scoliosis": 297,
+      "spinal_xray": 1563
+    },
+    "hospitalizations": {
+      "hospitalizations": 422
     },
     "care": {
       "multidisciplinary_plan": 2034,
-      "hospitalizations": 422
+      "specialists_seen": 3401,
+      "specialists_referred": 3390
     }
   }
 }
