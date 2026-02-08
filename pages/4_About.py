@@ -1,7 +1,7 @@
 """
 About Page
 
-Project information, access tiers, and version history.
+Project information, study details, access tiers, and version history.
 """
 
 import sys
@@ -38,118 +38,19 @@ st.markdown(
     {STUDY_START} -- {STUDY_END}, {STUDY_STATUS}).
 
     The registry captures longitudinal clinical data for **seven rare
-    neuromuscular diseases**: ALS, DMD, BMD, SMA, LGMD, FSHD, and Pompe
-    disease, across 60+ participating sites in the United States.
-    """
-)
+    neuromuscular diseases** -- ALS, DMD, BMD, SMA, LGMD, FSHD, and Pompe
+    disease -- across 60+ participating sites in the United States.
 
-# ---- Access Tiers ----
-st.markdown("---")
-st.subheader("Access Tiers")
+    OpenMOVR App is built for the **research community first** -- clinical
+    researchers, academic institutions engaged in basic and translational
+    science, and patient advocacy groups working to advance disease
+    understanding and drug development.  It leverages modern data
+    visualization and cohort-browsing technology to make registry insights
+    accessible and actionable, with capabilities that will grow over time.
 
-st.markdown(
-    """
-    OpenMOVR App is built for the **patient advocacy and research community**
-    first.  The two-tier model ensures that aggregated registry insights are
-    openly available, while site-level and downloadable data are shared
-    responsibly under the MOVR Data Hub's mission and Data Use Agreement.
-    """
-)
-
-col_pub, col_prov = st.columns(2)
-
-with col_pub:
-    st.markdown(
-        """
-        <div style='background: #E8F5E9; border-left: 4px solid #4CAF50;
-        padding: 16px; border-radius: 0 4px 4px 0; min-height: 380px;'>
-        <h4 style='margin-top:0;'>Public Access</h4>
-        <p style='font-size:0.95em;'>
-        Available to everyone &mdash; no login required.
-        </p>
-        <ul style='font-size:0.9em;'>
-            <li>Aggregated enrollment &amp; disease distribution</li>
-            <li>Anonymized site map</li>
-            <li>Disease Explorer with demographic breakdowns</li>
-            <li>LGMD Overview &amp; future disease deep-dives</li>
-            <li>Curated Data Dictionary (1,024 clinical fields)</li>
-            <li>Clinical data highlights (functional scores, medications,
-                trials, hospitalizations)</li>
-        </ul>
-        <p style='font-size:0.85em; color:#666;'>
-        Tables are displayed as static views.  For downloadable data,
-        see Provisioned Access.
-        </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with col_prov:
-    st.markdown(
-        """
-        <div style='background: #E3F2FD; border-left: 4px solid #1E88E5;
-        padding: 16px; border-radius: 0 4px 4px 0; min-height: 380px;'>
-        <h4 style='margin-top:0;'>Provisioned Access</h4>
-        <p style='font-size:0.95em;'>
-        Requires an access key &mdash; granted under an approved DUA.
-        </p>
-        <ul style='font-size:0.9em;'>
-            <li><strong>Site Analytics</strong> &mdash; site-level reports with
-                facility names, site-vs-overall comparisons, per-disease
-                breakdowns</li>
-            <li><strong>Download Center</strong> &mdash; export tables as CSV,
-                download snapshot data for custom analytics</li>
-            <li><em>Coming soon:</em> Cohort Builder, custom longitudinal
-                analytics</li>
-        </ul>
-        <p style='font-size:0.85em; color:#666;'>
-        Available to <strong>participating sites</strong>, <strong>PAGs</strong>,
-        <strong>researchers</strong>, and <strong>patients</strong> with an
-        approved Data Use Agreement.<br><br>
-        All other inquiries &mdash; including those from organizations seeking
-        data access &mdash; should be directed to the MOVR team to discuss
-        licensing that aligns with the registry's mission and objectives.
-        </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-st.markdown("")
-
-st.markdown(
-    """
-    <div style='text-align: center; margin: 1rem 0;'>
-    <a href="https://mdausa.tfaforms.net/389761" target="_blank"
-       style='background: #1E88E5; color: white; padding: 10px 24px;
-       border-radius: 4px; text-decoration: none; font-weight: bold;'>
-       Request Access
-    </a>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ---- Roadmap ----
-st.markdown("---")
-st.subheader("Roadmap")
-
-st.markdown(
-    """
-    | Feature | Status |
-    |---------|--------|
-    | Public dashboard with aggregated statistics | Available |
-    | Anonymized site map with disease filters | Available |
-    | Disease Explorer & LGMD deep-dive | Available |
-    | Curated Data Dictionary (19 clinical domains) | Available |
-    | Gene therapy & advanced therapies tracking | Available |
-    | Site Analytics (provisioned) | Available |
-    | Download Center (provisioned) | Available |
-    | Cohort Builder with custom filters | Planned |
-    | Custom longitudinal analytics | Planned |
-    | Additional disease deep-dives (SMA, ALS, DMD) | Planned |
-    | Patient-facing data summaries | Planned |
+    All data access is governed by the **MOVR Data Hub governance policy**
+    and is designed to support the registry's mission of driving progress
+    in neuromuscular disease research.
     """
 )
 
@@ -171,6 +72,110 @@ st.markdown(
 
     *The MDA sponsors the MOVR study and data collection.  The OpenMOVR App
     is an independent open-source project created by Andre D Paredes.*
+    """
+)
+
+# ---- Access Tiers ----
+st.markdown("---")
+st.subheader("Access Tiers")
+
+col_pub, col_prov = st.columns(2)
+
+with col_pub:
+    st.markdown(
+        """
+        <div style='background: #E8F5E9; border-left: 4px solid #4CAF50;
+        padding: 16px; border-radius: 0 4px 4px 0; min-height: 380px;'>
+        <h4 style='margin-top:0;'>Public Access</h4>
+        <p style='font-size:0.95em;'>
+        Available to everyone &mdash; no login required.
+        </p>
+        <ul style='font-size:0.9em;'>
+            <li>Aggregated enrollment &amp; disease distribution</li>
+            <li>Anonymized site map</li>
+            <li>Disease Explorer with demographic breakdowns</li>
+            <li>Disease-specific overview (prototype)</li>
+            <li>Curated Data Dictionary (1,024 clinical fields)</li>
+            <li>Clinical data highlights (functional scores, medications,
+                trials, hospitalizations)</li>
+        </ul>
+        <p style='font-size:0.85em; color:#666;'>
+        All data shown is pre-computed aggregated statistics (snapshots)
+        &mdash; no individual-level data is connected or displayed.
+        For downloadable data, see Provisioned Access.
+        </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+with col_prov:
+    st.markdown(
+        """
+        <div style='background: #E3F2FD; border-left: 4px solid #1E88E5;
+        padding: 16px; border-radius: 0 4px 4px 0; min-height: 380px;'>
+        <h4 style='margin-top:0;'>Provisioned Access</h4>
+        <p style='font-size:0.95em;'>
+        Requires a signed Data Use Agreement (DUA).
+        </p>
+        <ul style='font-size:0.9em;'>
+            <li><strong>Site Analytics</strong> &mdash; site-level reports with
+                facility names, site-vs-overall comparisons, per-disease
+                breakdowns</li>
+            <li><strong>Download Center</strong> &mdash; export tables as CSV,
+                download snapshot data for custom analytics</li>
+            <li><strong>Disease Deep-Dives</strong> &mdash; custom disease-specific
+                analyses with advanced analytics</li>
+            <li><em>Coming soon:</em> Cohort Builder, custom longitudinal
+                analytics</li>
+        </ul>
+        <p style='font-size:0.85em; color:#666;'>
+        Available to <strong>participating sites</strong>, <strong>PAGs</strong>,
+        <strong>researchers</strong>, and <strong>patients</strong> under the
+        MOVR Data Hub governance policy.<br><br>
+        All other inquiries &mdash; including those from organizations seeking
+        data access &mdash; should be directed to the MOVR team to discuss
+        alignment with the registry's mission and objectives.
+        </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+st.markdown("")
+
+st.markdown(
+    """
+    <div style='text-align: center; margin: 1rem 0;'>
+    <a href="https://mdausa.tfaforms.net/389761" target="_blank"
+       style='background: #1E88E5; color: white; padding: 10px 24px;
+       border-radius: 4px; text-decoration: none; font-weight: bold;'>
+       Sign the DUA
+    </a>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ---- Roadmap ----
+st.markdown("---")
+st.subheader("Roadmap")
+
+st.markdown(
+    """
+    | Feature | Status |
+    |---------|--------|
+    | Public dashboard with aggregated statistics | Prototype |
+    | Anonymized site map with disease filters | Prototype |
+    | Disease Explorer & disease-specific overview | Prototype |
+    | Curated Data Dictionary (19 clinical domains) | Prototype |
+    | Gene therapy & advanced therapies tracking | Prototype |
+    | Site Analytics (provisioned) | Prototype |
+    | Download Center (provisioned) | Prototype |
+    | Cohort Builder with custom filters | Planned |
+    | Custom longitudinal analytics | Planned |
+    | Additional disease deep-dives (SMA, ALS, DMD) | Planned |
+    | Patient-facing data summaries | Planned |
     """
 )
 

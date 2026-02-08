@@ -16,9 +16,11 @@ sys.path.insert(0, str(app_dir))
 
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
 import yaml
 
 from api import StatsAPI
+from api.lgmd import LGMDAPI
 from components.charts import (
     create_age_distribution_chart,
     create_categorical_bar_chart,
@@ -54,6 +56,170 @@ def _unavailable_section(title, detail=None):
         </div>""",
         unsafe_allow_html=True,
     )
+
+
+def _render_lgmd_deep_dive_snapshot():
+    """Render LGMD-specific deep-dive sections from the LGMD snapshot."""
+    lgmd_snap = LGMDAPI.get_snapshot()
+    if not lgmd_snap:
+        return
+
+    st.markdown("---")
+    st.subheader("LGMD Deep-Dive")
+
+    # --- Subtype Distribution ---
+    subtypes = lgmd_snap.get('subtypes', {})
+    dist = subtypes.get('distribution', [])
+    if dist:
+        st.markdown("##### Subtype Distribution")
+        col_chart, col_table = st.columns([2, 1])
+
+        with col_chart:
+            top = dist[:15]
+            labels = [d['subtype'] for d in reversed(top)]
+            counts = [d['patients'] for d in reversed(top)]
+            types = [d.get('lgmd_type', '') for d in reversed(top)]
+            colors = ['#E53935' if t == 'LGMD Type 1 (Dominant)' else '#1E88E5' for t in types]
+            fig = go.Figure(go.Bar(x=counts, y=labels, orientation='h', marker_color=colors))
+            fig.update_layout(
+                title=f"Top {len(top)} LGMD Subtypes",
+                xaxis_title="Patients",
+                height=max(350, len(top) * 28 + 80),
+                margin=dict(t=40, b=40, l=250),
+            )
+            st.plotly_chart(fig, use_container_width=True)
+            st.caption("Red = Dominant (Type 1), Blue = Recessive (Type 2)")
+
+        with col_table:
+            rows = [{"Subtype": d['subtype'], "N": d['patients'],
+                     "%": f"{d['percentage']:.1f}%"} for d in top]
+            static_table(pd.DataFrame(rows))
+
+    # --- Genetic Confirmation + Diagnosis/Onset Ages ---
+    diagnosis = lgmd_snap.get('diagnosis', {})
+
+    col_gen, col_dx, col_onset = st.columns(3)
+
+    with col_gen:
+        gc = diagnosis.get('genetic_confirmation', {})
+        if gc:
+            pct = gc.get('confirmed_percentage', 0)
+            st.metric("Genetic Confirmation", f"{pct:.1f}%")
+            gc_dist = gc.get('distribution', {})
+            if gc_dist:
+                labels = list(gc_dist.keys())
+                values = list(gc_dist.values())
+                fig = go.Figure(go.Pie(labels=labels, values=values, hole=0.4))
+                fig.update_layout(title="Genetic Confirmation", height=300,
+                                  margin=dict(t=40, b=20), showlegend=True)
+                st.plotly_chart(fig, use_container_width=True)
+
+    with col_dx:
+        dx_age = diagnosis.get('diagnosis_age', {})
+        if dx_age and 'histogram' in dx_age:
+            hist = dx_age['histogram']
+            _median = dx_age['median']
+            _bins = hist['bins']
+            _median_bin = None
+            for b in _bins:
+                parts = b.split('-')
+                if len(parts) == 2 and float(parts[0]) <= _median < float(parts[1]):
+                    _median_bin = b
+                    break
+            fig = go.Figure(go.Bar(
+                x=_bins, y=hist['counts'],
+                marker_color=['#E53935' if b == _median_bin else '#00CC96' for b in _bins],
+            ))
+            fig.update_layout(title=f"Age at Diagnosis (median {_median:.1f})",
+                              xaxis_title="Age (years)", yaxis_title="Patients",
+                              showlegend=False, height=300)
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col_onset:
+        onset = diagnosis.get('onset_age', {})
+        if onset and 'histogram' in onset:
+            hist = onset['histogram']
+            _median = onset['median']
+            _bins = hist['bins']
+            _median_bin = None
+            for b in _bins:
+                parts = b.split('-')
+                if len(parts) == 2 and float(parts[0]) <= _median < float(parts[1]):
+                    _median_bin = b
+                    break
+            fig = go.Figure(go.Bar(
+                x=_bins, y=hist['counts'],
+                marker_color=['#E53935' if b == _median_bin else '#636EFA' for b in _bins],
+            ))
+            fig.update_layout(title=f"Age at Symptom Onset (median {_median:.1f})",
+                              xaxis_title="Age (years)", yaxis_title="Patients",
+                              showlegend=False, height=300)
+            st.plotly_chart(fig, use_container_width=True)
+
+    # --- Clinical Characteristics ---
+    clinical = lgmd_snap.get('clinical', {})
+    col_biopsy, col_fam, col_sym = st.columns(3)
+
+    with col_biopsy:
+        mb = clinical.get('muscle_biopsy', {}).get('distribution', {})
+        if mb:
+            fig = go.Figure(go.Pie(labels=list(mb.keys()), values=list(mb.values()), hole=0.4))
+            fig.update_layout(title="Muscle Biopsy", height=300,
+                              margin=dict(t=40, b=20), showlegend=True)
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col_fam:
+        fh = clinical.get('family_history', {}).get('distribution', {})
+        if fh:
+            fig = go.Figure(go.Pie(labels=list(fh.keys()), values=list(fh.values()), hole=0.4))
+            fig.update_layout(title="Family History", height=300,
+                              margin=dict(t=40, b=20), showlegend=True)
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col_sym:
+        fs = clinical.get('first_symptoms', {}).get('distribution', {})
+        if fs:
+            items = sorted(fs.items(), key=lambda x: x[1], reverse=True)[:8]
+            labels = [x[0] for x in reversed(items)]
+            counts = [x[1] for x in reversed(items)]
+            fig = go.Figure(go.Bar(x=counts, y=labels, orientation='h',
+                                   marker_color='#AB63FA'))
+            fig.update_layout(title="First Symptoms (Top 8)",
+                              xaxis_title="Patients",
+                              height=max(250, len(labels) * 28 + 80),
+                              margin=dict(t=40, b=40, l=200))
+            st.plotly_chart(fig, use_container_width=True)
+
+    # --- Ambulatory Status ---
+    amb = lgmd_snap.get('ambulatory', {})
+    amb_dist = amb.get('current_status', {}).get('distribution', {})
+
+    # --- Top Care Sites ---
+    fac_list = lgmd_snap.get('facilities', {}).get('facilities', [])
+
+    if amb_dist or fac_list:
+        col_amb, col_sites = st.columns(2)
+
+        with col_amb:
+            if amb_dist:
+                fig = go.Figure(go.Pie(labels=list(amb_dist.keys()),
+                                       values=list(amb_dist.values()), hole=0.4))
+                fig.update_layout(title="Ambulatory Status", height=300,
+                                  margin=dict(t=40, b=20), showlegend=True)
+                st.plotly_chart(fig, use_container_width=True)
+
+        with col_sites:
+            if fac_list:
+                top_sites = fac_list[:10]
+                labels = [f"Site {s.get('facility_id', i+1)}" for i, s in enumerate(top_sites)]
+                counts = [s.get('patients', 0) for s in top_sites]
+                fig = go.Figure(go.Bar(x=counts, y=labels, orientation='h',
+                                       marker_color='#00BCD4'))
+                fig.update_layout(title="Top 10 Care Sites",
+                                  xaxis_title="Patients",
+                                  height=350,
+                                  margin=dict(t=40, b=40, l=120))
+                st.plotly_chart(fig, use_container_width=True)
 
 
 # Header with branding
@@ -295,8 +461,6 @@ if not _has_parquet:
         st.markdown("---")
         st.subheader(f"{selected_disease} Diagnosis Profile")
 
-        import plotly.graph_objects as go
-
         for i in range(0, len(diag_snap), 2):
             cols = st.columns(2)
             for j, col in enumerate(cols):
@@ -331,6 +495,12 @@ if not _has_parquet:
                             st.metric("Median", f"{dx['median']:.1f}")
                         with mc3:
                             st.metric("N", f"{dx['n']:,}")
+
+    # ===================================================================
+    # DISEASE DEEP-DIVE (disease-specific)
+    # ===================================================================
+    if selected_disease == 'LGMD':
+        _render_lgmd_deep_dive_snapshot()
 
     # ===================================================================
     # DATA SUMMARY note
