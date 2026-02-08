@@ -100,7 +100,7 @@ def create_facility_chart(facility_data: List[Dict[str, Any]],
         fig.update_traces(texttemplate='%{text:,}', textposition='outside')
         fig.update_layout(
             showlegend=False,
-            yaxis={'categoryorder':'total ascending'},
+            yaxis={'categoryorder':'total ascending', 'type': 'category'},
             height=max(400, top_n * 40)
         )
     else:  # bar
@@ -373,8 +373,9 @@ def create_facility_distribution_mini_chart(
     """
     Horizontal bar of top *top_n* facilities within a cohort DataFrame.
 
-    Uses *facility_col* for grouping (typically from demographics).
-    Returns None if the column is missing or empty.
+    Prefers FACILITY_NAME for display. Falls back to facility_col if names
+    are unavailable, casting IDs to strings so Plotly treats them as
+    categorical rather than numeric.
     """
     if facility_col not in df.columns:
         return None
@@ -384,7 +385,19 @@ def create_facility_distribution_mini_chart(
     if counts.empty:
         return None
 
-    chart_df = pd.DataFrame({"Facility": counts.index, "Patients": counts.values})
+    # Build display labels: prefer FACILITY_NAME, fall back to ID as string
+    if "FACILITY_NAME" in df.columns:
+        id_to_name = (
+            df[[facility_col, "FACILITY_NAME"]]
+            .drop_duplicates()
+            .set_index(facility_col)["FACILITY_NAME"]
+            .to_dict()
+        )
+        labels = [id_to_name.get(fid, str(fid)) for fid in counts.index]
+    else:
+        labels = [str(fid) for fid in counts.index]
+
+    chart_df = pd.DataFrame({"Facility": labels, "Patients": counts.values})
 
     fig = px.bar(
         chart_df,
@@ -400,7 +413,7 @@ def create_facility_distribution_mini_chart(
     fig.update_layout(
         height=max(350, top_n * 35),
         showlegend=False,
-        yaxis=dict(categoryorder="total ascending"),
+        yaxis=dict(categoryorder="total ascending", type="category"),
         xaxis_title="Patients",
         yaxis_title="",
         coloraxis_showscale=False,
