@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-02T08:56:40.387584",
-    "generated_timestamp": "2026-02-02 08:56:40",
+    "generated_at": "2026-02-07T17:58:19.950460",
+    "generated_timestamp": "2026-02-07 17:58:19",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -111,355 +111,355 @@
     "top_10_facilities": [
       {
         "FACILITY_DISPLAY_ID": "1349",
-        "FACILITY_NAME": "Texas Neurology",
-        "patient_count": 390
+        "patient_count": 390,
+        "FACILITY_NAME": "Texas Neurology"
       },
       {
         "FACILITY_DISPLAY_ID": "1194",
-        "FACILITY_NAME": "Houston Methodist Neurological Institute",
-        "patient_count": 199
+        "patient_count": 199,
+        "FACILITY_NAME": "Houston Methodist Neurological Institute"
       },
       {
         "FACILITY_DISPLAY_ID": "1411",
-        "FACILITY_NAME": "Nemours Children's Hospital",
-        "patient_count": 149
+        "patient_count": 149,
+        "FACILITY_NAME": "Nemours Children's Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1149",
-        "FACILITY_NAME": "Ohio State University Wexner Medical Center",
-        "patient_count": 134
+        "patient_count": 134,
+        "FACILITY_NAME": "Ohio State University Wexner Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1359",
-        "FACILITY_NAME": "Billings Clinic",
-        "patient_count": 126
+        "patient_count": 126,
+        "FACILITY_NAME": "Billings Clinic"
       },
       {
         "FACILITY_DISPLAY_ID": "1379",
-        "FACILITY_NAME": "University of California San Francisco",
-        "patient_count": 123
+        "patient_count": 123,
+        "FACILITY_NAME": "University of California San Francisco"
       },
       {
         "FACILITY_DISPLAY_ID": "1325",
-        "FACILITY_NAME": "UC Irvine Center for Clinical Research",
-        "patient_count": 111
+        "patient_count": 111,
+        "FACILITY_NAME": "UC Irvine Center for Clinical Research"
       },
       {
         "FACILITY_DISPLAY_ID": "1383",
-        "FACILITY_NAME": "Hospital for Special Care",
-        "patient_count": 105
+        "patient_count": 105,
+        "FACILITY_NAME": "Hospital for Special Care"
       },
       {
         "FACILITY_DISPLAY_ID": "1440",
-        "FACILITY_NAME": "Johns Hopkins University",
-        "patient_count": 94
+        "patient_count": 94,
+        "FACILITY_NAME": "Johns Hopkins University"
       },
       {
         "FACILITY_DISPLAY_ID": "1048",
-        "FACILITY_NAME": "Georgetown University",
-        "patient_count": 92
+        "patient_count": 92,
+        "FACILITY_NAME": "Georgetown University"
       }
     ],
     "all_facilities": [
       {
         "FACILITY_DISPLAY_ID": "1349",
-        "FACILITY_NAME": "Texas Neurology",
-        "patient_count": 390
+        "patient_count": 390,
+        "FACILITY_NAME": "Texas Neurology"
       },
       {
         "FACILITY_DISPLAY_ID": "1194",
-        "FACILITY_NAME": "Houston Methodist Neurological Institute",
-        "patient_count": 199
+        "patient_count": 199,
+        "FACILITY_NAME": "Houston Methodist Neurological Institute"
       },
       {
         "FACILITY_DISPLAY_ID": "1411",
-        "FACILITY_NAME": "Nemours Children's Hospital",
-        "patient_count": 149
+        "patient_count": 149,
+        "FACILITY_NAME": "Nemours Children's Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1149",
-        "FACILITY_NAME": "Ohio State University Wexner Medical Center",
-        "patient_count": 134
+        "patient_count": 134,
+        "FACILITY_NAME": "Ohio State University Wexner Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1359",
-        "FACILITY_NAME": "Billings Clinic",
-        "patient_count": 126
+        "patient_count": 126,
+        "FACILITY_NAME": "Billings Clinic"
       },
       {
         "FACILITY_DISPLAY_ID": "1379",
-        "FACILITY_NAME": "University of California San Francisco",
-        "patient_count": 123
+        "patient_count": 123,
+        "FACILITY_NAME": "University of California San Francisco"
       },
       {
         "FACILITY_DISPLAY_ID": "1325",
-        "FACILITY_NAME": "UC Irvine Center for Clinical Research",
-        "patient_count": 111
+        "patient_count": 111,
+        "FACILITY_NAME": "UC Irvine Center for Clinical Research"
       },
       {
         "FACILITY_DISPLAY_ID": "1383",
-        "FACILITY_NAME": "Hospital for Special Care",
-        "patient_count": 105
+        "patient_count": 105,
+        "FACILITY_NAME": "Hospital for Special Care"
       },
       {
         "FACILITY_DISPLAY_ID": "1440",
-        "FACILITY_NAME": "Johns Hopkins University",
-        "patient_count": 94
+        "patient_count": 94,
+        "FACILITY_NAME": "Johns Hopkins University"
       },
       {
         "FACILITY_DISPLAY_ID": "1048",
-        "FACILITY_NAME": "Georgetown University",
-        "patient_count": 92
+        "patient_count": 92,
+        "FACILITY_NAME": "Georgetown University"
       },
       {
         "FACILITY_DISPLAY_ID": "1100",
-        "FACILITY_NAME": "University of Missouri",
-        "patient_count": 90
+        "patient_count": 90,
+        "FACILITY_NAME": "University of Missouri"
       },
       {
         "FACILITY_DISPLAY_ID": "1328",
-        "FACILITY_NAME": "Cincinnati Children's Hospital Medical Center",
-        "patient_count": 89
+        "patient_count": 89,
+        "FACILITY_NAME": "Cincinnati Children's Hospital Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1430",
-        "FACILITY_NAME": "Temple University Hospital",
-        "patient_count": 88
+        "patient_count": 88,
+        "FACILITY_NAME": "Temple University Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1095",
-        "FACILITY_NAME": "University of Minnesota",
-        "patient_count": 84
+        "patient_count": 84,
+        "FACILITY_NAME": "University of Minnesota"
       },
       {
         "FACILITY_DISPLAY_ID": "1165",
-        "FACILITY_NAME": "Children's Hospital of Philadelphia",
-        "patient_count": 84
+        "patient_count": 84,
+        "FACILITY_NAME": "Children's Hospital of Philadelphia"
       },
       {
         "FACILITY_DISPLAY_ID": "1184",
-        "FACILITY_NAME": "Wesley Neurology Clinic",
-        "patient_count": 83
+        "patient_count": 83,
+        "FACILITY_NAME": "Wesley Neurology Clinic"
       },
       {
         "FACILITY_DISPLAY_ID": "1064",
-        "FACILITY_NAME": "University of Kansas Medical Center",
-        "patient_count": 78
+        "patient_count": 78,
+        "FACILITY_NAME": "University of Kansas Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1254",
-        "FACILITY_NAME": "University of Miami Kessenich Family Center",
-        "patient_count": 75
+        "patient_count": 75,
+        "FACILITY_NAME": "University of Miami Kessenich Family Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1434",
-        "FACILITY_NAME": "Children's Hospital of the King's Daughters",
-        "patient_count": 73
+        "patient_count": 73,
+        "FACILITY_NAME": "Children's Hospital of the King's Daughters"
       },
       {
         "FACILITY_DISPLAY_ID": "1405",
-        "FACILITY_NAME": "Children's Hospital Los Angeles",
-        "patient_count": 73
+        "patient_count": 73,
+        "FACILITY_NAME": "Children's Hospital Los Angeles"
       },
       {
         "FACILITY_DISPLAY_ID": "1225",
-        "FACILITY_NAME": "Children's Hospital of Wisconsin",
-        "patient_count": 67
+        "patient_count": 67,
+        "FACILITY_NAME": "Children's Hospital of Wisconsin"
       },
       {
         "FACILITY_DISPLAY_ID": "1433",
-        "FACILITY_NAME": "University of Louisville (Pediatrics)",
-        "patient_count": 63
+        "patient_count": 63,
+        "FACILITY_NAME": "University of Louisville (Pediatrics)"
       },
       {
         "FACILITY_DISPLAY_ID": "1072",
-        "FACILITY_NAME": "Louisiana State University Health Science Center",
-        "patient_count": 62
+        "patient_count": 62,
+        "FACILITY_NAME": "Louisiana State University Health Science Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1408",
-        "FACILITY_NAME": "American Family Children Hospital",
-        "patient_count": 59
+        "patient_count": 59,
+        "FACILITY_NAME": "American Family Children Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1441",
-        "FACILITY_NAME": "Massachusetts General Hospital",
-        "patient_count": 58
+        "patient_count": 58,
+        "FACILITY_NAME": "Massachusetts General Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1449",
-        "FACILITY_NAME": "UF Health Pediatrics",
-        "patient_count": 55
+        "patient_count": 55,
+        "FACILITY_NAME": "UF Health Pediatrics"
       },
       {
         "FACILITY_DISPLAY_ID": "1418",
-        "FACILITY_NAME": "Beaumont Health, Royal Oak",
-        "patient_count": 53
+        "patient_count": 53,
+        "FACILITY_NAME": "Beaumont Health, Royal Oak"
       },
       {
         "FACILITY_DISPLAY_ID": "1226",
-        "FACILITY_NAME": "Medical College of Wisconsin",
-        "patient_count": 51
+        "patient_count": 51,
+        "FACILITY_NAME": "Medical College of Wisconsin"
       },
       {
         "FACILITY_DISPLAY_ID": "9001",
-        "FACILITY_NAME": "Arkansas Children's Research Institute",
-        "patient_count": 50
+        "patient_count": 50,
+        "FACILITY_NAME": "Arkansas Children's Research Institute"
       },
       {
         "FACILITY_DISPLAY_ID": "1259",
-        "FACILITY_NAME": "Cook Children's Medical Center",
-        "patient_count": 49
+        "patient_count": 49,
+        "FACILITY_NAME": "Cook Children's Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1438",
-        "FACILITY_NAME": "UCLA",
-        "patient_count": 45
+        "patient_count": 45,
+        "FACILITY_NAME": "UCLA"
       },
       {
         "FACILITY_DISPLAY_ID": "1162",
-        "FACILITY_NAME": "Penn State Health",
-        "patient_count": 44
+        "patient_count": 44,
+        "FACILITY_NAME": "Penn State Health"
       },
       {
         "FACILITY_DISPLAY_ID": "1239",
-        "FACILITY_NAME": "Carle Neuroscience Institute, Carle Foundation Hospital",
-        "patient_count": 37
+        "patient_count": 37,
+        "FACILITY_NAME": "Carle Neuroscience Institute, Carle Foundation Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1392",
-        "FACILITY_NAME": "HSS - Hospital for Special Surgery",
-        "patient_count": 35
+        "patient_count": 35,
+        "FACILITY_NAME": "HSS - Hospital for Special Surgery"
       },
       {
         "FACILITY_DISPLAY_ID": "1009",
-        "FACILITY_NAME": "University of Arkansas Medical Sciences",
-        "patient_count": 31
+        "patient_count": 31,
+        "FACILITY_NAME": "University of Arkansas Medical Sciences"
       },
       {
         "FACILITY_DISPLAY_ID": "1229",
-        "FACILITY_NAME": "Children's Hospital of Colorado",
-        "patient_count": 28
+        "patient_count": 28,
+        "FACILITY_NAME": "Children's Hospital of Colorado"
       },
       {
         "FACILITY_DISPLAY_ID": "1402",
-        "FACILITY_NAME": "Le Bonheur Children's Hospital",
-        "patient_count": 27
+        "patient_count": 27,
+        "FACILITY_NAME": "Le Bonheur Children's Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1341",
-        "FACILITY_NAME": "Southern Illinois University of Medicine",
-        "patient_count": 25
+        "patient_count": 25,
+        "FACILITY_NAME": "Southern Illinois University of Medicine"
       },
       {
         "FACILITY_DISPLAY_ID": "1347",
-        "FACILITY_NAME": "UCSF Benioff Children's Hospital",
-        "patient_count": 25
+        "patient_count": 25,
+        "FACILITY_NAME": "UCSF Benioff Children's Hospital"
       },
       {
         "FACILITY_DISPLAY_ID": "1185",
-        "FACILITY_NAME": "Vanderbilt University Medical Center",
-        "patient_count": 23
+        "patient_count": 23,
+        "FACILITY_NAME": "Vanderbilt University Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1448",
-        "FACILITY_NAME": "Yale University School of Medicine",
-        "patient_count": 22
+        "patient_count": 22,
+        "FACILITY_NAME": "Yale University School of Medicine"
       },
       {
         "FACILITY_DISPLAY_ID": "1364",
-        "FACILITY_NAME": "Prevea Health",
-        "patient_count": 22
+        "patient_count": 22,
+        "FACILITY_NAME": "Prevea Health"
       },
       {
         "FACILITY_DISPLAY_ID": "1378",
-        "FACILITY_NAME": "Child Neurology Consultants of Austin",
-        "patient_count": 22
+        "patient_count": 22,
+        "FACILITY_NAME": "Child Neurology Consultants of Austin"
       },
       {
         "FACILITY_DISPLAY_ID": "1431",
-        "FACILITY_NAME": "Las Vegas Clinic",
-        "patient_count": 17
+        "patient_count": 17,
+        "FACILITY_NAME": "Las Vegas Clinic"
       },
       {
         "FACILITY_DISPLAY_ID": "1298",
-        "FACILITY_NAME": "Essentia Health of Duluth",
-        "patient_count": 17
+        "patient_count": 17,
+        "FACILITY_NAME": "Essentia Health of Duluth"
       },
       {
         "FACILITY_DISPLAY_ID": "1114",
-        "FACILITY_NAME": "Rutgers New Jersey Medical School",
-        "patient_count": 16
+        "patient_count": 16,
+        "FACILITY_NAME": "Rutgers New Jersey Medical School"
       },
       {
         "FACILITY_DISPLAY_ID": "1021",
-        "FACILITY_NAME": "Rady Children's Hospital- San Diego",
-        "patient_count": 14
+        "patient_count": 14,
+        "FACILITY_NAME": "Rady Children's Hospital- San Diego"
       },
       {
         "FACILITY_DISPLAY_ID": "9000",
-        "FACILITY_NAME": "Idaho Physical Medicine & Rehabilitation",
-        "patient_count": 13
+        "patient_count": 13,
+        "FACILITY_NAME": "Idaho Physical Medicine & Rehabilitation"
       },
       {
         "FACILITY_DISPLAY_ID": "1063",
-        "FACILITY_NAME": "University of Iowa Hospitals & Clinics",
-        "patient_count": 13
+        "patient_count": 13,
+        "FACILITY_NAME": "University of Iowa Hospitals & Clinics"
       },
       {
         "FACILITY_DISPLAY_ID": "1149_legacy",
-        "FACILITY_NAME": "Ohio State University Wexner Medical Center",
-        "patient_count": 10
+        "patient_count": 10,
+        "FACILITY_NAME": "Ohio State University Wexner Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1234",
-        "FACILITY_NAME": "University of Puerto Rico Medical Sciences",
-        "patient_count": 9
+        "patient_count": 9,
+        "FACILITY_NAME": "University of Puerto Rico Medical Sciences"
       },
       {
         "FACILITY_DISPLAY_ID": "1001",
-        "FACILITY_NAME": "University of Alabama at Birmingham",
-        "patient_count": 7
+        "patient_count": 7,
+        "FACILITY_NAME": "University of Alabama at Birmingham"
       },
       {
         "FACILITY_DISPLAY_ID": "1206",
-        "FACILITY_NAME": "University of Vermont Medical Center",
-        "patient_count": 7
+        "patient_count": 7,
+        "FACILITY_NAME": "University of Vermont Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1446",
-        "FACILITY_NAME": "Geisinger Medical Center",
-        "patient_count": 6
+        "patient_count": 6,
+        "FACILITY_NAME": "Geisinger Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1098",
-        "FACILITY_NAME": "University of Mississippi Medical Center",
-        "patient_count": 5
+        "patient_count": 5,
+        "FACILITY_NAME": "University of Mississippi Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1444",
-        "FACILITY_NAME": "Columbia University Medical Center",
-        "patient_count": 5
+        "patient_count": 5,
+        "FACILITY_NAME": "Columbia University Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1176",
-        "FACILITY_NAME": "Medical University of South Carolina",
-        "patient_count": 4
+        "patient_count": 4,
+        "FACILITY_NAME": "Medical University of South Carolina"
       },
       {
         "FACILITY_DISPLAY_ID": "1109",
-        "FACILITY_NAME": "Dartmouth-Hitchcock Medical Center",
-        "patient_count": 4
+        "patient_count": 4,
+        "FACILITY_NAME": "Dartmouth-Hitchcock Medical Center"
       },
       {
         "FACILITY_DISPLAY_ID": "1282",
-        "FACILITY_NAME": "Children's Healthcare of Atlanta / Emory Healthcare",
-        "patient_count": 3
+        "patient_count": 3,
+        "FACILITY_NAME": "Children's Healthcare of Atlanta / Emory Healthcare"
       },
       {
         "FACILITY_DISPLAY_ID": "1282_legacy",
-        "FACILITY_NAME": "Children's Healthcare of Atlanta / Emory Healthcare",
-        "patient_count": 1
+        "patient_count": 1,
+        "FACILITY_NAME": "Children's Healthcare of Atlanta / Emory Healthcare"
       }
     ]
   },
@@ -480,5 +480,104 @@
     "diagnosis_records": 3444,
     "encounter_records": 10489,
     "medication_records": 24314
+  },
+  "longitudinal": {
+    "total_encounters": 10489,
+    "patients_with_encounters": 3444,
+    "mean_encounters_per_patient": 3.0,
+    "median_encounters_per_patient": 2,
+    "patients_3plus_encounters": 1480,
+    "patients_5plus_encounters": 730,
+    "by_disease": {
+      "ALS": {
+        "patients": 1653,
+        "encounters": 4923,
+        "mean_per_patient": 3.0,
+        "patients_3plus": 673
+      },
+      "BMD": {
+        "patients": 148,
+        "encounters": 356,
+        "mean_per_patient": 2.4,
+        "patients_3plus": 49
+      },
+      "DMD": {
+        "patients": 688,
+        "encounters": 2426,
+        "mean_per_patient": 3.5,
+        "patients_3plus": 374
+      },
+      "FSHD": {
+        "patients": 184,
+        "encounters": 388,
+        "mean_per_patient": 2.1,
+        "patients_3plus": 51
+      },
+      "LGMD": {
+        "patients": 210,
+        "encounters": 502,
+        "mean_per_patient": 2.4,
+        "patients_3plus": 65
+      },
+      "Pompe": {
+        "patients": 37,
+        "encounters": 94,
+        "mean_per_patient": 2.5,
+        "patients_3plus": 15
+      },
+      "SMA": {
+        "patients": 524,
+        "encounters": 1800,
+        "mean_per_patient": 3.4,
+        "patients_3plus": 253
+      }
+    }
+  },
+  "clinical_availability": {
+    "functional_scores": {
+      "alsfrs_r": {
+        "patients": 1461,
+        "patients_longitudinal": 908,
+        "label": "ALSFRS-R"
+      },
+      "hfmse": {
+        "patients": 276,
+        "patients_longitudinal": 157,
+        "label": "HFMSE"
+      },
+      "chop_intend": {
+        "patients": 165,
+        "patients_longitudinal": 87,
+        "label": "CHOP-INTEND"
+      },
+      "rulm": {
+        "patients": 79,
+        "patients_longitudinal": 25,
+        "label": "RULM"
+      }
+    },
+    "pulmonary": {
+      "pft_performed": 3345,
+      "fvc": 2038,
+      "fev1": 1241
+    },
+    "cardiac": {
+      "ecg": 644,
+      "echo": 651,
+      "cardiomyopathy": 984
+    },
+    "medications": {
+      "glucocorticoid": 820,
+      "ambulatory_status": 2246
+    },
+    "timed_tests": {
+      "walk_run_10m": 381,
+      "stair_climb": 225,
+      "rise_from_supine": 202
+    },
+    "care": {
+      "multidisciplinary_plan": 2034,
+      "hospitalizations": 422
+    }
   }
 }

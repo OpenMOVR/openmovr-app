@@ -22,6 +22,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 import argparse
+import pandas as pd
 
 # Add src to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -93,10 +94,100 @@ def generate_snapshot(include_usndr: bool = False) -> dict:
             "diagnosis_records": len(base_cohort['diagnosis']),
             "encounter_records": len(base_cohort['encounters']),
             "medication_records": len(base_cohort['medications'])
-        }
+        },
+
+        "longitudinal": _compute_longitudinal_stats(base_cohort),
+
+        "clinical_availability": _compute_clinical_availability(base_cohort),
     }
 
     return snapshot
+
+
+def _compute_longitudinal_stats(base_cohort: dict) -> dict:
+    """Compute encounter longitudinality statistics."""
+    enc = base_cohort['encounters']
+    if enc.empty or 'FACPATID' not in enc.columns:
+        return {}
+
+    enc_per_pt = enc.groupby('FACPATID').size()
+
+    stats = {
+        "total_encounters": len(enc),
+        "patients_with_encounters": int(enc['FACPATID'].nunique()),
+        "mean_encounters_per_patient": round(float(enc_per_pt.mean()), 1),
+        "median_encounters_per_patient": int(enc_per_pt.median()),
+        "patients_3plus_encounters": int((enc_per_pt >= 3).sum()),
+        "patients_5plus_encounters": int((enc_per_pt >= 5).sum()),
+    }
+
+    # By disease
+    if 'dstype' in enc.columns:
+        by_disease = {}
+        for ds in sorted(enc['dstype'].dropna().unique()):
+            ds_enc = enc[enc['dstype'] == ds]
+            ds_per_pt = ds_enc.groupby('FACPATID').size()
+            by_disease[ds] = {
+                "patients": int(ds_enc['FACPATID'].nunique()),
+                "encounters": int(len(ds_enc)),
+                "mean_per_patient": round(float(ds_per_pt.mean()), 1),
+                "patients_3plus": int((ds_per_pt >= 3).sum()),
+            }
+        stats["by_disease"] = by_disease
+
+    return stats
+
+
+def _compute_clinical_availability(base_cohort: dict) -> dict:
+    """Compute clinical domain data availability (patients with data)."""
+    enc = base_cohort['encounters']
+    if enc.empty or 'FACPATID' not in enc.columns:
+        return {}
+
+    def _patients_with(col):
+        if col not in enc.columns:
+            return 0
+        has = enc[col].notna() & (enc[col].astype(str).str.strip() != '')
+        return int(enc.loc[has, 'FACPATID'].nunique())
+
+    def _patients_multi(col):
+        if col not in enc.columns:
+            return 0
+        has = enc[col].notna() & (enc[col].astype(str).str.strip() != '')
+        pt_counts = enc.loc[has].groupby('FACPATID').size()
+        return int((pt_counts > 1).sum())
+
+    return {
+        "functional_scores": {
+            "alsfrs_r": {"patients": _patients_with('alsfrstl'), "patients_longitudinal": _patients_multi('alsfrstl'), "label": "ALSFRS-R"},
+            "hfmse": {"patients": _patients_with('hfmsesc'), "patients_longitudinal": _patients_multi('hfmsesc'), "label": "HFMSE"},
+            "chop_intend": {"patients": _patients_with('cittlscr'), "patients_longitudinal": _patients_multi('cittlscr'), "label": "CHOP-INTEND"},
+            "rulm": {"patients": _patients_with('rulmcs'), "patients_longitudinal": _patients_multi('rulmcs'), "label": "RULM"},
+        },
+        "pulmonary": {
+            "pft_performed": _patients_with('pftest'),
+            "fvc": _patients_with('fvcrslt'),
+            "fev1": _patients_with('fev1rslt'),
+        },
+        "cardiac": {
+            "ecg": _patients_with('ecgrslt'),
+            "echo": _patients_with('echorslt'),
+            "cardiomyopathy": _patients_with('crdmyo'),
+        },
+        "medications": {
+            "glucocorticoid": _patients_with('glcouse'),
+            "ambulatory_status": _patients_with('curramb'),
+        },
+        "timed_tests": {
+            "walk_run_10m": _patients_with('ttwr10m'),
+            "stair_climb": _patients_with('ttcstr'),
+            "rise_from_supine": _patients_with('ttrsupn'),
+        },
+        "care": {
+            "multidisciplinary_plan": _patients_with('mltcrpl'),
+            "hospitalizations": _patients_with('hospbtwvt'),
+        },
+    }
 
 
 def save_snapshot(snapshot: dict, output_path: Path):

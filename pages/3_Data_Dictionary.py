@@ -66,34 +66,17 @@ def _render_sidebar_contact():
         st.sidebar.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
         st.sidebar.image(str(LOGO_PNG), width=160)
         st.sidebar.markdown("</div>", unsafe_allow_html=True)
+    st.sidebar.markdown("---")
     st.sidebar.markdown(
         """
         <div style='text-align: center; font-size: 0.8em; color: #888;'>
             <strong>Open Source Project</strong><br>
             <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a><br>
-            <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    st.sidebar.markdown("---")
-    st.sidebar.markdown(
-        """
-        <div style='text-align: center; font-size: 0.8em; color: #888;'>
-            <strong>Created by</strong><br>
-            Andre D Paredes<br>
+            <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a><br><br>
+            <strong>Created by</strong> Andre D Paredes<br>
             <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a><br>
-            <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a> (MDA)
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    st.sidebar.markdown("---")
-    st.sidebar.markdown(
-        """
-        <div style='text-align: center; font-size: 0.8em; color: #888;'>
-            <strong>Request Data</strong><br>
-            <a href="https://mdausa.tfaforms.net/389761" target="_blank">MDA Data Request Form</a>
+            <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a> (MDA)<br><br>
+            <a href="https://mdausa.tfaforms.net/389761" target="_blank"><strong>Request Data</strong></a>
         </div>
         """,
         unsafe_allow_html=True
@@ -126,22 +109,106 @@ with header_right:
 
 
 # ---------------------------------------------------------------------------
-# MOVR Data Overview (from curated snapshot)
+# MOVR Data Overview
 # ---------------------------------------------------------------------------
 st.markdown("---")
 st.subheader("MOVR Data Overview")
 
 st.markdown(
     """
-    The MOVR registry captures clinical data for **7 neuromuscular diseases**.
-    Each disease functions as its own sub-registry with **shared** data forms
-    and **disease-specific** eCRFs (electronic Case Report Forms). The eCRFs
-    and data dictionary were developed by the
+    The MOVR registry captures clinical data for **7 neuromuscular diseases**
+    (ALS, BMD, DMD, SMA, LGMD, FSHD, Pompe). Each disease functions as its
+    own sub-registry with **shared** data forms and **disease-specific** eCRFs.
+    The eCRFs and data dictionary were developed by the
     [Muscular Dystrophy Association](https://www.mda.org/science/movr2).
     """
 )
 
-# Build domain × disease matrix from curated snapshot
+# --- Demographics & Enrollment ---
+st.markdown("#### Demographics & Enrollment (35 fields — shared across all diseases)")
+st.markdown(
+    """
+    Captured once at enrollment. Identical for all 7 registries.
+
+    Includes: age, date of birth, gender, race/ethnicity, health insurance,
+    education level, employment status, school enrollment, USNDR status,
+    and contact information (name, address, phone, email).
+    """
+)
+
+# --- Diagnosis ---
+st.markdown("#### Diagnosis (171 fields — disease-specific)")
+st.markdown(
+    """
+    Captured once at enrollment. Each disease has its own diagnosis form with
+    disease-specific prefixes (als\\*, bmd\\*, dmd\\*, sma\\*, lg\\*, fshd\\*, pom\\*).
+    """
+)
+
+_dx_overview = {
+    "Disease": ["ALS", "BMD", "DMD", "SMA", "LGMD", "FSHD", "Pompe"],
+    "Fields": [21, 45, 45, 22, 30, 34, 37],
+    "What's Captured": [
+        "Diagnosis date/age, symptom onset, El Escorial criteria, body regions affected, gene mutation, family history",
+        "Diagnosis date/age, genetic confirmation + report, dystrophin biopsy, DNA dosage analysis, exon mapping (single/multiple), frame type, walked independently milestones, family history",
+        "Diagnosis date/age, genetic confirmation + report, dystrophin biopsy, DNA dosage analysis, exon mapping, frame type, family history",
+        "Diagnosis date/age, initial method, SMA classification (Type I–IV), genetic confirmation, SMN1/SMN2 copy number, prenatal onset, non-SMN SMA, family history",
+        "Diagnosis date/age, symptom onset date/age, LGMD subtype + gene (20+ subtypes), genetic confirmation, gene mutations (1 & 2), muscle biopsy, first symptoms, family history",
+        "Diagnosis date/age, first medical attention, FSHD subtype, 4q35 deletion + size, somatic mosaicism, haplotype testing, D4Z4 methylation, SMCHD1 sequencing, first symptoms, loss of ambulation, family history",
+        "Diagnosis date/age, initial method, Pompe classification (Infantile/Late-Onset), genetic confirmation, variant 1/2/3, GAA enzyme activity, CRIM status, symptom onset, pre-symptomatic flag, family history",
+    ],
+}
+
+st.dataframe(
+    pd.DataFrame(_dx_overview),
+    use_container_width=True,
+    hide_index=True,
+    height=290,
+)
+
+# --- Encounter & Longitudinal Data ---
+st.markdown("#### Encounter & Longitudinal Data (805 fields — per clinic visit)")
+st.markdown(
+    """
+    Collected at **each clinic visit** by MOVR sites — this is the longitudinal
+    core of the registry. Encounter fields (651) capture point-in-time
+    assessments; Log fields (154) track start/end dates for medications,
+    devices, surgeries, and milestones.
+    """
+)
+
+_enc_overview = {
+    "Disease": ["ALS", "BMD", "DMD", "SMA", "LGMD", "FSHD", "Pompe"],
+    "Encounter Fields": [135, 206, 226, 358, 96, 133, 183],
+    "Log Fields": [55, 55, 55, 55, 59, 72, 133],
+    "Unique Strengths": [
+        "ALSFRS-R questionnaire (speech, swallowing, handwriting, walking, respiratory), ALSCBS cognitive/behavioral scores, end-of-life planning",
+        "Cardiac (Echo, EKG, MRI with LV/RV measurements), glucocorticoid therapy + steroid complications, timed function tests, scoliosis/spine imaging",
+        "Deepest cardiac monitoring (59 fields: Echo, EKG, MRI, cardiac devices), glucocorticoids + steroid complications, NSAA, PUL 2.0, timed function tests, scoliosis/spine",
+        "Most fields of any disease (358). Gross motor milestones (head control, sitting, crawling, standing, walking), HFMSE, RULM, CHOP-INTEND, Spinraza dosing, extensive pulmonary/ventilation monitoring",
+        "Current ambulatory status, timed function tests (6MWT, 10MWT, stair climb, rise from supine), muscle biopsy tracking, assistive devices",
+        "FSHD Clinical Scores (facial weakness, scapular/pelvic girdle, limbs, abdominal), timed function tests, FSHD-specific milestones (scapular winging, foot drop, difficulty closing eyes/mouth, Coats syndrome, hearing loss)",
+        "Gross motor milestones (58 fields), cardiac monitoring (Echo, MRI), ERT dosing + antibody titers, GAA enzyme activity, cognitive/behavioral screening (MoCA), hearing assessments, neuroimaging",
+    ],
+}
+
+st.dataframe(
+    pd.DataFrame(_enc_overview),
+    use_container_width=True,
+    hide_index=True,
+    height=290,
+)
+
+st.markdown(
+    """
+    **Shared across all diseases:** vital signs (height, weight, BMI),
+    mobility/ambulation status, hospitalizations, medications, multidisciplinary
+    care plans (specialists seen/referred), vaccinations, clinical research
+    participation, and discontinuation.
+    """
+)
+
+# --- Clinical Domain Coverage Matrix ---
 domain_summary = DataDictionaryAPI.get_domain_summary()
 if domain_summary:
     overview_data = {
@@ -155,7 +222,7 @@ if domain_summary:
 
     st.markdown("#### Clinical Domain Coverage by Disease")
     st.caption(
-        "Fields classified into 19 clinical domains from a neuromuscular specialist perspective. "
+        "All 1,024 fields classified into 19 clinical domains. "
         "Counts show fields applicable to each disease within that domain."
     )
 
@@ -175,13 +242,10 @@ if domain_summary:
             f"border-radius: 0 4px 4px 0; margin: 0.5rem 0 0.5rem 0; font-size: 0.9em;'>"
             f"<strong>Curated Dictionary:</strong> {rate}% of fields classified into clinical domains. "
             f"{corrections} mislabeled field corrections applied (FSHD fields incorrectly marked for LGMD). "
-            f"All encounter data is <strong>longitudinal</strong> — each row represents a clinic visit. "
             f"Discontinuation data exists but was <strong>poorly captured</strong> across sites."
             f"</div>",
             unsafe_allow_html=True,
         )
-else:
-    st.info("Curated domain classification not available. Showing raw dictionary.")
 
 st.markdown(
     """
