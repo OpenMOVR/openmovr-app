@@ -21,9 +21,9 @@ from api import StatsAPI
 from utils.cache import get_cached_snapshot
 from components.charts import (
     create_disease_distribution_chart,
-    create_facility_chart,
+    create_site_map,
 )
-from components.tables import display_disease_table, display_facility_table
+from components.tables import display_disease_table
 
 
 # Page configuration — use logo as favicon
@@ -39,7 +39,7 @@ st.set_page_config(
 def main():
     """Main application entry point."""
 
-    # Custom CSS to add branding above page navigation
+    # Custom CSS: branding + hide row indices on static tables
     st.markdown(
         """
         <style>
@@ -65,12 +65,17 @@ def main():
             margin-bottom: 1rem;
             border-bottom: 1px solid #ddd;
         }
+        /* Hide row numbers on static tables (public pages) */
+        [data-testid="stTable"] thead tr th:first-child,
+        [data-testid="stTable"] tbody tr td:first-child {
+            display: none;
+        }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Sidebar: logo (centered) + contact
+    # Sidebar: logo (centered) + tier info + contact
     with st.sidebar:
         if LOGO_PNG.exists():
             st.markdown(
@@ -79,6 +84,23 @@ def main():
             )
             st.image(str(LOGO_PNG), width=160)
             st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown(
+            """
+            <div style='font-size: 0.85em; padding: 0 0.5rem;'>
+            <strong>Public Pages</strong><br>
+            <span style='color: #666;'>Dashboard, Disease Explorer, Facility View,
+            Data Dictionary, LGMD Overview</span><br><br>
+            <strong>Provisioned Access</strong><br>
+            <span style='color: #666;'>Site Analytics, Download Center</span><br>
+            <span style='font-size: 0.85em; color: #999;'>
+            Free for sites &amp; researchers |
+            <a href="https://mdausa.tfaforms.net/389761" target="_blank">Request Access</a>
+            </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         st.markdown("---")
         st.markdown(
             """
@@ -237,34 +259,27 @@ def main():
             show_columns=['disease', 'patient_count', 'percentage']
         )
 
-    # Facility Distribution Section
+    # Participating Sites Map
     st.markdown("---")
-    st.subheader("Top Facilities")
+    st.subheader("Participating Sites")
 
-    top_n = st.slider(
-        "Number of facilities to display",
-        min_value=5,
-        max_value=20,
-        value=DEFAULT_TOP_N_FACILITIES,
-        step=1
-    )
+    site_locations = snapshot['facilities'].get('site_locations', [])
+    if site_locations:
+        site_map = create_site_map(site_locations, title="MOVR Participating Sites")
+        if site_map:
+            st.plotly_chart(site_map, use_container_width=True)
 
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        facility_chart = create_facility_chart(
-            snapshot['facilities']['all_facilities'],
-            top_n=top_n,
-            chart_type='horizontal_bar'
+        # Compact summary
+        continental = [s for s in site_locations
+                       if s.get('continental', True) and s.get('lat') is not None]
+        total_mapped = len(continental)
+        states_covered = len(set(s['state'] for s in continental if s.get('state')))
+        st.caption(
+            f"{total_mapped} sites across {states_covered} states + DC.  "
+            "Filter by disease and explore site details on the **Facility View** page."
         )
-        st.plotly_chart(facility_chart, use_container_width=True)
-
-    with col2:
-        st.markdown(f"#### Top {top_n} Facilities")
-        display_facility_table(
-            snapshot['facilities']['all_facilities'],
-            show_top_n=top_n
-        )
+    else:
+        st.info("Site geographic data not available.")
 
     # Longitudinal Data Section
     st.markdown("---")
@@ -313,36 +328,36 @@ def main():
                         "With 3+ Visits": f"{info['patients_3plus']:,}",
                     })
             if enc_data:
-                st.dataframe(
-                    pd.DataFrame(enc_data),
-                    use_container_width=True,
-                    hide_index=True,
-                )
+                st.table(pd.DataFrame(enc_data))
 
     # Clinical Data Highlights
     st.markdown("---")
     st.subheader("Clinical Data Highlights")
-    st.caption("Counts reflect unique MOVR participants with at least one recorded value, plus total data points where noted.")
+    st.caption("Unique MOVR participants with at least one recorded value.")
 
     clinical = snapshot.get('clinical_availability', {})
     if clinical:
-        # Functional Assessments — table with patients, data points, longitudinal
-        st.markdown("##### Functional Assessments")
-        func_scores = clinical.get('functional_scores', {})
-        if func_scores:
-            func_data = []
-            for key, info in func_scores.items():
-                func_data.append({
-                    "Assessment": info.get('label', key),
-                    "Participants": f"{info['patients']:,}",
-                    "Data Points": f"{info.get('data_points', 0):,}",
-                    "Longitudinal (2+)": f"{info['patients_longitudinal']:,}",
-                })
-            st.dataframe(pd.DataFrame(func_data), use_container_width=True, hide_index=True)
 
-        # Timed Tests — table
-        timed = clinical.get('timed_tests', {})
-        if timed:
+        # --- Row 1: Functional Assessments | Timed Tests ---
+        col_left, col_right = st.columns(2)
+
+        with col_left:
+            st.markdown("##### Functional Assessments")
+            func_scores = clinical.get('functional_scores', {})
+            if func_scores:
+                func_data = []
+                for key, info in func_scores.items():
+                    func_data.append({
+                        "Assessment": info.get('label', key),
+                        "Participants": f"{info['patients']:,}",
+                        "Data Points": f"{info.get('data_points', 0):,}",
+                        "Longitudinal (2+)": f"{info['patients_longitudinal']:,}",
+                    })
+                st.table(pd.DataFrame(func_data))
+
+        with col_right:
+            st.markdown("##### Timed Function Tests")
+            timed = clinical.get('timed_tests', {})
             timed_labels = {
                 'walk_run_10m': '10m Walk/Run',
                 'stair_climb': 'Stair Climb (4 stairs)',
@@ -358,216 +373,144 @@ def main():
                         "Data Points": f"{info.get('data_points', 0):,}",
                     })
             if timed_data:
-                col_left, col_right = st.columns([1, 1])
-                with col_left:
-                    st.markdown("##### Timed Function Tests")
-                    st.dataframe(pd.DataFrame(timed_data), use_container_width=True, hide_index=True)
+                st.table(pd.DataFrame(timed_data))
 
-                # Vital Signs | Orthopedic
-                with col_right:
-                    st.markdown("##### Vital Signs & Anthropometrics")
-                    vitals = clinical.get('vital_signs', {})
-                    v1, v2, v3 = st.columns(3)
-                    with v1:
-                        st.metric("Height", f"{vitals.get('height', 0):,}")
-                    with v2:
-                        st.metric("Weight", f"{vitals.get('weight', 0):,}")
-                    with v3:
-                        st.metric("BMI", f"{vitals.get('bmi', 0):,}")
-
-        # Medications & Treatments — drug class breakdown
+        # --- Row 2: Medications (main focus) ---
         st.markdown("##### Medications & Treatments")
         meds = clinical.get('medications', {})
         if meds:
-            med_col1, med_col2 = st.columns(2)
-            with med_col1:
+            col_left, col_right = st.columns(2)
+
+            with col_left:
+                # Gene therapy by disease (from combo_drugs + gene therapy config)
+                gt_by_disease = meds.get('gene_therapy_by_disease', {})
+                if gt_by_disease:
+                    st.markdown("###### Advanced Therapies by Disease")
+                    disease_order = ['SMA', 'DMD', 'ALS', 'Pompe']
+                    gt_rows = []
+                    for disease in disease_order:
+                        dinfo = gt_by_disease.get(disease)
+                        if not dinfo:
+                            continue
+                        for t in dinfo.get('treatments', []):
+                            gt_rows.append({
+                                "Disease": disease,
+                                "Category": t['category'],
+                                "Treatment": t['label'],
+                                "Patients": t['patients'],
+                            })
+                    if gt_rows:
+                        st.table(pd.DataFrame(gt_rows))
+
+                # Drug class breakdown table
                 med_rows = []
                 for cls_key, label in [
-                    ('glucocorticoids_med_table', 'Glucocorticoids'),
                     ('disease_modifying_als', 'Disease-Modifying (ALS)'),
-                    ('gene_therapy_antisense', 'Gene Therapy & Antisense'),
-                    ('cardiac_meds', 'Cardiac Medications'),
+                    ('cardiac_meds', 'Cardiac'),
                     ('psych_neuro', 'Psych / Neuro'),
                     ('respiratory_meds', 'Respiratory'),
                 ]:
                     cls = meds.get(cls_key, {})
-                    if cls:
+                    if cls and cls.get('patients', 0) > 0:
                         med_rows.append({
                             "Drug Class": label,
-                            "Participants": f"{cls.get('patients', 0):,}",
-                            "Records": f"{cls.get('records', 0):,}",
+                            "Participants": f"{cls['patients']:,}",
+                            "Records": f"{cls['records']:,}",
                         })
                 if med_rows:
-                    st.dataframe(pd.DataFrame(med_rows), use_container_width=True, hide_index=True)
-                    total_pts = meds.get('total_patients', 0)
-                    total_recs = meds.get('total_records', 0)
-                    st.caption(
-                        "Total medication table: {:,} records across {:,} participants.".format(
-                            total_recs, total_pts
-                        )
-                    )
+                    st.table(pd.DataFrame(med_rows))
 
-            with med_col2:
-                # Glucocorticoid encounter detail
-                glc_enc = meds.get('glucocorticoid_encounter', {})
-                if glc_enc:
-                    st.markdown("**Glucocorticoid Use (Encounter eCRF)**")
-                    glc_vals = glc_enc.get('values', {})
-                    if glc_vals:
-                        glc_rows = [{"Status": k, "Count": f"{v:,}"} for k, v in glc_vals.items()]
-                        st.dataframe(pd.DataFrame(glc_rows), use_container_width=True, hide_index=True, height=200)
-                    st.caption(
-                        "{:,} participants, {:,} data points.".format(
-                            glc_enc.get('patients', 0), glc_enc.get('data_points', 0)
-                        )
-                    )
+            with col_right:
+                total_pts = meds.get('total_patients', 0)
+                total_recs = meds.get('total_records', 0)
+                source = meds.get('source', 'encounter_log_meds')
+                source_label = "Combo Drugs table" if source == "combo_drugs" else "Encounter + Log tables"
+                st.metric("Total Medication Records", f"{total_recs:,}",
+                          help=f"Across {total_pts:,} participants ({source_label})")
 
-                # Gene therapy / SMA treatments highlight
-                gene = meds.get('gene_therapy_antisense', {})
-                sma_search = meds.get('sma_treatments_search', {})
-                exon = meds.get('exon_skipping_search', {})
-                if gene.get('drugs'):
-                    st.markdown("**Gene Therapy & Exon-Skipping**")
-                    gene_rows = []
-                    for name, info in gene['drugs'].items():
-                        gene_rows.append({
-                            "Treatment": name,
-                            "Participants": f"{info['patients']:,}",
-                            "Records": f"{info['records']:,}",
-                        })
-                    st.dataframe(pd.DataFrame(gene_rows), use_container_width=True, hide_index=True)
-                    st.caption(
-                        "SMA treatments (all sources): {:,} patients. Exon-skipping (all sources): {:,} patients.".format(
-                            sma_search.get('patients', 0), exon.get('patients', 0)
-                        )
-                    )
+                # Top prescribed medications
+                top_meds = meds.get('top_medications', [])
+                if top_meds:
+                    st.markdown("###### Top Prescribed")
+                    top_rows = [
+                        {"Medication": m['name'], "Patients": f"{m['patients']:,}"}
+                        for m in top_meds[:10]
+                    ]
+                    st.table(pd.DataFrame(top_rows))
 
-        # Spinraza eCRF Highlight
-        spinraza = clinical.get('spinraza', {})
-        if spinraza and spinraza.get('ecrf_fields', 0) > 0:
-            st.markdown(
-                "<div style='background-color: #E8F5E9; border-left: 4px solid #4CAF50; padding: 10px 14px;"
-                " border-radius: 0 4px 4px 0; margin: 0.5rem 0;'>"
-                "<strong>Spinraza (Nusinersen)</strong> &mdash; "
-                "{} dedicated eCRF fields baked into the registry. "
-                "{:,} maintenance dose records across {} patients. "
-                "{} patients with EAP (Expanded Access Program) data."
-                "</div>".format(
-                    spinraza.get('ecrf_fields', 0),
-                    spinraza.get('maintenance_records', 0),
-                    spinraza.get('patients_with_maintenance', 0),
-                    spinraza.get('patients_eap', 0),
-                ),
-                unsafe_allow_html=True,
-            )
+            # Footnotes
+            footnotes = []
+            glc_enc = meds.get('glucocorticoid_encounter', {})
+            if glc_enc.get('patients', 0) > 0:
+                footnotes.append(
+                    f"*Glucocorticoid use is also captured as a dedicated eCRF field "
+                    f"({glc_enc['patients']:,} participants, {glc_enc.get('data_points', 0):,} data points).*"
+                )
+            spinraza = clinical.get('spinraza', {})
+            if spinraza and spinraza.get('ecrf_fields', 0) > 0:
+                footnotes.append(
+                    f"*Spinraza (Nusinersen) has {spinraza['ecrf_fields']} dedicated eCRF fields "
+                    f"baked into the registry, with {spinraza.get('maintenance_records', 0):,} "
+                    f"maintenance dose records across {spinraza.get('patients_with_maintenance', 0):,} patients.*"
+                )
+            if footnotes:
+                st.caption("  \n".join(footnotes))
 
-        # Pulmonary | Cardiology
+        # --- Row 3: Clinical Trials | Pulmonary & Cardiology ---
         col_left, col_right = st.columns(2)
+
         with col_left:
-            st.markdown("##### Pulmonary & Respiratory")
+            st.markdown("##### Clinical Trial Participation")
+            trials = clinical.get('clinical_trials', {})
+            if trials and trials.get('patient_breakdown'):
+                trial_rows = []
+                for cat, pts in trials['patient_breakdown'].items():
+                    trial_rows.append({"Status": cat, "Participants": f"{pts:,}"})
+                st.table(pd.DataFrame(trial_rows))
+            else:
+                st.caption("Clinical trial data not available.")
+
+        with col_right:
+            st.markdown("##### Pulmonary & Cardiology")
             pulm = clinical.get('pulmonary', {})
-            p1, p2, p3 = st.columns(3)
-            with p1:
-                st.metric("PFTs", f"{pulm.get('pft_performed', 0):,}")
-            with p2:
-                st.metric("FVC", f"{pulm.get('fvc', 0):,}")
-            with p3:
-                st.metric("FEV1", f"{pulm.get('fev1', 0):,}")
-
-        with col_right:
-            st.markdown("##### Cardiology")
             cardiac = clinical.get('cardiac', {})
-            c1, c2, c3 = st.columns(3)
-            with c1:
-                st.metric("ECG", f"{cardiac.get('ecg', 0):,}")
-            with c2:
-                st.metric("Echo", f"{cardiac.get('echo', 0):,}")
-            with c3:
-                st.metric("Cardiomyopathy", f"{cardiac.get('cardiomyopathy', 0):,}")
+            pc_rows = [
+                {"Domain": "PFTs Performed", "Participants": f"{pulm.get('pft_performed', 0):,}"},
+                {"Domain": "FVC", "Participants": f"{pulm.get('fvc', 0):,}"},
+                {"Domain": "FEV1", "Participants": f"{pulm.get('fev1', 0):,}"},
+                {"Domain": "ECG", "Participants": f"{cardiac.get('ecg', 0):,}"},
+                {"Domain": "Echo", "Participants": f"{cardiac.get('echo', 0):,}"},
+                {"Domain": "Cardiomyopathy", "Participants": f"{cardiac.get('cardiomyopathy', 0):,}"},
+            ]
+            st.table(pd.DataFrame(pc_rows))
 
-        # Mobility & Devices | Nutrition
+        # --- Row 4: Devices & Hospitalizations | Surgeries ---
         col_left, col_right = st.columns(2)
+
         with col_left:
-            st.markdown("##### Mobility & Devices")
-            mob = clinical.get('mobility', {})
+            st.markdown("##### Hospitalizations & Devices")
+            hosp = clinical.get('hospitalizations', {})
             devs = clinical.get('devices', {})
-            mb1, mb2 = st.columns(2)
-            with mb1:
-                st.metric("Ambulatory Status", f"{mob.get('ambulatory_status', 0):,}")
-                st.metric("Wheelchair", f"{mob.get('wheelchair', 0):,}")
-            with mb2:
-                st.metric(
-                    "Assistive Devices",
-                    f"{devs.get('assistive_patients', 0):,}",
-                    help=f"{devs.get('assistive_records', 0):,} records (encounter + log)"
-                )
-                st.metric(
-                    "Pulmonary Devices",
-                    f"{devs.get('pulmonary_patients', 0):,}",
-                    help=f"{devs.get('pulmonary_records', 0):,} records (encounter + log)"
-                )
-            st.caption(
-                "Device data combined from encounter and log tables. "
-                "Falls reported: {:,} participants.".format(mob.get('falls', 0))
-            )
+            hd_rows = [
+                {"Category": "Hospitalizations", "Participants": f"{hosp.get('patients', 0):,}", "Records": f"{hosp.get('records', 0):,}"},
+                {"Category": "Assistive Devices", "Participants": f"{devs.get('assistive_patients', 0):,}", "Records": f"{devs.get('assistive_records', 0):,}"},
+                {"Category": "Pulmonary Devices", "Participants": f"{devs.get('pulmonary_patients', 0):,}", "Records": f"{devs.get('pulmonary_records', 0):,}"},
+            ]
+            st.table(pd.DataFrame(hd_rows))
+            st.caption("Combined from encounter and log tables.")
 
         with col_right:
-            st.markdown("##### Nutrition & GI")
-            nutr = clinical.get('nutrition', {})
-            n1, n2, n3 = st.columns(3)
-            with n1:
-                st.metric("Nutrition Therapy", f"{nutr.get('nutritional_supplementation', 0):,}")
-            with n2:
-                st.metric("Feeding Method", f"{nutr.get('feeding_method', 0):,}")
-            with n3:
-                st.metric("Feeding Tube", f"{nutr.get('feeding_tube', 0):,}")
-
-            st.markdown("##### Orthopedic")
-            ortho = clinical.get('orthopedic', {})
-            o1, o2 = st.columns(2)
-            with o1:
-                st.metric("Scoliosis", f"{ortho.get('scoliosis', 0):,}")
-            with o2:
-                st.metric("Spinal X-ray", f"{ortho.get('spinal_xray', 0):,}")
-
-        # Hospitalizations & Surgeries | Care
-        col_left, col_right = st.columns(2)
-        with col_left:
-            st.markdown("##### Hospitalizations")
-            hosp = clinical.get('hospitalizations', {})
-            h1, h2 = st.columns(2)
-            with h1:
-                st.metric("Patients", f"{hosp.get('patients', 0):,}")
-            with h2:
-                st.metric("Records", f"{hosp.get('records', 0):,}")
-            top_reasons = hosp.get('top_reasons', {})
-            if top_reasons:
-                reason_rows = [{"Reason": k, "Count": f"{v:,}"} for k, v in top_reasons.items()]
-                st.dataframe(pd.DataFrame(reason_rows), use_container_width=True, hide_index=True, height=200)
-
             st.markdown("##### Surgeries")
             surg = clinical.get('surgeries', {})
-            if surg:
-                sg1, sg2 = st.columns(2)
-                with sg1:
-                    st.metric("Patients", f"{surg.get('patients', 0):,}")
-                with sg2:
-                    st.metric("Records", f"{surg.get('records', 0):,}")
+            if surg and surg.get('patients', 0) > 0:
+                st.metric("Patients", f"{surg['patients']:,}",
+                          help=f"{surg.get('records', 0):,} total records")
                 surg_types = surg.get('types', {})
                 if surg_types:
                     surg_rows = [{"Type": k, "Count": f"{v:,}"} for k, v in surg_types.items() if k.strip()]
-                    st.dataframe(pd.DataFrame(surg_rows), use_container_width=True, hide_index=True, height=200)
-
-        with col_right:
-            st.markdown("##### Multidisciplinary Care")
-            care = clinical.get('care', {})
-            cr1, cr2, cr3 = st.columns(3)
-            with cr1:
-                st.metric("Care Plans", f"{care.get('multidisciplinary_plan', 0):,}")
-            with cr2:
-                st.metric("Seen By", f"{care.get('specialists_seen', 0):,}")
-            with cr3:
-                st.metric("Referred To", f"{care.get('specialists_referred', 0):,}")
+                    st.table(pd.DataFrame(surg_rows))
+            else:
+                st.caption("Surgery data not available.")
 
     # Footer
     st.markdown("---")

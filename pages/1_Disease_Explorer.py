@@ -27,6 +27,7 @@ from components.charts import (
     create_facility_distribution_mini_chart,
 )
 from components.tables import display_cohort_summary, display_data_preview, create_download_button
+from utils.cache import get_cached_snapshot
 from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES, LOGO_PNG
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -63,6 +64,10 @@ st.markdown(
         padding-bottom: 1rem;
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
+    }
+    [data-testid="stTable"] thead tr th:first-child,
+    [data-testid="stTable"] tbody tr td:first-child {
+        display: none;
     }
     </style>
     """,
@@ -258,7 +263,7 @@ if not _has_parquet:
         table_df.columns = ['Disease', 'Patients', '%']
         table_df['%'] = table_df['%'].apply(lambda x: f"{x:.1f}%")
         # Bold the selected disease
-        st.dataframe(table_df, hide_index=True, use_container_width=True)
+        st.table(table_df)
 
     # ===================================================================
     # UNAVAILABLE SECTIONS (snapshot mode)
@@ -448,13 +453,26 @@ else:
                 st.caption("Race/Ethnicity field not found")
 
         with col_fac:
+            # Build location lookup from snapshot for anonymized labels
+            _loc_lookup = {}
+            try:
+                _snap = get_cached_snapshot()
+                for s in _snap.get('facilities', {}).get('site_locations', []):
+                    city, state = s.get('city', ''), s.get('state', '')
+                    label = f"{city}, {state}" if city else f"Site {s['facility_id']}"
+                    _loc_lookup[str(s['facility_id'])] = label
+            except Exception:
+                pass
+
             fig = create_facility_distribution_mini_chart(
-                demo_df, title="Top Facilities (This Cohort)"
+                demo_df,
+                title="Top Sites (This Cohort)",
+                location_lookup=_loc_lookup if _loc_lookup else None,
             )
             if fig:
                 st.plotly_chart(fig, use_container_width=True)
             else:
-                st.caption("Facility distribution: no data available")
+                st.caption("Site distribution: no data available")
     else:
         st.warning("No demographics data available for this cohort.")
 

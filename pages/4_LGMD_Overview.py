@@ -26,6 +26,7 @@ from components.charts import (
     create_categorical_bar_chart,
     create_categorical_donut_chart,
 )
+from utils.cache import get_cached_snapshot
 from config.settings import PAGE_ICON, LOGO_PNG
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -62,6 +63,10 @@ st.markdown(
         padding-bottom: 1rem;
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
+    }
+    [data-testid="stTable"] thead tr th:first-child,
+    [data-testid="stTable"] tbody tr td:first-child {
+        display: none;
     }
     </style>
     """,
@@ -412,7 +417,7 @@ if has_subtype_data:
         st.markdown("**Subtype Breakdown**")
         display_df = subtype_counts[['Subtype', 'Patients', 'Percentage']].copy()
         display_df['Percentage'] = display_df['Percentage'].apply(lambda x: f"{x}%")
-        st.dataframe(display_df, hide_index=True, use_container_width=True, height=450)
+        st.table(display_df)
 else:
     st.info("Subtype data not available.")
 
@@ -777,7 +782,28 @@ else:
     else:
         facilities_df = pd.DataFrame()
 
+# Build location lookup from snapshot
+_lgmd_loc_lookup = {}
+try:
+    _lgmd_snap = get_cached_snapshot()
+    for s in _lgmd_snap.get('facilities', {}).get('site_locations', []):
+        city, state = s.get('city', ''), s.get('state', '')
+        label = f"{city}, {state}" if city else f"Site {s['facility_id']}"
+        _lgmd_loc_lookup[str(s['facility_id'])] = label
+except Exception:
+    pass
+
 if not facilities_df.empty:
+    # Map facility IDs to locations
+    if _lgmd_loc_lookup and 'FACILITY_DISPLAY_ID' in facilities_df.columns:
+        facilities_df['Location'] = facilities_df['FACILITY_DISPLAY_ID'].astype(str).map(
+            lambda fid: _lgmd_loc_lookup.get(fid, fid)
+        )
+    elif 'FACILITY_NAME' in facilities_df.columns:
+        facilities_df['Location'] = facilities_df['FACILITY_NAME']
+    else:
+        facilities_df['Location'] = facilities_df.index.astype(str)
+
     col_fac_chart, col_fac_table = st.columns([2, 1])
 
     with col_fac_chart:
@@ -785,20 +811,20 @@ if not facilities_df.empty:
         fig = px.bar(
             top_facilities,
             x='patient_count',
-            y='FACILITY_NAME',
+            y='Location',
             orientation='h',
             title=f"Top 10 Care Sites (of {len(facilities_df)} total)",
-            labels={'patient_count': 'LGMD Patients', 'FACILITY_NAME': 'Care Site'},
+            labels={'patient_count': 'LGMD Patients', 'Location': 'Care Site'},
             color_discrete_sequence=['#19D3F3']
         )
-        fig.update_layout(yaxis={'categoryorder': 'total ascending'}, height=400)
+        fig.update_layout(yaxis={'categoryorder': 'total ascending', 'type': 'category'}, height=400)
         st.plotly_chart(fig, use_container_width=True)
 
     with col_fac_table:
         st.markdown("**All Care Sites**")
-        display_fac = facilities_df[['FACILITY_NAME', 'patient_count']].copy()
+        display_fac = facilities_df[['Location', 'patient_count']].copy()
         display_fac.columns = ['Care Site', 'Patients']
-        st.dataframe(display_fac, hide_index=True, use_container_width=True, height=350)
+        st.table(display_fac)
 else:
     st.info("Facility data not available.")
 

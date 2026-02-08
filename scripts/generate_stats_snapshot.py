@@ -80,8 +80,16 @@ def generate_snapshot(include_usndr: bool = False) -> dict:
 
         "facilities": {
             "total_facilities": base_cohort['facility_info'].get('total_facilities', 0),
-            "top_10_facilities": base_cohort['facility_info'].get('facilities', [])[:10] if base_cohort['facility_info'] else [],
-            "all_facilities": base_cohort['facility_info'].get('facilities', []) if base_cohort['facility_info'] else []
+            # Strip facility names from public snapshot — names only
+            # available via provisioned access + live Excel metadata
+            "all_facilities": [
+                {
+                    "FACILITY_DISPLAY_ID": f.get("FACILITY_DISPLAY_ID"),
+                    "patient_count": f.get("patient_count"),
+                }
+                for f in (base_cohort['facility_info'].get('facilities', []) if base_cohort['facility_info'] else [])
+            ],
+            "site_locations": _build_site_geography(base_cohort),
         },
 
         "disease_type_distribution": {
@@ -136,6 +144,110 @@ def _compute_longitudinal_stats(base_cohort: dict) -> dict:
         stats["by_disease"] = by_disease
 
     return stats
+
+
+def _build_site_geography(base_cohort: dict) -> list:
+    """Build site locations from actual encounter data + metadata for geography.
+
+    Patient counts and per-disease breakdowns come from the data itself
+    (encounters grouped by FACILITY_DISPLAY_ID × dstype).  Location metadata
+    (city, state, ZIP → lat/lon) comes from the MOVR Sites tracker Excel.
+    Sites that appear in the data but not the metadata are included with
+    null coordinates.  No facility names are stored.
+    """
+    enc = base_cohort['encounters']
+    if enc.empty or 'FACILITY_DISPLAY_ID' not in enc.columns:
+        return []
+
+    # --- Source of truth: patient counts from data ---
+    fac_total = (
+        enc.groupby('FACILITY_DISPLAY_ID')['FACPATID']
+        .nunique()
+        .reset_index()
+        .rename(columns={'FACPATID': 'patient_count'})
+    )
+    fac_total['facility_id'] = fac_total['FACILITY_DISPLAY_ID'].astype(str)
+
+    # Per-disease counts per facility
+    disease_counts = {}
+    if 'dstype' in enc.columns:
+        fac_ds = (
+            enc.groupby(['FACILITY_DISPLAY_ID', 'dstype'])['FACPATID']
+            .nunique()
+            .reset_index()
+            .rename(columns={'FACPATID': 'patients'})
+        )
+        for _, row in fac_ds.iterrows():
+            fid = str(row['FACILITY_DISPLAY_ID'])
+            ds = str(row['dstype'])
+            disease_counts.setdefault(fid, {})[ds] = int(row['patients'])
+
+    all_diseases = sorted(enc['dstype'].dropna().unique()) if 'dstype' in enc.columns else []
+
+    # --- Location metadata from Excel (optional enrichment) ---
+    excel_path = Path(__file__).parent.parent / 'data' / 'MOVR Sites - Tracker Information - EK.xlsx'
+    meta_lookup = {}
+    if excel_path.exists():
+        sites_meta = pd.read_excel(excel_path)
+        try:
+            import pgeocode
+            nomi = pgeocode.Nominatim('us')
+        except ImportError:
+            nomi = None
+            print("⚠️  pgeocode not installed – coordinates unavailable")
+
+        for _, mrow in sites_meta.iterrows():
+            mid = str(int(mrow['FACILITY_DISPLAY_ID']))
+            zipcode = str(int(mrow['Zip'])).zfill(5)
+
+            lat, lon = None, None
+            if nomi is not None:
+                geo = nomi.query_postal_code(zipcode)
+                lat = float(geo.latitude) if pd.notna(geo.latitude) else None
+                lon = float(geo.longitude) if pd.notna(geo.longitude) else None
+
+            state = str(mrow['State']).strip()
+            meta_lookup[mid] = {
+                "city": str(mrow['City']).strip(),
+                "state": state,
+                "region": str(mrow.get('Region', '')).strip(),
+                "site_type": str(mrow.get('Site Type', '')).strip(),
+                "lat": lat,
+                "lon": lon,
+                "continental": state not in ('HI', 'AK', 'PR', 'GU', 'VI', 'AS', 'MP'),
+            }
+    else:
+        print("⚠️  Site tracker Excel not found – locations unavailable")
+
+    # --- Merge data counts with metadata ---
+    locations = []
+    for _, row in fac_total.iterrows():
+        fid = row['facility_id']
+        meta = meta_lookup.get(fid, {})
+        ds_counts = disease_counts.get(fid, {})
+
+        locations.append({
+            "facility_id": fid,
+            "city": meta.get("city", ""),
+            "state": meta.get("state", ""),
+            "region": meta.get("region", ""),
+            "site_type": meta.get("site_type", ""),
+            "lat": meta.get("lat"),
+            "lon": meta.get("lon"),
+            "continental": meta.get("continental", True),
+            "patient_count": int(row['patient_count']),
+            "by_disease": ds_counts,
+        })
+
+    locations.sort(key=lambda x: x['patient_count'], reverse=True)
+
+    mapped = sum(1 for loc in locations if loc['lat'] is not None)
+    in_data_only = sum(1 for loc in locations if not meta_lookup.get(loc['facility_id']))
+    print(f"📍 Site geography: {len(locations)} sites from data, "
+          f"{mapped} geocoded, {in_data_only} data-only (no metadata)")
+    if all_diseases:
+        print(f"   Disease types: {', '.join(all_diseases)}")
+    return locations
 
 
 def _compute_clinical_availability(base_cohort: dict) -> dict:
@@ -296,6 +408,7 @@ def _compute_clinical_availability(base_cohort: dict) -> dict:
         },
         "hospitalizations": hosp_stats,
         "surgeries": surg_stats,
+        "clinical_trials": _compute_trial_stats(enc),
         "care": {
             "multidisciplinary_plan": _patients_with('mltcrpl'),
             "specialists_seen": _patients_with('ptsn'),
@@ -304,44 +417,160 @@ def _compute_clinical_availability(base_cohort: dict) -> dict:
     }
 
 
-def _compute_medication_stats(enc, enc_meds, log_meds):
-    """Compute medication breakdown by drug class from repeat group tables."""
-    # Combine encounter + log medication tables
-    all_meds = pd.concat([enc_meds, log_meds], ignore_index=True) if not log_meds.empty else enc_meds
-
-    if all_meds.empty:
+def _compute_trial_stats(enc):
+    """Compute clinical trial participation from clntrlyn encounter field."""
+    if 'clntrlyn' not in enc.columns:
         return {}
+    vals = enc['clntrlyn'].dropna()
+    vals = vals[vals.astype(str).str.strip() != '']
+    patients = int(enc.loc[vals.index, 'FACPATID'].nunique())
+    breakdown = {str(k): int(v) for k, v in vals.value_counts().items()}
+    # Count unique patients per category
+    patient_breakdown = {}
+    for cat in vals.unique():
+        mask = enc['clntrlyn'] == cat
+        patient_breakdown[str(cat)] = int(enc.loc[mask, 'FACPATID'].nunique())
+    return {
+        "patients": patients,
+        "data_points": len(vals),
+        "breakdown": breakdown,
+        "patient_breakdown": patient_breakdown,
+    }
 
-    total_pts = int(all_meds['FACPATID'].nunique()) if 'FACPATID' in all_meds.columns else 0
 
-    def _class_stats(names, label):
-        mask = all_meds['medname'].isin(names)
-        recs = int(mask.sum())
-        pts = int(all_meds.loc[mask, 'FACPATID'].nunique()) if recs > 0 else 0
-        result = {"patients": pts, "records": recs, "label": label}
-        # Per-drug breakdown
+def _compute_medication_stats(enc, enc_meds, log_meds):
+    """Compute medication stats from combo_drugs (preferred) + repeat group tables."""
+    import yaml
+
+    # Combine encounter + log medication tables (for overall totals)
+    all_meds = pd.concat([enc_meds, log_meds], ignore_index=True) if not log_meds.empty else enc_meds
+    total_pts = int(all_meds['FACPATID'].nunique()) if not all_meds.empty and 'FACPATID' in all_meds.columns else 0
+
+    # --- Load combo_drugs (preferred source per gene therapy config) ---
+    data_dir = Path(__file__).parent.parent / 'data'
+    combo_path = data_dir / 'combo_drugs.parquet'
+    patient_ids = set(enc['FACPATID'].dropna().unique()) if 'FACPATID' in enc.columns else set()
+
+    combo = pd.DataFrame()
+    if combo_path.exists():
+        combo = pd.read_parquet(combo_path)
+        if 'FACPATID' in combo.columns:
+            combo = combo[combo['FACPATID'].isin(patient_ids)]
+        print(f"   combo_drugs: {len(combo):,} records, {combo['FACPATID'].nunique():,} cohort patients")
+
+    # --- Load gene therapy config ---
+    config_path = data_dir.parent / 'config' / 'gene_therapy_config.yaml'
+    gt_config = {}
+    if config_path.exists():
+        with open(config_path) as f:
+            gt_config = yaml.safe_load(f)
+
+    # --- Gene therapy by disease from combo_drugs ---
+    # Merge brand + generic names into deduplicated treatment families
+    # so patients aren't double-counted (Spinraza = nusinersen, etc.)
+    _TREATMENT_FAMILIES = {
+        'SMA': [
+            {'label': 'Spinraza (nusinersen)', 'category': 'Antisense',
+             'search': ['Spinraza', 'nusinersen']},
+            {'label': 'Zolgensma (onasemnogene)', 'category': 'Gene Therapy',
+             'search': ['Zolgensma', 'onasemnogene']},
+            {'label': 'Evrysdi (risdiplam)', 'category': 'SMN2 Modifier',
+             'search': ['Evrysdi', 'risdiplam']},
+        ],
+        'DMD': [
+            {'label': 'Exondys 51 (eteplirsen)', 'category': 'Exon Skipping',
+             'search': ['Exondys', 'eteplirsen']},
+            {'label': 'Vyondys 53 (golodirsen)', 'category': 'Exon Skipping',
+             'search': ['Vyondys', 'golodirsen']},
+            {'label': 'Amondys 45 (casimersen)', 'category': 'Exon Skipping',
+             'search': ['Amondys', 'casimersen']},
+            {'label': 'Viltepso (viltolarsen)', 'category': 'Exon Skipping',
+             'search': ['Viltepso', 'viltolarsen']},
+        ],
+        'ALS': [
+            {'label': 'Qalsody (tofersen)', 'category': 'Antisense',
+             'search': ['Qalsody', 'tofersen']},
+        ],
+        'Pompe': [
+            {'label': 'Lumizyme (alglucosidase alfa)', 'category': 'ERT',
+             'search': ['Lumizyme', 'alglucosidase alfa']},
+            {'label': 'Nexviazyme (avalglucosidase alfa)', 'category': 'ERT',
+             'search': ['Nexviazyme', 'avalglucosidase alfa']},
+        ],
+    }
+
+    gene_therapy_by_disease = {}
+    if not combo.empty:
+        for disease, families in _TREATMENT_FAMILIES.items():
+            disease_patient_ids = set()
+            treatments = []
+
+            for fam in families:
+                fam_pts = set()
+                fam_recs = 0
+                for term in fam['search']:
+                    mask = combo['StandardName'].str.contains(
+                        term, case=False, na=False
+                    )
+                    recs = int(mask.sum())
+                    if recs > 0:
+                        fam_pts |= set(combo.loc[mask, 'FACPATID'].dropna())
+                        fam_recs += recs
+
+                if fam_pts:
+                    treatments.append({
+                        "label": fam['label'],
+                        "category": fam['category'],
+                        "patients": len(fam_pts),
+                        "records": fam_recs,
+                    })
+                    disease_patient_ids |= fam_pts
+
+            if treatments:
+                gene_therapy_by_disease[disease] = {
+                    "total_patients": len(disease_patient_ids),
+                    "treatments": treatments,
+                }
+
+        if gene_therapy_by_disease:
+            parts = [f"{d}={v['total_patients']} pts" for d, v in gene_therapy_by_disease.items()]
+            print(f"   Gene therapy by disease: {', '.join(parts)}")
+
+    # --- Top medications from combo_drugs ---
+    top_medications = []
+    if not combo.empty and 'StandardName' in combo.columns:
+        top = (
+            combo.groupby('StandardName')['FACPATID']
+            .nunique()
+            .sort_values(ascending=False)
+            .head(25)
+        )
+        for name, pts in top.items():
+            recs = int((combo['StandardName'] == name).sum())
+            top_medications.append({
+                "name": str(name),
+                "patients": int(pts),
+                "records": recs,
+            })
+
+    # --- Drug class stats from combo_drugs (or fallback to enc/log meds) ---
+    def _class_stats_combo(keywords, label):
+        """Match drug classes in combo_drugs by keyword search on StandardName."""
+        if combo.empty:
+            return {"patients": 0, "records": 0, "label": label, "drugs": {}}
+
+        all_pts = set()
+        all_recs = 0
         drugs = {}
-        for name in names:
-            drug_mask = all_meds['medname'] == name
-            drug_recs = int(drug_mask.sum())
-            if drug_recs > 0:
-                drug_pts = int(all_meds.loc[drug_mask, 'FACPATID'].nunique())
-                drugs[name] = {"patients": drug_pts, "records": drug_recs}
-        result["drugs"] = drugs
-        return result
-
-    # Also search medoth and medname1-Description for gene therapies
-    def _search_meds(keywords):
-        pts = set()
-        recs = 0
         for kw in keywords:
-            for col in ['medname', 'medoth']:
-                if col in all_meds.columns:
-                    vals = all_meds[col].fillna('').astype(str)
-                    matches = vals.str.lower().str.contains(kw.lower(), na=False)
-                    recs += int(matches.sum())
-                    pts |= set(all_meds.loc[matches, 'FACPATID'].dropna())
-        return {"patients": len(pts), "records": recs}
+            mask = combo['StandardName'].str.contains(kw, case=False, na=False)
+            recs = int(mask.sum())
+            if recs > 0:
+                pts = set(combo.loc[mask, 'FACPATID'].dropna())
+                drugs[kw] = {"patients": len(pts), "records": recs}
+                all_pts |= pts
+                all_recs += recs
+        return {"patients": len(all_pts), "records": all_recs, "label": label, "drugs": drugs}
 
     # Glucocorticoid encounter field (glcouse) breakdown
     glc_enc = {}
@@ -354,44 +583,34 @@ def _compute_medication_stats(enc, enc_meds, log_meds):
             str(k): int(v) for k, v in glc_vals.value_counts().items()
         }
 
-    return {
-        "total_records": len(all_meds),
-        "total_patients": total_pts,
-        "glucocorticoids_med_table": _class_stats(
-            ['Prednisone', 'Deflazacort', 'Emflaza'], "Glucocorticoids (Med Table)"
-        ),
+    combo_stats = {
+        "total_records": len(combo) if not combo.empty else len(all_meds),
+        "total_patients": int(combo['FACPATID'].nunique()) if not combo.empty else total_pts,
+        "source": "combo_drugs" if not combo.empty else "encounter_log_meds",
+        "gene_therapy_by_disease": gene_therapy_by_disease,
+        "top_medications": top_medications,
         "glucocorticoid_encounter": glc_enc,
-        "disease_modifying_als": _class_stats(
-            ['Riluzole', 'Riluzole, oral suspension (TiGlutik)', 'Radicava', 'Relyvrio'],
+        "disease_modifying_als": _class_stats_combo(
+            ['riluzole', 'Radicava', 'edaravone', 'Relyvrio'],
             "Disease-Modifying (ALS)"
         ),
-        "gene_therapy_antisense": _class_stats(
-            ['Spinraza', 'Zolgensma', 'Exondys-51', 'Evrysdi'],
-            "Gene Therapy & Antisense"
-        ),
-        "exon_skipping_search": _search_meds(
-            ['exondys', 'vyondys', 'viltepso', 'casimersen', 'amondys',
-             'eteplirsen', 'golodirsen', 'gene therapy', 'gene skipping']
-        ),
-        "sma_treatments_search": _search_meds(
-            ['spinraza', 'nusinersen', 'zolgensma', 'onasemnogene',
-             'risdiplam', 'evrysdi']
-        ),
-        "cardiac_meds": _class_stats(
-            ['Lisinopril', 'Losartan', 'Enalapril', 'Carvedilol', 'Metoprolol',
-             'Aldactone (Spironolactone)', 'Digoxin', 'Benazepril', 'Ramipril'],
+        "cardiac_meds": _class_stats_combo(
+            ['lisinopril', 'losartan', 'enalapril', 'carvedilol', 'metoprolol',
+             'spironolactone', 'digoxin', 'benazepril', 'ramipril'],
             "Cardiac Medications"
         ),
-        "psych_neuro": _class_stats(
-            ['Zyprexa', 'Nuedexta', 'Gabapentin', 'Zoloft (SSRI)',
-             'Lorazepam', 'Amitriptyline', 'Baclofen'],
+        "psych_neuro": _class_stats_combo(
+            ['olanzapine', 'Nuedexta', 'gabapentin', 'sertraline',
+             'lorazepam', 'amitriptyline', 'baclofen'],
             "Psych / Neuro"
         ),
-        "respiratory_meds": _class_stats(
-            ['Albuterol', 'Albuterol inhaled', 'Albuterol oral', 'Budesonide'],
+        "respiratory_meds": _class_stats_combo(
+            ['albuterol', 'budesonide'],
             "Respiratory"
         ),
     }
+
+    return combo_stats
 
 
 def save_snapshot(snapshot: dict, output_path: Path):
@@ -436,9 +655,9 @@ def print_summary(snapshot: dict):
 
     print(f"\n🏥 FACILITIES")
     print(f"   Total Facilities: {snapshot['facilities']['total_facilities']}")
-    print(f"   Top 5 Facilities:")
-    for facility in snapshot['facilities']['top_10_facilities'][:5]:
-        print(f"      {facility['FACILITY_DISPLAY_ID']}: {facility['FACILITY_NAME']} ({facility['patient_count']:,} patients)")
+    print(f"   Top 5 Sites (by patient count):")
+    for facility in snapshot['facilities']['all_facilities'][:5]:
+        print(f"      Site {facility['FACILITY_DISPLAY_ID']}: {facility['patient_count']:,} patients")
 
     print(f"\n📋 DATA AVAILABILITY")
     print(f"   Demographics: {snapshot['data_availability']['demographics_records']:,} records")

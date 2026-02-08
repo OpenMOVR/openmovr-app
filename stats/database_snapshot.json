@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-07T18:34:06.853111",
-    "generated_timestamp": "2026-02-07 18:34:06",
+    "generated_at": "2026-02-07T20:13:18.522777",
+    "generated_timestamp": "2026-02-07 20:13:18",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -108,358 +108,1281 @@
   },
   "facilities": {
     "total_facilities": 60,
-    "top_10_facilities": [
-      {
-        "FACILITY_DISPLAY_ID": "1349",
-        "patient_count": 390,
-        "FACILITY_NAME": "Texas Neurology"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1194",
-        "patient_count": 199,
-        "FACILITY_NAME": "Houston Methodist Neurological Institute"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1411",
-        "patient_count": 149,
-        "FACILITY_NAME": "Nemours Children's Hospital"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1149",
-        "patient_count": 134,
-        "FACILITY_NAME": "Ohio State University Wexner Medical Center"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1359",
-        "patient_count": 126,
-        "FACILITY_NAME": "Billings Clinic"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1379",
-        "patient_count": 123,
-        "FACILITY_NAME": "University of California San Francisco"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1325",
-        "patient_count": 111,
-        "FACILITY_NAME": "UC Irvine Center for Clinical Research"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1383",
-        "patient_count": 105,
-        "FACILITY_NAME": "Hospital for Special Care"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1440",
-        "patient_count": 94,
-        "FACILITY_NAME": "Johns Hopkins University"
-      },
-      {
-        "FACILITY_DISPLAY_ID": "1048",
-        "patient_count": 92,
-        "FACILITY_NAME": "Georgetown University"
-      }
-    ],
     "all_facilities": [
       {
         "FACILITY_DISPLAY_ID": "1349",
-        "patient_count": 390,
-        "FACILITY_NAME": "Texas Neurology"
+        "patient_count": 390
       },
       {
         "FACILITY_DISPLAY_ID": "1194",
-        "patient_count": 199,
-        "FACILITY_NAME": "Houston Methodist Neurological Institute"
+        "patient_count": 199
       },
       {
         "FACILITY_DISPLAY_ID": "1411",
-        "patient_count": 149,
-        "FACILITY_NAME": "Nemours Children's Hospital"
+        "patient_count": 149
       },
       {
         "FACILITY_DISPLAY_ID": "1149",
-        "patient_count": 134,
-        "FACILITY_NAME": "Ohio State University Wexner Medical Center"
+        "patient_count": 134
       },
       {
         "FACILITY_DISPLAY_ID": "1359",
-        "patient_count": 126,
-        "FACILITY_NAME": "Billings Clinic"
+        "patient_count": 126
       },
       {
         "FACILITY_DISPLAY_ID": "1379",
-        "patient_count": 123,
-        "FACILITY_NAME": "University of California San Francisco"
+        "patient_count": 123
       },
       {
         "FACILITY_DISPLAY_ID": "1325",
-        "patient_count": 111,
-        "FACILITY_NAME": "UC Irvine Center for Clinical Research"
+        "patient_count": 111
       },
       {
         "FACILITY_DISPLAY_ID": "1383",
-        "patient_count": 105,
-        "FACILITY_NAME": "Hospital for Special Care"
+        "patient_count": 105
       },
       {
         "FACILITY_DISPLAY_ID": "1440",
-        "patient_count": 94,
-        "FACILITY_NAME": "Johns Hopkins University"
+        "patient_count": 94
       },
       {
         "FACILITY_DISPLAY_ID": "1048",
-        "patient_count": 92,
-        "FACILITY_NAME": "Georgetown University"
+        "patient_count": 92
       },
       {
         "FACILITY_DISPLAY_ID": "1100",
-        "patient_count": 90,
-        "FACILITY_NAME": "University of Missouri"
+        "patient_count": 90
       },
       {
         "FACILITY_DISPLAY_ID": "1328",
-        "patient_count": 89,
-        "FACILITY_NAME": "Cincinnati Children's Hospital Medical Center"
+        "patient_count": 89
       },
       {
         "FACILITY_DISPLAY_ID": "1430",
-        "patient_count": 88,
-        "FACILITY_NAME": "Temple University Hospital"
+        "patient_count": 88
       },
       {
         "FACILITY_DISPLAY_ID": "1095",
-        "patient_count": 84,
-        "FACILITY_NAME": "University of Minnesota"
+        "patient_count": 84
       },
       {
         "FACILITY_DISPLAY_ID": "1165",
-        "patient_count": 84,
-        "FACILITY_NAME": "Children's Hospital of Philadelphia"
+        "patient_count": 84
       },
       {
         "FACILITY_DISPLAY_ID": "1184",
-        "patient_count": 83,
-        "FACILITY_NAME": "Wesley Neurology Clinic"
+        "patient_count": 83
       },
       {
         "FACILITY_DISPLAY_ID": "1064",
-        "patient_count": 78,
-        "FACILITY_NAME": "University of Kansas Medical Center"
+        "patient_count": 78
       },
       {
         "FACILITY_DISPLAY_ID": "1254",
-        "patient_count": 75,
-        "FACILITY_NAME": "University of Miami Kessenich Family Center"
+        "patient_count": 75
       },
       {
         "FACILITY_DISPLAY_ID": "1434",
-        "patient_count": 73,
-        "FACILITY_NAME": "Children's Hospital of the King's Daughters"
+        "patient_count": 73
       },
       {
         "FACILITY_DISPLAY_ID": "1405",
-        "patient_count": 73,
-        "FACILITY_NAME": "Children's Hospital Los Angeles"
+        "patient_count": 73
       },
       {
         "FACILITY_DISPLAY_ID": "1225",
-        "patient_count": 67,
-        "FACILITY_NAME": "Children's Hospital of Wisconsin"
+        "patient_count": 67
       },
       {
         "FACILITY_DISPLAY_ID": "1433",
-        "patient_count": 63,
-        "FACILITY_NAME": "University of Louisville (Pediatrics)"
+        "patient_count": 63
       },
       {
         "FACILITY_DISPLAY_ID": "1072",
-        "patient_count": 62,
-        "FACILITY_NAME": "Louisiana State University Health Science Center"
+        "patient_count": 62
       },
       {
         "FACILITY_DISPLAY_ID": "1408",
-        "patient_count": 59,
-        "FACILITY_NAME": "American Family Children Hospital"
+        "patient_count": 59
       },
       {
         "FACILITY_DISPLAY_ID": "1441",
-        "patient_count": 58,
-        "FACILITY_NAME": "Massachusetts General Hospital"
+        "patient_count": 58
       },
       {
         "FACILITY_DISPLAY_ID": "1449",
-        "patient_count": 55,
-        "FACILITY_NAME": "UF Health Pediatrics"
+        "patient_count": 55
       },
       {
         "FACILITY_DISPLAY_ID": "1418",
-        "patient_count": 53,
-        "FACILITY_NAME": "Beaumont Health, Royal Oak"
+        "patient_count": 53
       },
       {
         "FACILITY_DISPLAY_ID": "1226",
-        "patient_count": 51,
-        "FACILITY_NAME": "Medical College of Wisconsin"
+        "patient_count": 51
       },
       {
         "FACILITY_DISPLAY_ID": "9001",
-        "patient_count": 50,
-        "FACILITY_NAME": "Arkansas Children's Research Institute"
+        "patient_count": 50
       },
       {
         "FACILITY_DISPLAY_ID": "1259",
-        "patient_count": 49,
-        "FACILITY_NAME": "Cook Children's Medical Center"
+        "patient_count": 49
       },
       {
         "FACILITY_DISPLAY_ID": "1438",
-        "patient_count": 45,
-        "FACILITY_NAME": "UCLA"
+        "patient_count": 45
       },
       {
         "FACILITY_DISPLAY_ID": "1162",
-        "patient_count": 44,
-        "FACILITY_NAME": "Penn State Health"
+        "patient_count": 44
       },
       {
         "FACILITY_DISPLAY_ID": "1239",
-        "patient_count": 37,
-        "FACILITY_NAME": "Carle Neuroscience Institute, Carle Foundation Hospital"
+        "patient_count": 37
       },
       {
         "FACILITY_DISPLAY_ID": "1392",
-        "patient_count": 35,
-        "FACILITY_NAME": "HSS - Hospital for Special Surgery"
+        "patient_count": 35
       },
       {
         "FACILITY_DISPLAY_ID": "1009",
-        "patient_count": 31,
-        "FACILITY_NAME": "University of Arkansas Medical Sciences"
+        "patient_count": 31
       },
       {
         "FACILITY_DISPLAY_ID": "1229",
-        "patient_count": 28,
-        "FACILITY_NAME": "Children's Hospital of Colorado"
+        "patient_count": 28
       },
       {
         "FACILITY_DISPLAY_ID": "1402",
-        "patient_count": 27,
-        "FACILITY_NAME": "Le Bonheur Children's Hospital"
+        "patient_count": 27
       },
       {
         "FACILITY_DISPLAY_ID": "1341",
-        "patient_count": 25,
-        "FACILITY_NAME": "Southern Illinois University of Medicine"
+        "patient_count": 25
       },
       {
         "FACILITY_DISPLAY_ID": "1347",
-        "patient_count": 25,
-        "FACILITY_NAME": "UCSF Benioff Children's Hospital"
+        "patient_count": 25
       },
       {
         "FACILITY_DISPLAY_ID": "1185",
-        "patient_count": 23,
-        "FACILITY_NAME": "Vanderbilt University Medical Center"
+        "patient_count": 23
       },
       {
         "FACILITY_DISPLAY_ID": "1448",
-        "patient_count": 22,
-        "FACILITY_NAME": "Yale University School of Medicine"
+        "patient_count": 22
       },
       {
         "FACILITY_DISPLAY_ID": "1364",
-        "patient_count": 22,
-        "FACILITY_NAME": "Prevea Health"
+        "patient_count": 22
       },
       {
         "FACILITY_DISPLAY_ID": "1378",
-        "patient_count": 22,
-        "FACILITY_NAME": "Child Neurology Consultants of Austin"
+        "patient_count": 22
       },
       {
         "FACILITY_DISPLAY_ID": "1431",
-        "patient_count": 17,
-        "FACILITY_NAME": "Las Vegas Clinic"
+        "patient_count": 17
       },
       {
         "FACILITY_DISPLAY_ID": "1298",
-        "patient_count": 17,
-        "FACILITY_NAME": "Essentia Health of Duluth"
+        "patient_count": 17
       },
       {
         "FACILITY_DISPLAY_ID": "1114",
-        "patient_count": 16,
-        "FACILITY_NAME": "Rutgers New Jersey Medical School"
+        "patient_count": 16
       },
       {
         "FACILITY_DISPLAY_ID": "1021",
-        "patient_count": 14,
-        "FACILITY_NAME": "Rady Children's Hospital- San Diego"
+        "patient_count": 14
       },
       {
         "FACILITY_DISPLAY_ID": "9000",
-        "patient_count": 13,
-        "FACILITY_NAME": "Idaho Physical Medicine & Rehabilitation"
+        "patient_count": 13
       },
       {
         "FACILITY_DISPLAY_ID": "1063",
-        "patient_count": 13,
-        "FACILITY_NAME": "University of Iowa Hospitals & Clinics"
+        "patient_count": 13
       },
       {
         "FACILITY_DISPLAY_ID": "1149_legacy",
-        "patient_count": 10,
-        "FACILITY_NAME": "Ohio State University Wexner Medical Center"
+        "patient_count": 10
       },
       {
         "FACILITY_DISPLAY_ID": "1234",
-        "patient_count": 9,
-        "FACILITY_NAME": "University of Puerto Rico Medical Sciences"
+        "patient_count": 9
       },
       {
         "FACILITY_DISPLAY_ID": "1001",
-        "patient_count": 7,
-        "FACILITY_NAME": "University of Alabama at Birmingham"
+        "patient_count": 7
       },
       {
         "FACILITY_DISPLAY_ID": "1206",
-        "patient_count": 7,
-        "FACILITY_NAME": "University of Vermont Medical Center"
+        "patient_count": 7
       },
       {
         "FACILITY_DISPLAY_ID": "1446",
-        "patient_count": 6,
-        "FACILITY_NAME": "Geisinger Medical Center"
+        "patient_count": 6
       },
       {
         "FACILITY_DISPLAY_ID": "1098",
-        "patient_count": 5,
-        "FACILITY_NAME": "University of Mississippi Medical Center"
+        "patient_count": 5
       },
       {
         "FACILITY_DISPLAY_ID": "1444",
-        "patient_count": 5,
-        "FACILITY_NAME": "Columbia University Medical Center"
+        "patient_count": 5
       },
       {
         "FACILITY_DISPLAY_ID": "1176",
-        "patient_count": 4,
-        "FACILITY_NAME": "Medical University of South Carolina"
+        "patient_count": 4
       },
       {
         "FACILITY_DISPLAY_ID": "1109",
-        "patient_count": 4,
-        "FACILITY_NAME": "Dartmouth-Hitchcock Medical Center"
+        "patient_count": 4
       },
       {
         "FACILITY_DISPLAY_ID": "1282",
-        "patient_count": 3,
-        "FACILITY_NAME": "Children's Healthcare of Atlanta / Emory Healthcare"
+        "patient_count": 3
       },
       {
         "FACILITY_DISPLAY_ID": "1282_legacy",
+        "patient_count": 1
+      }
+    ],
+    "site_locations": [
+      {
+        "facility_id": "1349",
+        "city": "Dallas",
+        "state": "TX",
+        "region": "Southwest",
+        "site_type": "ALS Only",
+        "lat": 32.831,
+        "lon": -96.7692,
+        "continental": true,
+        "patient_count": 390,
+        "by_disease": {
+          "ALS": 390
+        }
+      },
+      {
+        "facility_id": "1194",
+        "city": "Houston",
+        "state": "TX",
+        "region": "Southwest",
+        "site_type": "Adult Neurology & ALS Clinic",
+        "lat": 29.7041,
+        "lon": -95.401,
+        "continental": true,
+        "patient_count": 199,
+        "by_disease": {
+          "ALS": 197,
+          "FSHD": 1,
+          "SMA": 1
+        }
+      },
+      {
+        "facility_id": "1411",
+        "city": "Orlando",
+        "state": "FL",
+        "region": "East",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 28.4317,
+        "lon": -81.343,
+        "continental": true,
+        "patient_count": 149,
+        "by_disease": {
+          "BMD": 17,
+          "DMD": 57,
+          "FSHD": 1,
+          "LGMD": 9,
+          "Pompe": 3,
+          "SMA": 62
+        }
+      },
+      {
+        "facility_id": "1149",
+        "city": "Columbus",
+        "state": "OH",
+        "region": "Midwest",
+        "site_type": "Adult Neurology & ALS Clinic",
+        "lat": 40.0226,
+        "lon": -83.0776,
+        "continental": true,
+        "patient_count": 134,
+        "by_disease": {
+          "ALS": 93,
+          "BMD": 1,
+          "DMD": 4,
+          "FSHD": 19,
+          "LGMD": 8,
+          "SMA": 9
+        }
+      },
+      {
+        "facility_id": "1359",
+        "city": "Billings",
+        "state": "MT",
+        "region": "West",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 45.7745,
+        "lon": -108.5005,
+        "continental": true,
+        "patient_count": 126,
+        "by_disease": {
+          "ALS": 68,
+          "BMD": 3,
+          "DMD": 19,
+          "FSHD": 6,
+          "LGMD": 11,
+          "Pompe": 4,
+          "SMA": 15
+        }
+      },
+      {
+        "facility_id": "1379",
+        "city": "San Francisco",
+        "state": "CA",
+        "region": "West",
+        "site_type": "ALS only",
+        "lat": 37.7631,
+        "lon": -122.4586,
+        "continental": true,
+        "patient_count": 123,
+        "by_disease": {
+          "ALS": 123
+        }
+      },
+      {
+        "facility_id": "1325",
+        "city": "Orange",
+        "state": "CA",
+        "region": "West",
+        "site_type": "Adult Neurology/ALS",
+        "lat": 33.7875,
+        "lon": -117.8776,
+        "continental": true,
+        "patient_count": 111,
+        "by_disease": {
+          "ALS": 73,
+          "BMD": 2,
+          "FSHD": 13,
+          "LGMD": 15,
+          "Pompe": 5,
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1383",
+        "city": "New Britain",
+        "state": "CT",
+        "region": "Northeast",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 41.6867,
+        "lon": -72.7908,
+        "continental": true,
+        "patient_count": 105,
+        "by_disease": {
+          "ALS": 79,
+          "BMD": 2,
+          "DMD": 1,
+          "FSHD": 13,
+          "LGMD": 7,
+          "Pompe": 2,
+          "SMA": 1
+        }
+      },
+      {
+        "facility_id": "1440",
+        "city": "Baltimore",
+        "state": "MD",
+        "region": "Northeast",
+        "site_type": "ALS Only",
+        "lat": 39.2975,
+        "lon": -76.5927,
+        "continental": true,
+        "patient_count": 94,
+        "by_disease": {
+          "ALS": 94
+        }
+      },
+      {
+        "facility_id": "1048",
+        "city": "Washington",
+        "state": "DC",
+        "region": "Northeast",
+        "site_type": "Adult Neurology Only",
+        "lat": 38.9144,
+        "lon": -77.074,
+        "continental": true,
+        "patient_count": 92,
+        "by_disease": {
+          "ALS": 51,
+          "BMD": 6,
+          "DMD": 5,
+          "FSHD": 12,
+          "LGMD": 11,
+          "Pompe": 2,
+          "SMA": 5
+        }
+      },
+      {
+        "facility_id": "1100",
+        "city": "Columbia",
+        "state": "MO",
+        "region": "Midwest",
+        "site_type": "Adult Neurology/Pediatric Neurology",
+        "lat": 38.9376,
+        "lon": -92.3304,
+        "continental": true,
+        "patient_count": 90,
+        "by_disease": {
+          "ALS": 55,
+          "BMD": 4,
+          "DMD": 7,
+          "FSHD": 10,
+          "LGMD": 7,
+          "Pompe": 1,
+          "SMA": 6
+        }
+      },
+      {
+        "facility_id": "1328",
+        "city": "Cincinnati",
+        "state": "OH",
+        "region": "Midwest",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 39.149,
+        "lon": -84.4892,
+        "continental": true,
+        "patient_count": 89,
+        "by_disease": {
+          "BMD": 3,
+          "DMD": 77,
+          "SMA": 9
+        }
+      },
+      {
+        "facility_id": "1430",
+        "city": "Philadelphia",
+        "state": "PA",
+        "region": "Northeast",
+        "site_type": "Adult Neurology & ALS Clinic",
+        "lat": 40.0118,
+        "lon": -75.1456,
+        "continental": true,
+        "patient_count": 88,
+        "by_disease": {
+          "ALS": 71,
+          "FSHD": 6,
+          "LGMD": 5,
+          "SMA": 6
+        }
+      },
+      {
+        "facility_id": "1095",
+        "city": "Minneapolis",
+        "state": "MN",
+        "region": "Midwest",
+        "site_type": "Adult Neurology only",
+        "lat": 44.9682,
+        "lon": -93.2429,
+        "continental": true,
+        "patient_count": 84,
+        "by_disease": {
+          "BMD": 2,
+          "DMD": 27,
+          "FSHD": 4,
+          "LGMD": 3,
+          "SMA": 48
+        }
+      },
+      {
+        "facility_id": "1165",
+        "city": "Philadelphia",
+        "state": "PA",
+        "region": "East",
+        "site_type": "Pediatric Neurology only",
+        "lat": 39.9597,
+        "lon": -75.2024,
+        "continental": true,
+        "patient_count": 84,
+        "by_disease": {
+          "BMD": 5,
+          "DMD": 39,
+          "LGMD": 3,
+          "SMA": 37
+        }
+      },
+      {
+        "facility_id": "1184",
+        "city": "Cordova",
+        "state": "TN",
+        "region": "Southeast",
+        "site_type": "Adult Neurology/ALS",
+        "lat": 35.1556,
+        "lon": -89.7762,
+        "continental": true,
+        "patient_count": 83,
+        "by_disease": {
+          "ALS": 48,
+          "BMD": 5,
+          "DMD": 2,
+          "FSHD": 7,
+          "LGMD": 13,
+          "Pompe": 1,
+          "SMA": 7
+        }
+      },
+      {
+        "facility_id": "1064",
+        "city": "Kansas City",
+        "state": "KS",
+        "region": "Midwest",
+        "site_type": "Adult Neurology only",
+        "lat": 39.0966,
+        "lon": -94.7495,
+        "continental": true,
+        "patient_count": 78,
+        "by_disease": {
+          "BMD": 10,
+          "DMD": 10,
+          "FSHD": 28,
+          "LGMD": 16,
+          "Pompe": 1,
+          "SMA": 13
+        }
+      },
+      {
+        "facility_id": "1254",
+        "city": "Miami",
+        "state": "FL",
+        "region": "Southeast",
+        "site_type": "Adult Neurology/ALS",
+        "lat": 25.7864,
+        "lon": -80.2042,
+        "continental": true,
+        "patient_count": 75,
+        "by_disease": {
+          "ALS": 12,
+          "BMD": 4,
+          "DMD": 6,
+          "FSHD": 19,
+          "LGMD": 8,
+          "Pompe": 4,
+          "SMA": 22
+        }
+      },
+      {
+        "facility_id": "1405",
+        "city": "Los Angeles",
+        "state": "CA",
+        "region": "West",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 34.104,
+        "lon": -118.2925,
+        "continental": true,
+        "patient_count": 73,
+        "by_disease": {
+          "BMD": 5,
+          "DMD": 42,
+          "FSHD": 1,
+          "LGMD": 4,
+          "SMA": 21
+        }
+      },
+      {
+        "facility_id": "1434",
+        "city": "Norfolk",
+        "state": "VA",
+        "region": "East",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 36.8585,
+        "lon": -76.0019,
+        "continental": true,
+        "patient_count": 73,
+        "by_disease": {
+          "BMD": 2,
+          "DMD": 31,
+          "FSHD": 2,
+          "LGMD": 3,
+          "SMA": 35
+        }
+      },
+      {
+        "facility_id": "1225",
+        "city": "Milwaukee",
+        "state": "WI",
+        "region": "Midwest",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 43.0493,
+        "lon": -88.0414,
+        "continental": true,
+        "patient_count": 67,
+        "by_disease": {
+          "BMD": 5,
+          "DMD": 26,
+          "FSHD": 2,
+          "LGMD": 4,
+          "Pompe": 2,
+          "SMA": 28
+        }
+      },
+      {
+        "facility_id": "1433",
+        "city": "Louisville",
+        "state": "KY",
+        "region": "Southeast",
+        "site_type": "Pediatric Neurology only",
+        "lat": 38.2507,
+        "lon": -85.7476,
+        "continental": true,
+        "patient_count": 63,
+        "by_disease": {
+          "BMD": 11,
+          "DMD": 22,
+          "LGMD": 3,
+          "SMA": 27
+        }
+      },
+      {
+        "facility_id": "1072",
+        "city": "New Orleans",
+        "state": "LA",
+        "region": "Southwest",
+        "site_type": "Adult Neurology & ALS Clinic",
+        "lat": 29.9605,
+        "lon": -90.0753,
+        "continental": true,
+        "patient_count": 62,
+        "by_disease": {
+          "ALS": 44,
+          "DMD": 1,
+          "FSHD": 4,
+          "LGMD": 10,
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1408",
+        "city": "",
+        "state": "",
+        "region": "",
+        "site_type": "",
+        "lat": null,
+        "lon": null,
+        "continental": true,
+        "patient_count": 59,
+        "by_disease": {
+          "BMD": 2,
+          "DMD": 19,
+          "LGMD": 3,
+          "SMA": 35
+        }
+      },
+      {
+        "facility_id": "1441",
+        "city": "Boston",
+        "state": "MA",
+        "region": "Northeast",
+        "site_type": "ALS Only",
+        "lat": 42.3611,
+        "lon": -71.0682,
+        "continental": true,
+        "patient_count": 58,
+        "by_disease": {
+          "ALS": 56,
+          "SMA": 2
+        }
+      },
+      {
+        "facility_id": "1449",
+        "city": "Gainesville",
+        "state": "FL",
+        "region": "Southeast",
+        "site_type": "Pediatric Neurology only",
+        "lat": 29.6813,
+        "lon": -82.3539,
+        "continental": true,
+        "patient_count": 55,
+        "by_disease": {
+          "BMD": 7,
+          "DMD": 38,
+          "LGMD": 2,
+          "Pompe": 1,
+          "SMA": 7
+        }
+      },
+      {
+        "facility_id": "1418",
+        "city": "Royal Oak",
+        "state": "MI",
+        "region": "Southeast",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 42.519,
+        "lon": -83.157,
+        "continental": true,
+        "patient_count": 53,
+        "by_disease": {
+          "BMD": 2,
+          "DMD": 25,
+          "FSHD": 1,
+          "LGMD": 3,
+          "Pompe": 1,
+          "SMA": 21
+        }
+      },
+      {
+        "facility_id": "1226",
+        "city": "Milwaukee",
+        "state": "WI",
+        "region": "Midwest",
+        "site_type": "Adult Neurology only",
+        "lat": 43.0493,
+        "lon": -88.0414,
+        "continental": true,
+        "patient_count": 51,
+        "by_disease": {
+          "ALS": 47,
+          "DMD": 1,
+          "LGMD": 3
+        }
+      },
+      {
+        "facility_id": "9001",
+        "city": "Little Rock",
+        "state": "AR",
+        "region": "Southeast",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 34.7363,
+        "lon": -92.2741,
+        "continental": true,
+        "patient_count": 50,
+        "by_disease": {
+          "BMD": 6,
+          "DMD": 38,
+          "FSHD": 1,
+          "LGMD": 3,
+          "SMA": 2
+        }
+      },
+      {
+        "facility_id": "1259",
+        "city": "Fort Worth",
+        "state": "TX",
+        "region": "Southwest",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 32.7256,
+        "lon": -97.3184,
+        "continental": true,
+        "patient_count": 49,
+        "by_disease": {
+          "BMD": 1,
+          "DMD": 27,
+          "LGMD": 2,
+          "SMA": 19
+        }
+      },
+      {
+        "facility_id": "1438",
+        "city": "Los Angeles",
+        "state": "CA",
+        "region": "West",
+        "site_type": "Adult Neurology",
+        "lat": 33.7866,
+        "lon": -118.2987,
+        "continental": true,
+        "patient_count": 45,
+        "by_disease": {
+          "DMD": 29,
+          "FSHD": 2,
+          "LGMD": 3,
+          "SMA": 11
+        }
+      },
+      {
+        "facility_id": "1162",
+        "city": "Hershey",
+        "state": "PA",
+        "region": "Northeast",
+        "site_type": "Adult Neurology only",
+        "lat": 40.2638,
+        "lon": -76.6545,
+        "continental": true,
+        "patient_count": 44,
+        "by_disease": {
+          "BMD": 5,
+          "DMD": 30,
+          "FSHD": 1,
+          "LGMD": 6,
+          "Pompe": 2
+        }
+      },
+      {
+        "facility_id": "1239",
+        "city": "Urbana",
+        "state": "IL",
+        "region": "Midwest",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 40.1095,
+        "lon": -88.2036,
+        "continental": true,
+        "patient_count": 37,
+        "by_disease": {
+          "ALS": 9,
+          "BMD": 4,
+          "DMD": 4,
+          "FSHD": 4,
+          "LGMD": 9,
+          "Pompe": 2,
+          "SMA": 5
+        }
+      },
+      {
+        "facility_id": "1392",
+        "city": "New York",
+        "state": "NY",
+        "region": "Northeast",
+        "site_type": "Adult Neurology & ALS Clinic",
+        "lat": 40.7685,
+        "lon": -73.9588,
+        "continental": true,
+        "patient_count": 35,
+        "by_disease": {
+          "ALS": 30,
+          "BMD": 2,
+          "FSHD": 1,
+          "Pompe": 1,
+          "SMA": 1
+        }
+      },
+      {
+        "facility_id": "1009",
+        "city": "Little Rock",
+        "state": "AR",
+        "region": "Southeast",
+        "site_type": "Adult Neurology/ALS",
+        "lat": 34.751,
+        "lon": -92.3455,
+        "continental": true,
+        "patient_count": 31,
+        "by_disease": {
+          "ALS": 31
+        }
+      },
+      {
+        "facility_id": "1229",
+        "city": "Aurora",
+        "state": "CO",
+        "region": "West",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 39.7467,
+        "lon": -104.8384,
+        "continental": true,
+        "patient_count": 28,
+        "by_disease": {
+          "BMD": 1,
+          "DMD": 17,
+          "FSHD": 1,
+          "SMA": 9
+        }
+      },
+      {
+        "facility_id": "1402",
+        "city": "Memphis",
+        "state": "TN",
+        "region": "Southeast",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 35.1497,
+        "lon": -90.033,
+        "continental": true,
+        "patient_count": 27,
+        "by_disease": {
+          "BMD": 4,
+          "DMD": 11,
+          "LGMD": 3,
+          "Pompe": 1,
+          "SMA": 8
+        }
+      },
+      {
+        "facility_id": "1341",
+        "city": "Springfield",
+        "state": "IL",
+        "region": "Midwest",
+        "site_type": "Adult Neurology only",
+        "lat": 39.8317,
+        "lon": -89.6465,
+        "continental": true,
+        "patient_count": 25,
+        "by_disease": {
+          "ALS": 18,
+          "BMD": 1,
+          "DMD": 1,
+          "FSHD": 3,
+          "LGMD": 2
+        }
+      },
+      {
+        "facility_id": "1347",
+        "city": "San Francisco",
+        "state": "CA",
+        "region": "West",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 37.7694,
+        "lon": -122.3867,
+        "continental": true,
+        "patient_count": 25,
+        "by_disease": {
+          "BMD": 4,
+          "DMD": 9,
+          "LGMD": 3,
+          "SMA": 9
+        }
+      },
+      {
+        "facility_id": "1185",
+        "city": "Nashville",
+        "state": "TN",
+        "region": "Southeast",
+        "site_type": "Adult Neurology Only",
+        "lat": 36.1866,
+        "lon": -86.7852,
+        "continental": true,
+        "patient_count": 23,
+        "by_disease": {
+          "ALS": 12,
+          "BMD": 2,
+          "FSHD": 5,
+          "LGMD": 4
+        }
+      },
+      {
+        "facility_id": "1364",
+        "city": "Green Bay",
+        "state": "WI",
+        "region": "Midwest",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 44.482,
+        "lon": -88.0205,
+        "continental": true,
+        "patient_count": 22,
+        "by_disease": {
+          "ALS": 2,
+          "BMD": 3,
+          "DMD": 4,
+          "FSHD": 3,
+          "Pompe": 4,
+          "SMA": 6
+        }
+      },
+      {
+        "facility_id": "1378",
+        "city": "Austin",
+        "state": "TX",
+        "region": "Southwest",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 30.3437,
+        "lon": -97.7316,
+        "continental": true,
+        "patient_count": 22,
+        "by_disease": {
+          "BMD": 4,
+          "DMD": 12,
+          "LGMD": 1,
+          "SMA": 5
+        }
+      },
+      {
+        "facility_id": "1448",
+        "city": "New Haven",
+        "state": "CT",
+        "region": "Northeast",
+        "site_type": "Adult Neurology/Pediatric Neurology",
+        "lat": 41.2963,
+        "lon": -72.9373,
+        "continental": true,
+        "patient_count": 22,
+        "by_disease": {
+          "ALS": 3,
+          "BMD": 4,
+          "DMD": 5,
+          "FSHD": 1,
+          "LGMD": 6,
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1298",
+        "city": "Duluth",
+        "state": "MN",
+        "region": "Midwest",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 46.7987,
+        "lon": -92.0946,
+        "continental": true,
+        "patient_count": 17,
+        "by_disease": {
+          "ALS": 11,
+          "BMD": 1,
+          "FSHD": 1,
+          "LGMD": 1,
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1431",
+        "city": "Las Vegas",
+        "state": "NV",
+        "region": "West",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 36.1693,
+        "lon": -115.2828,
+        "continental": true,
+        "patient_count": 17,
+        "by_disease": {
+          "ALS": 3,
+          "DMD": 11,
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1114",
+        "city": "Newark",
+        "state": "NJ",
+        "region": "East",
+        "site_type": "Adult Neurology Only",
+        "lat": 40.737,
+        "lon": -74.1964,
+        "continental": true,
+        "patient_count": 16,
+        "by_disease": {
+          "ALS": 7,
+          "DMD": 6,
+          "FSHD": 1,
+          "LGMD": 1,
+          "SMA": 1
+        }
+      },
+      {
+        "facility_id": "1021",
+        "city": "San Diego",
+        "state": "CA",
+        "region": "West",
+        "site_type": "Pediatric Neurology only",
+        "lat": 32.7973,
+        "lon": -117.1392,
+        "continental": true,
+        "patient_count": 14,
+        "by_disease": {
+          "DMD": 6,
+          "LGMD": 5,
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1063",
+        "city": "Iowa City",
+        "state": "IA",
+        "region": "Midwest",
+        "site_type": "Pediatric Neurology only",
+        "lat": 41.6627,
+        "lon": -91.5477,
+        "continental": true,
+        "patient_count": 13,
+        "by_disease": {
+          "BMD": 2,
+          "DMD": 6,
+          "FSHD": 1,
+          "SMA": 4
+        }
+      },
+      {
+        "facility_id": "9000",
+        "city": "Boise",
+        "state": "ID",
+        "region": "West",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 43.5885,
+        "lon": -116.191,
+        "continental": true,
+        "patient_count": 13,
+        "by_disease": {
+          "ALS": 2,
+          "BMD": 1,
+          "DMD": 1,
+          "FSHD": 5,
+          "LGMD": 3,
+          "SMA": 1
+        }
+      },
+      {
+        "facility_id": "1149_legacy",
+        "city": "",
+        "state": "",
+        "region": "",
+        "site_type": "",
+        "lat": null,
+        "lon": null,
+        "continental": true,
+        "patient_count": 10,
+        "by_disease": {
+          "ALS": 10
+        }
+      },
+      {
+        "facility_id": "1234",
+        "city": "San Juan",
+        "state": "PR",
+        "region": "Southeast",
+        "site_type": "Adult Neurology/ Pediatric Neurology",
+        "lat": null,
+        "lon": null,
+        "continental": false,
+        "patient_count": 9,
+        "by_disease": {
+          "ALS": 2,
+          "BMD": 1,
+          "DMD": 1,
+          "FSHD": 1,
+          "LGMD": 4
+        }
+      },
+      {
+        "facility_id": "1001",
+        "city": "Birmingham",
+        "state": "AL",
+        "region": "nan",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 33.5062,
+        "lon": -86.8003,
+        "continental": true,
+        "patient_count": 7,
+        "by_disease": {
+          "DMD": 4,
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1206",
+        "city": "Burlington",
+        "state": "VT",
+        "region": "Northeast",
+        "site_type": "Adult Neurology",
+        "lat": 44.484,
+        "lon": -73.2199,
+        "continental": true,
+        "patient_count": 7,
+        "by_disease": {
+          "ALS": 7
+        }
+      },
+      {
+        "facility_id": "1446",
+        "city": "Danville",
+        "state": "PA",
+        "region": "Northeast",
+        "site_type": "Adult Neurology + ALS Clinic",
+        "lat": 40.9674,
+        "lon": -76.6049,
+        "continental": true,
+        "patient_count": 6,
+        "by_disease": {
+          "ALS": 2,
+          "DMD": 2,
+          "LGMD": 1,
+          "SMA": 1
+        }
+      },
+      {
+        "facility_id": "1098",
+        "city": "Jackson",
+        "state": "MS",
+        "region": "Southeast",
+        "site_type": "Adult Neurology/ALS",
+        "lat": 32.3553,
+        "lon": -90.2171,
+        "continental": true,
+        "patient_count": 5,
+        "by_disease": {
+          "BMD": 3,
+          "FSHD": 1,
+          "LGMD": 1
+        }
+      },
+      {
+        "facility_id": "1444",
+        "city": "New York",
+        "state": "NY",
+        "region": "Northeast",
+        "site_type": "Adult & Pediatric Neurology",
+        "lat": 40.8382,
+        "lon": -73.942,
+        "continental": true,
+        "patient_count": 5,
+        "by_disease": {
+          "BMD": 1,
+          "DMD": 4
+        }
+      },
+      {
+        "facility_id": "1109",
+        "city": "Lebanon",
+        "state": "NH",
+        "region": "Northeast",
+        "site_type": "Adult Neurology",
+        "lat": 43.6447,
+        "lon": -72.2428,
+        "continental": true,
+        "patient_count": 4,
+        "by_disease": {
+          "DMD": 1,
+          "FSHD": 2,
+          "LGMD": 1
+        }
+      },
+      {
+        "facility_id": "1176",
+        "city": "Charleston",
+        "state": "SC",
+        "region": "Northeast",
+        "site_type": "Adult Neurology/ ALS",
+        "lat": 32.7862,
+        "lon": -79.9471,
+        "continental": true,
+        "patient_count": 4,
+        "by_disease": {
+          "ALS": 3,
+          "FSHD": 1
+        }
+      },
+      {
+        "facility_id": "1282",
+        "city": "Atlanta",
+        "state": "GA",
+        "region": "Southeast",
+        "site_type": "Pediatric Neurology Only",
+        "lat": 33.8842,
+        "lon": -84.3761,
+        "continental": true,
+        "patient_count": 3,
+        "by_disease": {
+          "SMA": 3
+        }
+      },
+      {
+        "facility_id": "1282_legacy",
+        "city": "",
+        "state": "",
+        "region": "",
+        "site_type": "",
+        "lat": null,
+        "lon": null,
+        "continental": true,
         "patient_count": 1,
-        "FACILITY_NAME": "Children's Healthcare of Atlanta / Emory Healthcare"
+        "by_disease": {
+          "SMA": 1
+        }
       }
     ]
   },
@@ -585,27 +1508,218 @@
       "cardiomyopathy": 984
     },
     "medications": {
-      "total_records": 34920,
-      "total_patients": 2637,
-      "glucocorticoids_med_table": {
-        "patients": 331,
-        "records": 695,
-        "label": "Glucocorticoids (Med Table)",
-        "drugs": {
-          "Prednisone": {
-            "patients": 176,
-            "records": 304
-          },
-          "Deflazacort": {
-            "patients": 160,
-            "records": 309
-          },
-          "Emflaza": {
-            "patients": 45,
-            "records": 82
-          }
+      "total_records": 24314,
+      "total_patients": 2526,
+      "source": "combo_drugs",
+      "gene_therapy_by_disease": {
+        "SMA": {
+          "total_patients": 316,
+          "treatments": [
+            {
+              "label": "Spinraza (nusinersen)",
+              "category": "Antisense",
+              "patients": 180,
+              "records": 249
+            },
+            {
+              "label": "Zolgensma (onasemnogene)",
+              "category": "Gene Therapy",
+              "patients": 57,
+              "records": 84
+            },
+            {
+              "label": "Evrysdi (risdiplam)",
+              "category": "SMN2 Modifier",
+              "patients": 143,
+              "records": 167
+            }
+          ]
+        },
+        "DMD": {
+          "total_patients": 93,
+          "treatments": [
+            {
+              "label": "Exondys 51 (eteplirsen)",
+              "category": "Exon Skipping",
+              "patients": 58,
+              "records": 77
+            },
+            {
+              "label": "Vyondys 53 (golodirsen)",
+              "category": "Exon Skipping",
+              "patients": 12,
+              "records": 15
+            },
+            {
+              "label": "Amondys 45 (casimersen)",
+              "category": "Exon Skipping",
+              "patients": 20,
+              "records": 22
+            },
+            {
+              "label": "Viltepso (viltolarsen)",
+              "category": "Exon Skipping",
+              "patients": 6,
+              "records": 6
+            }
+          ]
+        },
+        "ALS": {
+          "total_patients": 2,
+          "treatments": [
+            {
+              "label": "Qalsody (tofersen)",
+              "category": "Antisense",
+              "patients": 2,
+              "records": 2
+            }
+          ]
+        },
+        "Pompe": {
+          "total_patients": 12,
+          "treatments": [
+            {
+              "label": "Lumizyme (alglucosidase alfa)",
+              "category": "ERT",
+              "patients": 9,
+              "records": 13
+            },
+            {
+              "label": "Nexviazyme (avalglucosidase alfa)",
+              "category": "ERT",
+              "patients": 7,
+              "records": 7
+            }
+          ]
         }
       },
+      "top_medications": [
+        {
+          "name": "riluzole",
+          "patients": 813,
+          "records": 928
+        },
+        {
+          "name": "lisinopril",
+          "patients": 471,
+          "records": 600
+        },
+        {
+          "name": "cholecalciferol",
+          "patients": 429,
+          "records": 518
+        },
+        {
+          "name": "vitamin D3",
+          "patients": 319,
+          "records": 337
+        },
+        {
+          "name": "albuterol",
+          "patients": 288,
+          "records": 328
+        },
+        {
+          "name": "melatonin",
+          "patients": 256,
+          "records": 291
+        },
+        {
+          "name": "ascorbic acid",
+          "patients": 256,
+          "records": 279
+        },
+        {
+          "name": "gabapentin",
+          "patients": 255,
+          "records": 287
+        },
+        {
+          "name": "baclofen",
+          "patients": 253,
+          "records": 282
+        },
+        {
+          "name": "prednisone",
+          "patients": 244,
+          "records": 319
+        },
+        {
+          "name": "deflazacort",
+          "patients": 243,
+          "records": 339
+        },
+        {
+          "name": "aspirin",
+          "patients": 226,
+          "records": 247
+        },
+        {
+          "name": "Radicava",
+          "patients": 202,
+          "records": 238
+        },
+        {
+          "name": "vitamin D",
+          "patients": 193,
+          "records": 231
+        },
+        {
+          "name": "Nuedexta",
+          "patients": 187,
+          "records": 213
+        },
+        {
+          "name": "ibuprofen",
+          "patients": 174,
+          "records": 203
+        },
+        {
+          "name": "losartan",
+          "patients": 173,
+          "records": 205
+        },
+        {
+          "name": "glycopyrrolate",
+          "patients": 173,
+          "records": 197
+        },
+        {
+          "name": "omeprazole",
+          "patients": 171,
+          "records": 195
+        },
+        {
+          "name": "Spinraza",
+          "patients": 168,
+          "records": 231
+        },
+        {
+          "name": "acetaminophen",
+          "patients": 163,
+          "records": 185
+        },
+        {
+          "name": "famotidine",
+          "patients": 148,
+          "records": 173
+        },
+        {
+          "name": "Miralax",
+          "patients": 148,
+          "records": 180
+        },
+        {
+          "name": "ubidecarenone",
+          "patients": 147,
+          "records": 177
+        },
+        {
+          "name": "carvedilol",
+          "patients": 143,
+          "records": 165
+        }
+      ],
       "glucocorticoid_encounter": {
         "data_points": 2760,
         "patients": 820,
@@ -620,153 +1734,118 @@
         }
       },
       "disease_modifying_als": {
-        "patients": 606,
-        "records": 1658,
+        "patients": 857,
+        "records": 1314,
         "label": "Disease-Modifying (ALS)",
         "drugs": {
-          "Riluzole": {
-            "patients": 576,
-            "records": 1276
-          },
-          "Riluzole, oral suspension (TiGlutik)": {
-            "patients": 23,
-            "records": 42
+          "riluzole": {
+            "patients": 813,
+            "records": 955
           },
           "Radicava": {
-            "patients": 130,
-            "records": 340
-          }
-        }
-      },
-      "gene_therapy_antisense": {
-        "patients": 195,
-        "records": 423,
-        "label": "Gene Therapy & Antisense",
-        "drugs": {
-          "Spinraza": {
-            "patients": 139,
-            "records": 263
+            "patients": 203,
+            "records": 240
           },
-          "Zolgensma": {
-            "patients": 34,
+          "edaravone": {
+            "patients": 56,
             "records": 59
           },
-          "Exondys-51": {
-            "patients": 32,
-            "records": 89
-          },
-          "Evrysdi": {
-            "patients": 11,
-            "records": 12
+          "Relyvrio": {
+            "patients": 60,
+            "records": 60
           }
         }
       },
-      "exon_skipping_search": {
-        "patients": 56,
-        "records": 136
-      },
-      "sma_treatments_search": {
-        "patients": 197,
-        "records": 435
-      },
       "cardiac_meds": {
-        "patients": 494,
-        "records": 1036,
+        "patients": 880,
+        "records": 1529,
         "label": "Cardiac Medications",
         "drugs": {
-          "Lisinopril": {
-            "patients": 313,
-            "records": 604
+          "lisinopril": {
+            "patients": 477,
+            "records": 613
           },
-          "Losartan": {
-            "patients": 116,
-            "records": 223
+          "losartan": {
+            "patients": 183,
+            "records": 216
           },
-          "Enalapril": {
-            "patients": 40,
-            "records": 74
+          "enalapril": {
+            "patients": 68,
+            "records": 90
           },
-          "Carvedilol": {
-            "patients": 43,
-            "records": 43
+          "carvedilol": {
+            "patients": 153,
+            "records": 180
           },
-          "Metoprolol": {
-            "patients": 36,
-            "records": 36
+          "metoprolol": {
+            "patients": 196,
+            "records": 213
           },
-          "Aldactone (Spironolactone)": {
-            "patients": 25,
-            "records": 25
+          "spironolactone": {
+            "patients": 140,
+            "records": 180
           },
-          "Digoxin": {
-            "patients": 7,
+          "digoxin": {
+            "patients": 15,
+            "records": 16
+          },
+          "benazepril": {
+            "patients": 11,
+            "records": 12
+          },
+          "ramipril": {
+            "patients": 8,
             "records": 9
-          },
-          "Benazepril": {
-            "patients": 5,
-            "records": 7
-          },
-          "Ramipril": {
-            "patients": 4,
-            "records": 15
           }
         }
       },
       "psych_neuro": {
-        "patients": 548,
-        "records": 1802,
+        "patients": 693,
+        "records": 1023,
         "label": "Psych / Neuro",
         "drugs": {
-          "Zyprexa": {
-            "patients": 56,
-            "records": 486
+          "olanzapine": {
+            "patients": 5,
+            "records": 5
           },
           "Nuedexta": {
-            "patients": 154,
-            "records": 326
+            "patients": 189,
+            "records": 215
           },
-          "Gabapentin": {
-            "patients": 161,
-            "records": 304
+          "gabapentin": {
+            "patients": 256,
+            "records": 288
           },
-          "Zoloft (SSRI)": {
-            "patients": 74,
-            "records": 130
+          "sertraline": {
+            "patients": 72,
+            "records": 78
           },
-          "Lorazepam": {
-            "patients": 39,
-            "records": 69
+          "lorazepam": {
+            "patients": 67,
+            "records": 72
           },
-          "Amitriptyline": {
-            "patients": 42,
-            "records": 90
+          "amitriptyline": {
+            "patients": 68,
+            "records": 83
           },
-          "Baclofen": {
-            "patients": 170,
-            "records": 397
+          "baclofen": {
+            "patients": 253,
+            "records": 282
           }
         }
       },
       "respiratory_meds": {
-        "patients": 257,
-        "records": 562,
+        "patients": 477,
+        "records": 667,
         "label": "Respiratory",
         "drugs": {
-          "Albuterol": {
-            "patients": 132,
-            "records": 238
+          "albuterol": {
+            "patients": 464,
+            "records": 581
           },
-          "Albuterol inhaled": {
-            "patients": 130,
-            "records": 222
-          },
-          "Albuterol oral": {
-            "patients": 3,
-            "records": 3
-          },
-          "Budesonide": {
-            "patients": 46,
-            "records": 99
+          "budesonide": {
+            "patients": 68,
+            "records": 86
           }
         }
       }
@@ -829,6 +1908,22 @@
         "Hernia Repair": 61,
         "icdplac1": 17,
         "Scapular fixation": 13
+      }
+    },
+    "clinical_trials": {
+      "patients": 3046,
+      "data_points": 8597,
+      "breakdown": {
+        "No": 5249,
+        "Yes, observational study": 2069,
+        "Yes, interventional study": 672,
+        "Unknown": 607
+      },
+      "patient_breakdown": {
+        "Yes, observational study": 910,
+        "Yes, interventional study": 334,
+        "No": 2188,
+        "Unknown": 376
       }
     },
     "care": {

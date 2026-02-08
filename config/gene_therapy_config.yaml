@@ -1,0 +1,233 @@
+# MOVR Gene Therapy Configuration
+# This file contains gene therapy medications organized by 7 disease indications
+# Includes brand names, compound forms, and primary names for comprehensive filtering
+# Disease types: DMD, BMD, ALS, SMA, LGMD, FSHD, Pompe
+
+gene_therapy_medications:
+  description: "Gene therapy and related treatments organized by disease indication"
+  field_to_match: "StandardName"  # Field in medication data to match against
+  
+  # DMD (Duchenne Muscular Dystrophy)
+  DMD:
+    description: "Gene therapies and oligonucleotide treatments for DMD"
+    
+    # Gene therapy (actual gene replacement/editing)
+    gene_therapy:
+      - "delandistrogene moxeparvovec"  # SRP-9001 Sarepta
+      - "SRP-9001"                     # Research name
+      - "SGT-001"                      # Solid Biosciences  
+      - "PF-06939926"                  # Pfizer gene therapy
+      
+    # Exon-skipping therapies (oligonucleotides)
+    exon_skipping:
+      - "eteplirsen"                   # Exondys 51 (exon 51)
+      - "golodirsen"                   # Vyondys 53 (exon 53)
+      - "casimersen"                   # Amondys 45 (exon 45)
+      - "viltolarsen"                  # Viltepso (exon 53)
+      
+    # Brand names
+    brand_names:
+      - "Exondys"                      # eteplirsen
+      - "Exondys 51"                   # eteplirsen  
+      - "Vyondys 53"                   # golodirsen
+      - "Amondys 45"                   # casimersen
+      - "Viltepso"                     # viltolarsen
+      
+    # Investigational compounds
+    investigational:
+      - "suvodirsen"                   # WVE-210201 (exon 51)
+      - "drisapersen"                  # PRO051 (discontinued)
+      - "ataluren"                     # PTC124 (for nonsense mutations)
+      
+  # BMD (Becker Muscular Dystrophy)  
+  BMD:
+    description: "Gene therapies for BMD (limited specific therapies)"
+    
+    gene_therapy:
+      - "delandistrogene moxeparvovec"  # May apply to some BMD cases
+      
+    brand_names: []
+    investigational: []
+    
+  # SMA (Spinal Muscular Atrophy)
+  SMA:
+    description: "Gene therapy and antisense oligonucleotides for SMA"
+    
+    # Gene therapy
+    gene_therapy:
+      - "onasemnogene abeparvovec"     # Zolgensma (one-time gene therapy)
+      - "AVXS-101"                     # Research designation
+      
+    # Antisense oligonucleotides
+    antisense:
+      - "nusinersen"                   # Spinraza (intrathecal)
+      - "risdiplam"                    # Evrysdi (oral)
+      
+    # Brand names
+    brand_names:
+      - "Zolgensma"                    # onasemnogene abeparvovec
+      - "Spinraza"                     # nusinersen
+      - "Evrysdi"                      # risdiplam
+      
+    investigational:
+      - "branaplam"                    # Novartis oral SMN2 splicing modifier
+      
+  # ALS (Amyotrophic Lateral Sclerosis)
+  ALS:
+    description: "Gene therapies and antisense treatments for ALS"
+    
+    # Antisense oligonucleotides
+    antisense:
+      - "tofersen"                     # BIIB067 (for SOD1 mutations)
+      - "BIIB067"                      # Research name
+      
+    # Gene therapy (investigational)
+    gene_therapy:
+      - "AT-1501"                      # Audentes gene therapy
+      
+    brand_names:
+      - "Qalsody"                      # tofersen (if approved)
+      
+    investigational:
+      - "ION363"                       # C9orf72 antisense
+      - "BIIB078"                      # C9orf72 antisense
+      
+  # LGMD (Limb-Girdle Muscular Dystrophy)
+  LGMD:
+    description: "Gene therapies for various LGMD subtypes"
+    
+    # Gene therapy by subtype
+    gene_therapy:
+      - "PF-06939926"                  # Pfizer (LGMD2D/R3)
+      - "rAAVrh74.MCK.GALGT2"         # LGMD2B/R2
+      - "SGT-001"                      # Multiple LGMD types
+      
+    # Investigational by subtype
+    investigational:
+      - "scAAV1.tMCK.NTF3"           # LGMD2D/R3
+      - "AAV.SGCB"                    # LGMD2E/R4
+      
+    brand_names: []
+    
+  # FSHD (Facioscapulohumeral Dystrophy)
+  FSHD:
+    description: "Gene therapies and targeted treatments for FSHD"
+    
+    # Targeted gene therapy
+    gene_therapy:
+      - "AON.4000"                     # Antisense targeting DUX4
+      
+    # Investigational compounds
+    investigational:
+      - "losmapimod"                   # p38 MAPK inhibitor
+      - "ACE-083"                      # Myostatin inhibitor
+      
+    brand_names: []
+    
+  # Pompe Disease
+  Pompe:
+    description: "Gene therapies for Pompe disease (GAA deficiency)"
+    
+    # Gene therapy
+    gene_therapy:
+      - "AT845"                        # Audentes gene therapy
+      - "scAAV9/GAA"                   # Various vectors
+      
+    # Standard treatments (not gene therapy but relevant)
+    enzyme_replacement:
+      - "alglucosidase alfa"           # Myozyme/Lumizyme
+      - "avalglucosidase alfa"         # Nexviazyme
+      
+    brand_names:
+      - "Myozyme"                      # alglucosidase alfa
+      - "Lumizyme"                     # alglucosidase alfa  
+      - "Nexviazyme"                   # avalglucosidase alfa
+      
+    investigational:
+      - "cipaglucosidase alfa"         # + miglustat
+      - "AT845"                        # Gene therapy
+
+# Filtering configurations by disease and treatment type
+filtering_options:
+  
+  # All gene therapies (true gene replacement/editing)
+  all_gene_therapy:
+    include_categories:
+      - "gene_therapy"
+    description: "All true gene therapy treatments"
+    
+  # DMD-specific advanced therapies
+  dmd_advanced_therapies:
+    diseases: ["DMD"]
+    include_categories:
+      - "gene_therapy"
+      - "exon_skipping"
+      - "brand_names"
+    description: "DMD gene therapy and exon-skipping treatments"
+    
+  # SMA-specific treatments
+  sma_treatments:
+    diseases: ["SMA"]
+    include_categories:
+      - "gene_therapy"
+      - "antisense"
+      - "brand_names"
+    description: "SMA gene therapy and antisense treatments"
+    
+  # All advanced therapies (gene therapy + related)
+  all_advanced_therapies:
+    include_categories:
+      - "gene_therapy"
+      - "exon_skipping"
+      - "antisense"
+      - "brand_names"
+    description: "All gene therapy and related advanced treatments"
+    
+  # Investigational only
+  investigational_only:
+    include_categories:
+      - "investigational"
+    description: "Investigational gene therapies and compounds"
+
+# Clinical usage notes by disease
+clinical_notes:
+  DMD:
+    gene_therapy: |
+      - Delandistrogene moxeparvovec (SRP-9001): IV gene therapy delivering dystrophin gene
+      - Multiple trials ongoing for various approaches
+      
+    exon_skipping: |
+      - Eteplirsen (Exondys 51): First approved exon-skipping therapy
+      - Golodirsen (Vyondys 53): For amenable mutations
+      - Patient-specific based on genetic testing
+      
+  SMA:
+    gene_therapy: |
+      - Zolgensma: One-time IV treatment, typically for infants
+      - Dramatic motor function improvements when given early
+      
+    antisense: |
+      - Spinraza: Intrathecal injections, ongoing maintenance
+      - Evrysdi: Oral daily treatment, newer option
+      
+  ALS:
+    antisense: |
+      - Tofersen: For SOD1 mutations specifically
+      - Limited to genetic subset of ALS patients
+      
+# Quality control and validation
+validation:
+  required_fields:
+    - "StandardName"
+    - "FACPATID"
+  
+  data_sources:
+    preferred: "Combo_Drugs"
+    alternative: "Encounter_Medication"
+    
+  notes: |
+    Gene therapy medications may appear with various naming conventions:
+    - Generic names (e.g., eteplirsen)
+    - Brand names (e.g., Exondys 51)
+    - Research designations (e.g., SRP-9001)
+    - Compound names (e.g., onasemnogene abeparvovec) 

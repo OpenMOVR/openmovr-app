@@ -54,6 +54,10 @@ st.markdown(
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
     }
+    [data-testid="stTable"] thead tr th:first-child,
+    [data-testid="stTable"] tbody tr td:first-child {
+        display: none;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -159,12 +163,7 @@ _dx_overview = {
     ],
 }
 
-st.dataframe(
-    pd.DataFrame(_dx_overview),
-    use_container_width=True,
-    hide_index=True,
-    height=290,
-)
+st.table(pd.DataFrame(_dx_overview))
 
 # --- Encounter & Longitudinal Data ---
 st.markdown("#### Encounter & Longitudinal Data (805 fields — per clinic visit)")
@@ -192,12 +191,7 @@ _enc_overview = {
     ],
 }
 
-st.dataframe(
-    pd.DataFrame(_enc_overview),
-    use_container_width=True,
-    hide_index=True,
-    height=290,
-)
+st.table(pd.DataFrame(_enc_overview))
 
 st.markdown(
     """
@@ -226,12 +220,7 @@ if domain_summary:
         "Counts show fields applicable to each disease within that domain."
     )
 
-    st.dataframe(
-        overview_df,
-        use_container_width=True,
-        hide_index=True,
-        height=720,
-    )
+    st.table(overview_df)
 
     curated_meta = DataDictionaryAPI.get_curated_metadata()
     if curated_meta:
@@ -538,14 +527,8 @@ else:
             width="medium",
         )
 
-    # Display dataframe
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        height=400,
-        hide_index=True,
-        column_config=col_config,
-    )
+    # Display table (static — no CSV export on public pages)
+    st.table(display_df)
 
     caption_parts = ["'* REQUIRED' = mandatory field"]
     if selected_disease != "All":
@@ -663,7 +646,7 @@ if disease_coverage:
         st.bar_chart(coverage_df.set_index("Disease")["Fields"])
 
     with col_table:
-        st.dataframe(coverage_df, hide_index=True, use_container_width=True)
+        st.table(coverage_df)
 else:
     st.info("No disease coverage data available.")
 

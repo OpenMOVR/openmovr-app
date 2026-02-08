@@ -17,9 +17,8 @@ import streamlit as st
 import pandas as pd
 
 from api import StatsAPI
-from components.charts import create_facility_chart
-from components.tables import display_facility_table
-from utils.cache import get_cached_facility_stats
+from components.charts import create_site_map
+from utils.cache import get_cached_facility_stats, get_cached_snapshot
 from config.settings import PAGE_ICON, DEFAULT_TOP_N_FACILITIES, LOGO_PNG
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -56,6 +55,10 @@ st.markdown(
         padding-bottom: 1rem;
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
+    }
+    [data-testid="stTable"] thead tr th:first-child,
+    [data-testid="stTable"] tbody tr td:first-child {
+        display: none;
     }
     </style>
     """,
@@ -114,187 +117,195 @@ with st.spinner("Loading facility data..."):
         st.error(f"Error loading facility data: {e}")
         st.stop()
 
+# Load snapshot for site geography
+try:
+    snapshot = get_cached_snapshot()
+    site_locations = snapshot['facilities'].get('site_locations', [])
+except Exception:
+    site_locations = []
+
 # Summary metrics
 st.markdown("---")
-st.subheader("📊 Facility Overview")
+st.subheader("Facility Overview")
 
 col1, col2, col3, col4 = st.columns(4)
 
-# Calculate stats
 facility_df = pd.DataFrame(all_facilities)
 total_patients = facility_df['patient_count'].sum()
 avg_patients = facility_df['patient_count'].mean()
 median_patients = facility_df['patient_count'].median()
 
 with col1:
-    st.metric(
-        "Total Facilities",
-        total_facilities,
-        help="Number of participating facilities"
-    )
-
+    st.metric("Total Facilities", total_facilities, help="Number of participating facilities")
 with col2:
-    st.metric(
-        "Total Patients",
-        f"{total_patients:,}",
-        help="Total patients across all facilities"
-    )
-
+    st.metric("Total Patients", f"{total_patients:,}", help="Total patients across all facilities")
 with col3:
-    st.metric(
-        "Avg Patients/Facility",
-        f"{avg_patients:.0f}",
-        help="Average number of patients per facility"
-    )
-
+    st.metric("Avg Patients/Site", f"{avg_patients:.0f}", help="Average number of patients per site")
 with col4:
-    st.metric(
-        "Median Patients",
-        f"{median_patients:.0f}",
-        help="Median number of patients per facility"
-    )
+    st.metric("Median Patients", f"{median_patients:.0f}", help="Median number of patients per site")
 
-# Top Facilities Section
+# Site Map
 st.markdown("---")
-st.subheader("🔝 Top Facilities by Patient Count")
+st.subheader("Site Locations")
 
-# Number of facilities slider
-top_n = st.slider(
-    "Number of facilities to display",
-    min_value=5,
-    max_value=min(25, total_facilities),
-    value=DEFAULT_TOP_N_FACILITIES,
-    step=1,
-    key="top_n_slider"
-)
+if site_locations:
+    from components.charts import _prepare_site_df
 
-col1, col2 = st.columns([2, 1])
+    # Build disease list from actual data
+    _all_ds = set()
+    for s in site_locations:
+        _all_ds.update((s.get("by_disease") or {}).keys())
+    _disease_options = ["All Diseases"] + sorted(_all_ds)
 
-with col1:
-    # Chart
-    facility_chart = create_facility_chart(
-        all_facilities,
-        top_n=top_n,
-        chart_type='horizontal_bar'
+    # Filters
+    filt1, filt2 = st.columns([1, 1])
+    with filt1:
+        fv_top_n = st.slider(
+            "Number of sites to display",
+            min_value=5,
+            max_value=min(60, len(site_locations)),
+            value=min(20, len(site_locations)),
+            step=1,
+            key="fv_top_n",
+        )
+    with filt2:
+        fv_disease = st.selectbox(
+            "Filter by disease",
+            options=_disease_options,
+            index=0,
+            key="fv_disease_filter",
+        )
+
+    fv_ds_filter = None if fv_disease == "All Diseases" else fv_disease
+    fv_title = "MOVR Participating Sites"
+    if fv_ds_filter:
+        fv_title = f"MOVR Sites — {fv_ds_filter} Patients"
+
+    site_map = create_site_map(
+        site_locations,
+        disease_filter=fv_ds_filter,
+        top_n=fv_top_n,
+        title=fv_title,
     )
-    st.plotly_chart(facility_chart, use_container_width=True)
+    if site_map:
+        st.plotly_chart(site_map, use_container_width=True)
+    else:
+        st.info("No sites with data for this selection.")
 
-with col2:
-    # Table
-    st.markdown(f"#### Top {top_n} Facilities")
-    display_facility_table(all_facilities, show_top_n=top_n)
+    # State & Region summaries (respecting current filter)
+    filtered_df = _prepare_site_df(site_locations, fv_ds_filter, continental_only=True, top_n=fv_top_n)
+    if filtered_df is not None and not filtered_df.empty:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("#### By State")
+            state_counts = {}
+            for _, s in filtered_df.iterrows():
+                st_name = s['state']
+                if st_name not in state_counts:
+                    state_counts[st_name] = {"Sites": 0, "Patients": 0}
+                state_counts[st_name]["Sites"] += 1
+                state_counts[st_name]["Patients"] += s['patient_count']
+            state_df = pd.DataFrame([
+                {"State": k, "Sites": v["Sites"], "Patients": v["Patients"]}
+                for k, v in state_counts.items()
+            ]).sort_values("Patients", ascending=False).reset_index(drop=True)
+            st.table(state_df)
 
-# All Facilities Table
+        with col2:
+            st.markdown("#### By Region")
+            region_counts = {}
+            for _, s in filtered_df.iterrows():
+                rgn = s.get('region', 'Unknown') or 'Unknown'
+                if rgn not in region_counts:
+                    region_counts[rgn] = {"Sites": 0, "Patients": 0}
+                region_counts[rgn]["Sites"] += 1
+                region_counts[rgn]["Patients"] += s['patient_count']
+            region_df = pd.DataFrame([
+                {"Region": k, "Sites": v["Sites"], "Patients": v["Patients"]}
+                for k, v in region_counts.items()
+            ]).sort_values("Patients", ascending=False).reset_index(drop=True)
+            st.table(region_df)
+else:
+    st.info("Site geographic data not available.")
+
+# All Sites Table (anonymized)
 st.markdown("---")
-st.subheader("📋 All Facilities")
+st.subheader("All Sites")
 
-# Search filter
-search_term = st.text_input(
-    "🔍 Search facilities by name or ID",
-    placeholder="Enter facility name or ID...",
-    key="facility_search"
-)
+if site_locations:
+    # Use filtered data
+    table_df = _prepare_site_df(site_locations, fv_ds_filter, continental_only=True, top_n=None)
 
-# Filter facilities based on search
-if search_term:
-    filtered_facilities = [
-        f for f in all_facilities
-        if search_term.lower() in f['FACILITY_NAME'].lower()
-        or search_term.lower() in f['FACILITY_DISPLAY_ID'].lower()
-    ]
-    st.info(f"Found {len(filtered_facilities)} facilities matching '{search_term}'")
-else:
-    filtered_facilities = all_facilities
-
-# Display table
-facility_table_df = pd.DataFrame(filtered_facilities)
-
-if not facility_table_df.empty:
-    # Add rank column
-    facility_table_df['Rank'] = range(1, len(facility_table_df) + 1)
-
-    # Format and rename columns
-    display_df = facility_table_df[[
-        'Rank',
-        'FACILITY_DISPLAY_ID',
-        'FACILITY_NAME',
-        'patient_count'
-    ]].copy()
-
-    display_df['patient_count'] = display_df['patient_count'].apply(lambda x: f"{x:,}")
-
-    display_df = display_df.rename(columns={
-        'FACILITY_DISPLAY_ID': 'Facility ID',
-        'FACILITY_NAME': 'Facility Name',
-        'patient_count': 'Patient Count'
-    })
-
-    st.dataframe(display_df, use_container_width=True, hide_index=True, height=600)
-
-    # Download button
-    csv = facility_table_df.to_csv(index=False)
-    st.download_button(
-        label="📥 Download Facility Data (CSV)",
-        data=csv,
-        file_name="movr_facilities.csv",
-        mime="text/csv",
-        key="download_facilities"
+    # Search filter
+    search_term = st.text_input(
+        "Search sites by city or state",
+        placeholder="Enter city or state...",
+        key="site_search"
     )
+
+    if table_df is not None and not table_df.empty:
+        if search_term:
+            table_df = table_df[
+                table_df['city'].str.lower().str.contains(search_term.lower(), na=False) |
+                table_df['state'].str.lower().str.contains(search_term.lower(), na=False)
+            ]
+            st.info(f"Found {len(table_df)} sites matching '{search_term}'")
+
+        display_rows = []
+        for i, (_, r) in enumerate(table_df.iterrows()):
+            row_data = {
+                "Rank": i + 1,
+                "City": r["city"],
+                "State": r["state"],
+                "Region": r.get("region", ""),
+                "Type": r.get("site_type", ""),
+                "Patients": r["patient_count"],
+            }
+            by_ds = r.get("by_disease")
+            if isinstance(by_ds, dict) and by_ds:
+                row_data["Diseases"] = ", ".join(sorted(by_ds.keys()))
+            display_rows.append(row_data)
+        st.table(pd.DataFrame(display_rows))
+    else:
+        st.warning("No sites found matching your search.")
 else:
-    st.warning("No facilities found matching your search.")
+    st.table(
+        facility_df[['FACILITY_DISPLAY_ID', 'patient_count']].rename(
+            columns={'FACILITY_DISPLAY_ID': 'Site ID', 'patient_count': 'Patients'}
+        )
+    )
 
 # Distribution Analysis
 st.markdown("---")
-st.subheader("📈 Facility Distribution Analysis")
+st.subheader("Site Distribution Analysis")
 
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("#### Patient Count Ranges")
-
-    # Create patient count bins
     bins = [0, 10, 25, 50, 100, 200, 1000]
     labels = ['1-10', '11-25', '26-50', '51-100', '101-200', '200+']
-
     facility_df['patient_range'] = pd.cut(
-        facility_df['patient_count'],
-        bins=bins,
-        labels=labels,
-        include_lowest=True
+        facility_df['patient_count'], bins=bins, labels=labels, include_lowest=True
     )
-
     range_counts = facility_df['patient_range'].value_counts().sort_index()
-
-    range_df = pd.DataFrame({
-        'Patient Range': range_counts.index,
-        'Facility Count': range_counts.values
-    })
-
-    st.dataframe(range_df, use_container_width=True, hide_index=True)
+    range_df = pd.DataFrame({'Patient Range': range_counts.index, 'Site Count': range_counts.values})
+    st.table(range_df)
 
 with col2:
     st.markdown("#### Key Statistics")
-
     stats_data = {
-        'Metric': [
-            'Smallest Facility',
-            'Largest Facility',
-            'Average Size',
-            'Median Size',
-            'Standard Deviation',
-            'Total Patients'
-        ],
+        'Metric': ['Smallest Site', 'Largest Site', 'Average Size', 'Median Size', 'Std Dev', 'Total Patients'],
         'Value': [
             f"{facility_df['patient_count'].min()} patients",
             f"{facility_df['patient_count'].max()} patients",
             f"{facility_df['patient_count'].mean():.1f} patients",
             f"{facility_df['patient_count'].median():.0f} patients",
             f"{facility_df['patient_count'].std():.1f}",
-            f"{facility_df['patient_count'].sum():,} patients"
+            f"{facility_df['patient_count'].sum():,} patients",
         ]
     }
-
-    st.dataframe(pd.DataFrame(stats_data), use_container_width=True, hide_index=True)
+    st.table(pd.DataFrame(stats_data))
 
 # Footer
 st.markdown("---")
@@ -302,7 +313,7 @@ st.markdown(
     "<div style='text-align: center; color: #666;'>"
     "<strong>OpenMOVR App</strong> | MOVR Data Hub (MOVR 1.0)<br>"
     "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
-    "Facility data from the MOVR database<br>"
+    "Site data from the MOVR database (anonymized)<br>"
     "<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
     "<a href='mailto:andre.paredes@ymail.com'>andre.paredes@ymail.com</a> | "
     "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"

@@ -7,6 +7,7 @@ Reusable chart components using Plotly for interactive visualizations.
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import numpy as np
 from typing import List, Dict, Any, Optional
 
 
@@ -366,16 +367,16 @@ def create_numeric_histogram_chart(
 
 def create_facility_distribution_mini_chart(
     df: pd.DataFrame,
-    title: str = "Top Facilities (This Cohort)",
+    title: str = "Top Sites (This Cohort)",
     top_n: int = 10,
     facility_col: str = "FACILITY_DISPLAY_ID",
+    location_lookup: Optional[Dict[str, str]] = None,
 ) -> Optional[go.Figure]:
     """
-    Horizontal bar of top *top_n* facilities within a cohort DataFrame.
+    Horizontal bar of top *top_n* sites within a cohort DataFrame.
 
-    Prefers FACILITY_NAME for display. Falls back to facility_col if names
-    are unavailable, casting IDs to strings so Plotly treats them as
-    categorical rather than numeric.
+    Uses *location_lookup* (facility_id → "City, ST") when provided.
+    Falls back to facility_col as string so Plotly treats it as categorical.
     """
     if facility_col not in df.columns:
         return None
@@ -385,24 +386,18 @@ def create_facility_distribution_mini_chart(
     if counts.empty:
         return None
 
-    # Build display labels: prefer FACILITY_NAME, fall back to ID as string
-    if "FACILITY_NAME" in df.columns:
-        id_to_name = (
-            df[[facility_col, "FACILITY_NAME"]]
-            .drop_duplicates()
-            .set_index(facility_col)["FACILITY_NAME"]
-            .to_dict()
-        )
-        labels = [id_to_name.get(fid, str(fid)) for fid in counts.index]
+    # Build display labels: prefer location lookup, fall back to ID as string
+    if location_lookup:
+        labels = [location_lookup.get(str(fid), str(fid)) for fid in counts.index]
     else:
         labels = [str(fid) for fid in counts.index]
 
-    chart_df = pd.DataFrame({"Facility": labels, "Patients": counts.values})
+    chart_df = pd.DataFrame({"Site": labels, "Patients": counts.values})
 
     fig = px.bar(
         chart_df,
         x="Patients",
-        y="Facility",
+        y="Site",
         orientation="h",
         title=title,
         text="Patients",
@@ -418,4 +413,141 @@ def create_facility_distribution_mini_chart(
         yaxis_title="",
         coloraxis_showscale=False,
     )
+    return fig
+
+
+# ---------------------------------------------------------------------------
+# US Site Map
+# ---------------------------------------------------------------------------
+
+def _prepare_site_df(
+    site_locations: List[Dict[str, Any]],
+    disease_filter: Optional[str] = None,
+    continental_only: bool = True,
+    top_n: Optional[int] = None,
+) -> Optional[pd.DataFrame]:
+    """Shared helper: filter site_locations → DataFrame ready for map/table.
+
+    When *disease_filter* is set (e.g. "ALS"), patient_count is replaced
+    with the per-disease count from ``by_disease``.  Sites with 0 patients
+    for that disease are dropped.
+    """
+    if not site_locations:
+        return None
+
+    df = pd.DataFrame(site_locations)
+
+    # Apply disease filter — swap total for per-disease count
+    if disease_filter and "by_disease" in df.columns:
+        df["patient_count"] = df["by_disease"].apply(
+            lambda d: d.get(disease_filter, 0) if isinstance(d, dict) else 0
+        )
+        df = df[df["patient_count"] > 0]
+
+    if continental_only:
+        df = df[df["continental"] == True]
+
+    df = df.dropna(subset=["lat", "lon"])
+
+    if df.empty:
+        return None
+
+    # Sort descending and apply top_n
+    df = df.sort_values("patient_count", ascending=False).reset_index(drop=True)
+    if top_n is not None:
+        df = df.head(top_n)
+
+    return df
+
+
+def create_site_map(
+    site_locations: List[Dict[str, Any]],
+    continental_only: bool = True,
+    disease_filter: Optional[str] = None,
+    top_n: Optional[int] = None,
+    title: str = "MOVR Participating Sites",
+) -> Optional[go.Figure]:
+    """
+    Scatter-geo map of MOVR sites on a US continental projection.
+
+    Args:
+        site_locations: list of site dicts from the snapshot
+        continental_only: exclude non-continental US territories
+        disease_filter: if set, use per-disease count (e.g. "ALS")
+        top_n: if set, show only the top N sites by patient count
+        title: chart title
+
+    Returns None if no valid locations.
+    """
+    df = _prepare_site_df(site_locations, disease_filter, continental_only, top_n)
+    if df is None:
+        return None
+
+    # Build hover text
+    def _hover(r):
+        lines = [
+            f"<b>{r['city']}, {r['state']}</b>",
+            f"Patients: {r['patient_count']:,}",
+        ]
+        if r.get("region"):
+            lines.append(f"Region: {r['region']}")
+        if r.get("site_type"):
+            lines.append(f"Type: {r['site_type']}")
+        # Show disease breakdown if available and no single-disease filter
+        by_ds = r.get("by_disease")
+        if isinstance(by_ds, dict) and by_ds:
+            ds_str = " | ".join(f"{k}: {v}" for k, v in sorted(by_ds.items()))
+            lines.append(f"Diseases: {ds_str}")
+        return "<br>".join(lines)
+
+    df["hover"] = df.apply(_hover, axis=1)
+
+    # Size: scale so smallest sites are still visible
+    min_size = 8
+    max_size = 35
+    counts = df["patient_count"].values.astype(float)
+    if counts.max() > counts.min():
+        scaled = (counts - counts.min()) / (counts.max() - counts.min())
+        df["marker_size"] = min_size + scaled * (max_size - min_size)
+    else:
+        df["marker_size"] = (min_size + max_size) / 2
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scattergeo(
+        lat=df["lat"],
+        lon=df["lon"],
+        text=df["hover"],
+        hoverinfo="text",
+        marker=dict(
+            size=df["marker_size"],
+            color=df["patient_count"],
+            colorscale="Blues",
+            cmin=0,
+            cmax=df["patient_count"].max(),
+            colorbar=dict(title="Patients"),
+            line=dict(width=0.5, color="#333"),
+            opacity=0.85,
+        ),
+    ))
+
+    fig.update_geos(
+        scope="usa",
+        projection_type="albers usa",
+        showland=True,
+        landcolor="#f0f0f0",
+        showlakes=True,
+        lakecolor="white",
+        showcountries=False,
+        showsubunits=True,
+        subunitcolor="#ccc",
+    )
+
+    fig.update_layout(
+        title=title,
+        height=500,
+        margin=dict(l=0, r=0, t=40, b=0),
+        geo=dict(bgcolor="white"),
+    )
+
     return fig

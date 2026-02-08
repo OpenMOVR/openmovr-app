@@ -39,7 +39,7 @@ def display_disease_table(disease_data: List[Dict[str, Any]],
     }
     df = df.rename(columns=column_renames)
 
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.table(df)
 
 
 def display_facility_table(facility_data: List[Dict[str, Any]],
@@ -66,7 +66,7 @@ def display_facility_table(facility_data: List[Dict[str, Any]],
         'patient_count': 'Patient Count'
     })
 
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.table(df)
 
 
 def display_cohort_summary(cohort_summary: Dict[str, Any]) -> None:
@@ -96,7 +96,7 @@ def display_cohort_summary(cohort_summary: Dict[str, Any]) -> None:
         })
 
     df = pd.DataFrame(summary_data)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.table(df)
 
 
 def display_data_preview(df: pd.DataFrame,
