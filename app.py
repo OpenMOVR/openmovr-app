@@ -44,24 +44,29 @@ def main():
         """
         <style>
         [data-testid="stSidebarNav"] {
-            padding-top: 0rem;
+            padding-top: 5rem;
+            position: relative;
         }
         [data-testid="stSidebarNav"]::before {
             content: "OpenMOVR App";
-            display: block;
+            position: absolute;
+            top: 0.5rem;
+            left: 0; right: 0;
+            text-align: center;
             font-size: 1.4em;
             font-weight: bold;
             color: #1E88E5;
-            text-align: center;
-            padding: 1rem 0 0.5rem 0;
         }
         [data-testid="stSidebarNav"]::after {
-            content: "Open Source Project  \2022  openmovr.github.io";
-            display: block;
-            font-size: 0.75em;
-            color: #888;
+            content: "Open Source Project | MOVR Data Hub | 1.0";
+            position: absolute;
+            top: 2.5rem;
+            left: 0; right: 0;
             text-align: center;
+            font-size: 0.7em;
+            color: #888;
             padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
         }
         .clean-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
         .clean-table th { text-align: left; padding: 3px 8px; border-bottom: 2px solid #ddd; }
@@ -76,10 +81,10 @@ def main():
             letter-spacing: 0.05em;
         }
         /* DUA REQUIRED separator before provisioned pages */
-        [data-testid="stSidebarNav"] li:nth-last-child(2) {
+        [data-testid="stSidebarNav"] li:nth-last-child(3) {
             margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
         }
-        [data-testid="stSidebarNav"] li:nth-last-child(2)::before {
+        [data-testid="stSidebarNav"] li:nth-last-child(3)::before {
             content: "DUA REQUIRED"; display: block; font-size: 0.7em;
             color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
             letter-spacing: 0.05em;
@@ -89,8 +94,17 @@ def main():
         unsafe_allow_html=True
     )
 
-    # Sidebar: logo + links + contact
+    # Sidebar: links + logo + contact
     with st.sidebar:
+        st.markdown(
+            """
+            <div style='text-align: center; font-size: 0.8em; color: #888; padding-bottom: 0.25rem;'>
+                <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a> |
+                <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         if LOGO_PNG.exists():
             st.markdown(
                 "<div style='text-align: center;'>",
@@ -98,17 +112,6 @@ def main():
             )
             st.image(str(LOGO_PNG), width=160)
             st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown("---")
-        st.markdown(
-            """
-            <div style='text-align: center; font-size: 0.8em; color: #888;'>
-                <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a> |
-                <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a><br>
-                <a href="https://mdausa.tfaforms.net/389761" target="_blank">Request Access</a>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
         st.markdown("---")
         st.markdown(
             """
