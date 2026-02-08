@@ -48,7 +48,7 @@ def inject_global_css() -> None:
             color: #1E88E5;
         }
         [data-testid="stSidebarNav"]::after {
-            content: "Open Source Project | MOVR Data Hub | 1.0\\A openmovr.github.io | GitHub\\A Gen1 | v0.1.0 (Prototype)";
+            content: "Open Source Project | MOVR Data Hub | 1.0\\A openmovr.github.io | GitHub\\A Gen1 | v0.2.0";
             position: absolute;
             top: 2.5rem;
             left: 0; right: 0;

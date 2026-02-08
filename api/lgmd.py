@@ -389,3 +389,35 @@ class LGMDAPI:
 
             subtypes = diag_df['lgtype'].dropna().unique().tolist()
             return sorted([s for s in subtypes if str(s).strip()])
+
+    @classmethod
+    def get_functional_scores(cls) -> Dict[str, Any]:
+        """Get functional outcome scores (FVC, timed walk, ambulatory status)."""
+        snap = cls.get_snapshot()
+        if snap:
+            return snap.get('functional_scores', {})
+        return {}
+
+    @classmethod
+    def get_state_distribution(cls) -> Dict[str, Any]:
+        """Get geographic state distribution."""
+        snap = cls.get_snapshot()
+        if snap:
+            return snap.get('state_distribution', {})
+        return {}
+
+    @classmethod
+    def get_medication_stats(cls) -> Dict[str, Any]:
+        """Get medication utilization by category and top drugs."""
+        snap = cls.get_snapshot()
+        if snap:
+            return snap.get('medications', {})
+        return {}
+
+    @classmethod
+    def get_diagnostic_journey(cls) -> Dict[str, Any]:
+        """Get diagnostic delay and onset/diagnosis age data."""
+        snap = cls.get_snapshot()
+        if snap:
+            return snap.get('diagnostic_journey', {})
+        return {}

@@ -95,5 +95,5 @@ andre.paredes@ymail.com
 
 ---
 
-**OpenMOVR App** | Gen1 | v0.1.0 (Prototype)
+**OpenMOVR App** | Gen1 | v0.2.0
 Data Source: [MDA MOVR Data Hub Study](https://mdausa.tfaforms.net/389761)

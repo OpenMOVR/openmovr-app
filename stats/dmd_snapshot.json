@@ -1,0 +1,1009 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-08T16:41:10.454116",
+    "generated_timestamp": "2026-02-08 16:41:10",
+    "disease": "DMD",
+    "description": "Duchenne Muscular Dystrophy Deep Dive Statistics"
+  },
+  "summary": {
+    "total_patients": 688,
+    "total_facilities": 43
+  },
+  "genetics": {
+    "available": true,
+    "genetic_confirmation": {
+      "distribution": {
+        "Yes - Laboratory confirmation": 642,
+        "Unknown": 19,
+        "Yes - In a family member": 17,
+        "Suppressed (n<11)": 10
+      },
+      "confirmed_count": 659,
+      "confirmed_percentage": 95.8
+    },
+    "mutation_type": {
+      "distribution": [
+        {
+          "label": "Deletion",
+          "count": 443,
+          "suppressed": false
+        },
+        {
+          "label": "Duplication",
+          "count": 80,
+          "suppressed": false
+        },
+        {
+          "label": "Other, specify",
+          "count": 54,
+          "suppressed": false
+        },
+        {
+          "label": "Nonsense mutation",
+          "count": 51,
+          "suppressed": false
+        },
+        {
+          "label": "Splice site",
+          "count": 13,
+          "suppressed": false
+        },
+        {
+          "label": "No Mutation Detected",
+          "count": 0,
+          "suppressed": true
+        },
+        {
+          "label": "Missense",
+          "count": 0,
+          "suppressed": true
+        },
+        {
+          "label": "Insertion",
+          "count": 0,
+          "suppressed": true
+        },
+        {
+          "label": "Subexonic deletion",
+          "count": 0,
+          "suppressed": true
+        },
+        {
+          "label": "Pseudoexon",
+          "count": 0,
+          "suppressed": true
+        }
+      ],
+      "total_reported": 667
+    },
+    "exon_type": {
+      "distribution": [
+        {
+          "label": "Multiple Exons",
+          "count": 362,
+          "suppressed": false
+        },
+        {
+          "label": "Single exon",
+          "count": 152,
+          "suppressed": false
+        },
+        {
+          "label": "Non-exon region",
+          "count": 0,
+          "suppressed": true
+        }
+      ]
+    },
+    "frame_type": {
+      "distribution": [
+        {
+          "label": "Unknown",
+          "count": 243,
+          "suppressed": false
+        },
+        {
+          "label": "Out of frame",
+          "count": 220,
+          "suppressed": false
+        },
+        {
+          "label": "In frame",
+          "count": 57,
+          "suppressed": false
+        }
+      ]
+    },
+    "dystrophin_deficiency": {
+      "distribution": [
+        {
+          "label": "Unknown",
+          "count": 67,
+          "suppressed": false
+        },
+        {
+          "label": "Yes - Absent",
+          "count": 27,
+          "suppressed": false
+        },
+        {
+          "label": "Yes - Partial absence",
+          "count": 11,
+          "suppressed": false
+        },
+        {
+          "label": "Dystrophin analysis not performed",
+          "count": 0,
+          "suppressed": true
+        },
+        {
+          "label": "No",
+          "count": 0,
+          "suppressed": true
+        }
+      ]
+    }
+  },
+  "therapeutics": {
+    "available": true,
+    "drugs": [
+      {
+        "drug_name": "Exondys 51 (eteplirsen)",
+        "target_exon": 51,
+        "on_therapy": {
+          "count": 58,
+          "suppressed": false
+        },
+        "amenable_not_on_therapy": {
+          "count": 129,
+          "suppressed": false
+        },
+        "total_amenable": {
+          "count": 170,
+          "suppressed": false
+        },
+        "pct_of_cohort": 24.7
+      },
+      {
+        "drug_name": "Vyondys 53 (golodirsen)",
+        "target_exon": 53,
+        "on_therapy": {
+          "count": 12,
+          "suppressed": false
+        },
+        "amenable_not_on_therapy": {
+          "count": 71,
+          "suppressed": false
+        },
+        "total_amenable": {
+          "count": 83,
+          "suppressed": false
+        },
+        "pct_of_cohort": 12.1
+      },
+      {
+        "drug_name": "Viltepso (viltolarsen)",
+        "target_exon": 53,
+        "on_therapy": {
+          "count": 0,
+          "suppressed": true
+        },
+        "amenable_not_on_therapy": {
+          "count": 77,
+          "suppressed": false
+        },
+        "total_amenable": {
+          "count": 83,
+          "suppressed": false
+        },
+        "pct_of_cohort": 12.1
+      },
+      {
+        "drug_name": "Amondys 45 (casimersen)",
+        "target_exon": 45,
+        "on_therapy": {
+          "count": 20,
+          "suppressed": false
+        },
+        "amenable_not_on_therapy": {
+          "count": 115,
+          "suppressed": false
+        },
+        "total_amenable": {
+          "count": 128,
+          "suppressed": false
+        },
+        "pct_of_cohort": 18.6
+      },
+      {
+        "drug_name": "AOC 1044",
+        "target_exon": 44,
+        "on_therapy": {
+          "count": 0,
+          "suppressed": true
+        },
+        "amenable_not_on_therapy": {
+          "count": 84,
+          "suppressed": false
+        },
+        "total_amenable": {
+          "count": 84,
+          "suppressed": false
+        },
+        "pct_of_cohort": 12.2
+      }
+    ],
+    "amenable_mutation_types": [
+      "Deletion",
+      "Nonsense mutation",
+      "Missense"
+    ],
+    "total_amenable_any_drug": {
+      "count": 224,
+      "suppressed": false
+    },
+    "total_on_any_exon_skipping": {
+      "count": 93,
+      "suppressed": false
+    },
+    "total_non_amenable": {
+      "count": 464,
+      "suppressed": false
+    }
+  },
+  "steroids": {
+    "available": true,
+    "glcouse_first_encounter": {
+      "distribution": {
+        "Yes, Deflazacort currently": 286,
+        "Yes, prednisone currently": 170,
+        "Never": 88,
+        "No, but previously": 59,
+        "Yes, Other": 41,
+        "No, but recommended at this visit": 16,
+        "Unknown": 11
+      },
+      "total_reported": 671
+    },
+    "glcouse_last_encounter": {
+      "distribution": {
+        "Yes, Deflazacort currently": 321,
+        "Yes, prednisone currently": 162,
+        "No, but previously": 68,
+        "Never": 61,
+        "Yes, Other": 42,
+        "Suppressed (n<11)": 17
+      },
+      "total_reported": 671
+    },
+    "steroid_medications": {
+      "total_patients_on_steroids": {
+        "count": 428,
+        "suppressed": false
+      },
+      "breakdown": [
+        {
+          "drug_class": "Deflazacort / Emflaza",
+          "count": 300,
+          "suppressed": false
+        },
+        {
+          "drug_class": "Prednisone / Prednisolone",
+          "count": 204,
+          "suppressed": false
+        },
+        {
+          "drug_class": "Vamorolone / Agamree",
+          "count": 14,
+          "suppressed": false
+        }
+      ]
+    }
+  },
+  "state_distribution": {
+    "available": true,
+    "total_states_mapped": 28,
+    "states": [
+      {
+        "state": "FL",
+        "total": 101,
+        "on_therapy": 21,
+        "amenable_not_on": 22
+      },
+      {
+        "state": "CA",
+        "total": 86,
+        "on_therapy": 5,
+        "amenable_not_on": 19
+      },
+      {
+        "state": "OH",
+        "total": 81,
+        "on_therapy": 6,
+        "amenable_not_on": 25
+      },
+      {
+        "state": "PA",
+        "total": 71,
+        "on_therapy": 10,
+        "amenable_not_on": 20
+      },
+      {
+        "state": "TX",
+        "total": 39,
+        "on_therapy": 5,
+        "amenable_not_on": 11
+      },
+      {
+        "state": "AR",
+        "total": 38,
+        "on_therapy": 4,
+        "amenable_not_on": 6
+      },
+      {
+        "state": "VA",
+        "total": 31,
+        "on_therapy": 1,
+        "amenable_not_on": 2
+      },
+      {
+        "state": "WI",
+        "total": 31,
+        "on_therapy": 4,
+        "amenable_not_on": 6
+      },
+      {
+        "state": "MN",
+        "total": 27,
+        "on_therapy": 4,
+        "amenable_not_on": 6
+      },
+      {
+        "state": "MI",
+        "total": 25,
+        "on_therapy": 11,
+        "amenable_not_on": 1
+      },
+      {
+        "state": "KY",
+        "total": 22,
+        "on_therapy": 3,
+        "amenable_not_on": 5
+      },
+      {
+        "state": "MT",
+        "total": 19,
+        "on_therapy": 1,
+        "amenable_not_on": 2
+      },
+      {
+        "state": "CO",
+        "total": 17,
+        "on_therapy": 2,
+        "amenable_not_on": 2
+      },
+      {
+        "state": "TN",
+        "total": 13,
+        "on_therapy": 2,
+        "amenable_not_on": 2
+      },
+      {
+        "state": "NV",
+        "total": 11,
+        "on_therapy": 4,
+        "amenable_not_on": 4
+      },
+      {
+        "state": "Other States (n<11 each)",
+        "total": 57,
+        "on_therapy": 7,
+        "amenable_not_on": 13
+      }
+    ]
+  },
+  "functional_scores": {
+    "available": true,
+    "fvc_pct": {
+      "count": 417,
+      "median": 71.0,
+      "mean": 69.7,
+      "min": 2.0,
+      "max": 146.0,
+      "histogram": {
+        "bins": [
+          "0-10",
+          "10-20",
+          "20-30",
+          "30-40",
+          "40-50",
+          "50-60",
+          "60-70",
+          "70-80",
+          "80-90",
+          "90-100",
+          "100-110",
+          "110-120",
+          "120-130",
+          "130-140",
+          "140-150"
+        ],
+        "counts": [
+          10,
+          19,
+          25,
+          25,
+          37,
+          41,
+          46,
+          47,
+          38,
+          46,
+          41,
+          24,
+          13,
+          4,
+          1
+        ]
+      },
+      "by_age_band": {
+        "<5": {
+          "count": 12,
+          "median": 104.5,
+          "mean": 98.1,
+          "min": 32.0,
+          "max": 138.0
+        },
+        "5-12": {
+          "count": 178,
+          "median": 90.5,
+          "mean": 88.2,
+          "min": 28.0,
+          "max": 146.0
+        },
+        "13-17": {
+          "count": 131,
+          "median": 61.0,
+          "mean": 61.7,
+          "min": 2.0,
+          "max": 124.0
+        },
+        "18-25": {
+          "count": 80,
+          "median": 42.5,
+          "mean": 45.2,
+          "min": 5.0,
+          "max": 127.0
+        },
+        "26+": {
+          "count": 15,
+          "median": 27.0,
+          "mean": 26.9,
+          "min": 5.0,
+          "max": 61.0
+        }
+      },
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 74.0,
+          "q1": 51.2,
+          "q3": 93.8,
+          "n": 478
+        },
+        {
+          "year": 1,
+          "median": 74.0,
+          "q1": 52.0,
+          "q3": 94.0,
+          "n": 228
+        },
+        {
+          "year": 2,
+          "median": 72.5,
+          "q1": 54.2,
+          "q3": 90.8,
+          "n": 134
+        },
+        {
+          "year": 3,
+          "median": 75.0,
+          "q1": 60.0,
+          "q3": 96.0,
+          "n": 65
+        },
+        {
+          "year": 4,
+          "median": 62.0,
+          "q1": 56.5,
+          "q3": 87.0,
+          "n": 27
+        }
+      ]
+    },
+    "timed_10m_walk": {
+      "count": 239,
+      "median": 6.4,
+      "mean": 8.8,
+      "min": 1.0,
+      "max": 125.0,
+      "histogram": {
+        "bins": [
+          "0-5",
+          "5-10",
+          "10-15",
+          "15-20",
+          "20-25",
+          "25-30",
+          "30-35",
+          "35-40",
+          "40-45",
+          "45-50",
+          "50-55",
+          "55-60",
+          "60-65"
+        ],
+        "counts": [
+          69,
+          112,
+          37,
+          7,
+          9,
+          2,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "by_age_band": {
+        "<5": {
+          "count": 30,
+          "median": 5.6,
+          "mean": 6.5,
+          "min": 3.2,
+          "max": 22.0
+        },
+        "5-12": {
+          "count": 153,
+          "median": 5.9,
+          "mean": 8.8,
+          "min": 2.6,
+          "max": 125.0
+        },
+        "13-17": {
+          "count": 44,
+          "median": 9.1,
+          "mean": 10.3,
+          "min": 1.0,
+          "max": 24.0
+        },
+        "18-25": {
+          "count": 11,
+          "median": 9.4,
+          "mean": 9.2,
+          "min": 4.3,
+          "max": 12.3
+        }
+      },
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 5.7,
+          "q1": 4.5,
+          "q3": 8.5,
+          "n": 306
+        },
+        {
+          "year": 1,
+          "median": 6.0,
+          "q1": 4.7,
+          "q3": 8.2,
+          "n": 140
+        },
+        {
+          "year": 2,
+          "median": 6.0,
+          "q1": 4.8,
+          "q3": 9.2,
+          "n": 98
+        },
+        {
+          "year": 3,
+          "median": 5.8,
+          "q1": 4.4,
+          "q3": 7.9,
+          "n": 45
+        },
+        {
+          "year": 4,
+          "median": 4.7,
+          "q1": 4.7,
+          "q3": 5.3,
+          "n": 12
+        }
+      ]
+    },
+    "loss_of_ambulation": {
+      "total_with_data": 241,
+      "age_at_loss_years": {
+        "count": 241,
+        "median": 11.0,
+        "mean": 10.9,
+        "min": 0.6,
+        "max": 34.0,
+        "histogram": {
+          "bins": [
+            "0-2",
+            "2-4",
+            "4-6",
+            "6-8",
+            "8-10",
+            "10-12",
+            "12-14",
+            "14-16",
+            "16-18",
+            "18-20",
+            "20-22",
+            "22-24",
+            "24-26",
+            "26-28",
+            "28-30",
+            "30-32",
+            "32-34",
+            "34-36",
+            "36-38"
+          ],
+          "counts": [
+            8,
+            1,
+            1,
+            16,
+            49,
+            71,
+            59,
+            18,
+            12,
+            3,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        }
+      }
+    },
+    "ambulatory_status": {
+      "distribution": {
+        "Not ambulatory": 272,
+        "Ambulatory with difficulty": 119,
+        "Ambulatory without difficulty": 101,
+        "Suppressed (n<11)": 3
+      },
+      "total_reported": 495
+    }
+  },
+  "demographics": {
+    "available": true,
+    "diagnosis_age": {
+      "min": 0.0,
+      "max": 57.1,
+      "median": 5.0,
+      "mean": 5.4,
+      "count": 649,
+      "histogram": {
+        "bins": [
+          "0-2",
+          "2-4",
+          "4-6",
+          "6-8",
+          "8-10",
+          "10-12",
+          "12-14",
+          "14-16",
+          "16-18",
+          "18-20",
+          "20-22",
+          "22-24",
+          "24-26",
+          "26-28",
+          "28-30",
+          "30-32",
+          "32-34",
+          "34-36",
+          "36-38",
+          "38-40",
+          "40-42",
+          "42-44",
+          "44-46",
+          "46-48",
+          "48-50",
+          "50-52",
+          "52-54",
+          "54-56",
+          "56-58",
+          "58-60"
+        ],
+        "counts": [
+          109,
+          132,
+          172,
+          130,
+          65,
+          17,
+          9,
+          3,
+          3,
+          1,
+          2,
+          1,
+          1,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0
+        ]
+      }
+    },
+    "gender": {
+      "distribution": {
+        "Male": 680,
+        "Female": 7,
+        "Unspecified": 1
+      }
+    }
+  },
+  "ambulatory": {
+    "available": true,
+    "current_status": {
+      "distribution": {
+        "Not ambulatory": 273,
+        "Ambulatory with difficulty": 119,
+        "Ambulatory without difficulty": 101,
+        "Suppressed (n<11)": 3
+      }
+    }
+  },
+  "facilities": {
+    "available": true,
+    "total_facilities": 43,
+    "facilities": [
+      {
+        "id": "1328",
+        "name": "Cincinnati Children's Hospital Medical Center",
+        "patients": 77
+      },
+      {
+        "id": "1411",
+        "name": "Nemours Children's Hospital",
+        "patients": 57
+      },
+      {
+        "id": "1405",
+        "name": "Children's Hospital Los Angeles",
+        "patients": 42
+      },
+      {
+        "id": "1165",
+        "name": "Children's Hospital of Philadelphia",
+        "patients": 39
+      },
+      {
+        "id": "9001",
+        "name": "Arkansas Children's Research Institute",
+        "patients": 38
+      },
+      {
+        "id": "1449",
+        "name": "UF Health Pediatrics",
+        "patients": 38
+      },
+      {
+        "id": "1434",
+        "name": "Children's Hospital of the King's Daughters",
+        "patients": 31
+      },
+      {
+        "id": "1162",
+        "name": "Penn State Health",
+        "patients": 30
+      },
+      {
+        "id": "1438",
+        "name": "UCLA",
+        "patients": 29
+      },
+      {
+        "id": "1259",
+        "name": "Cook Children's Medical Center",
+        "patients": 27
+      },
+      {
+        "id": "1095",
+        "name": "University of Minnesota",
+        "patients": 27
+      },
+      {
+        "id": "1225",
+        "name": "Children's Hospital of Wisconsin",
+        "patients": 26
+      },
+      {
+        "id": "1418",
+        "name": "Beaumont Health, Royal Oak",
+        "patients": 25
+      },
+      {
+        "id": "1433",
+        "name": "University of Louisville (Pediatrics)",
+        "patients": 22
+      },
+      {
+        "id": "1359",
+        "name": "Billings Clinic",
+        "patients": 19
+      },
+      {
+        "id": "1408",
+        "name": "American Family Children Hospital",
+        "patients": 19
+      },
+      {
+        "id": "1229",
+        "name": "Children's Hospital of Colorado",
+        "patients": 17
+      },
+      {
+        "id": "1378",
+        "name": "Child Neurology Consultants of Austin",
+        "patients": 12
+      },
+      {
+        "id": "1402",
+        "name": "Le Bonheur Children's Hospital",
+        "patients": 11
+      },
+      {
+        "id": "1431",
+        "name": "Las Vegas Clinic",
+        "patients": 11
+      },
+      {
+        "id": "1064",
+        "name": "University of Kansas Medical Center",
+        "patients": 10
+      },
+      {
+        "id": "1347",
+        "name": "UCSF Benioff Children's Hospital",
+        "patients": 9
+      },
+      {
+        "id": "1100",
+        "name": "University of Missouri",
+        "patients": 7
+      },
+      {
+        "id": "1254",
+        "name": "University of Miami Kessenich Family Center",
+        "patients": 6
+      },
+      {
+        "id": "1021",
+        "name": "Rady Children's Hospital- San Diego",
+        "patients": 6
+      },
+      {
+        "id": "1063",
+        "name": "University of Iowa Hospitals & Clinics",
+        "patients": 6
+      },
+      {
+        "id": "1114",
+        "name": "Rutgers New Jersey Medical School",
+        "patients": 6
+      },
+      {
+        "id": "1048",
+        "name": "Georgetown University",
+        "patients": 5
+      },
+      {
+        "id": "1448",
+        "name": "Yale University School of Medicine",
+        "patients": 5
+      },
+      {
+        "id": "1149",
+        "name": "Ohio State University Wexner Medical Center",
+        "patients": 4
+      },
+      {
+        "id": "1001",
+        "name": "University of Alabama at Birmingham",
+        "patients": 4
+      },
+      {
+        "id": "1444",
+        "name": "Columbia University Medical Center",
+        "patients": 4
+      },
+      {
+        "id": "1364",
+        "name": "Prevea Health",
+        "patients": 4
+      },
+      {
+        "id": "1239",
+        "name": "Carle Neuroscience Institute, Carle Foundation Hospital",
+        "patients": 4
+      },
+      {
+        "id": "1446",
+        "name": "Geisinger Medical Center",
+        "patients": 2
+      },
+      {
+        "id": "1184",
+        "name": "Wesley Neurology Clinic",
+        "patients": 2
+      },
+      {
+        "id": "1072",
+        "name": "Louisiana State University Health Science Center",
+        "patients": 1
+      },
+      {
+        "id": "1109",
+        "name": "Dartmouth-Hitchcock Medical Center",
+        "patients": 1
+      },
+      {
+        "id": "1226",
+        "name": "Medical College of Wisconsin",
+        "patients": 1
+      },
+      {
+        "id": "1341",
+        "name": "Southern Illinois University of Medicine",
+        "patients": 1
+      },
+      {
+        "id": "1234",
+        "name": "University of Puerto Rico Medical Sciences",
+        "patients": 1
+      },
+      {
+        "id": "1383",
+        "name": "Hospital for Special Care",
+        "patients": 1
+      },
+      {
+        "id": "9000",
+        "name": "Idaho Physical Medicine & Rehabilitation",
+        "patients": 1
+      }
+    ]
+  }
+}

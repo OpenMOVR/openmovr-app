@@ -50,7 +50,7 @@ with header_right:
         <div style='text-align: right; padding-top: 10px;'>
             <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
             <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                Gen1 | v0.1.0 (Prototype)
+                Gen1 | v0.2.0
             </span>
         </div>
         """,
