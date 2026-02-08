@@ -443,15 +443,25 @@ with col_enroll_age:
         enroll_age_data = snapshot['demographics'].get('enrollment_age', {})
         if enroll_age_data and 'histogram' in enroll_age_data:
             hist_data = enroll_age_data['histogram']
-            fig = go.Figure(data=[go.Bar(x=hist_data['bins'], y=hist_data['counts'])])
+            _median = enroll_age_data['median']
+            # Find which bin the median falls in
+            _bins = hist_data['bins']
+            _median_bin = None
+            for b in _bins:
+                parts = b.split('-')
+                if len(parts) == 2 and float(parts[0]) <= _median < float(parts[1]):
+                    _median_bin = b
+                    break
+            fig = go.Figure(data=[go.Bar(
+                x=_bins, y=hist_data['counts'],
+                marker_color=['#E53935' if b == _median_bin else '#1E88E5' for b in _bins],
+            )])
             fig.update_layout(
-                title="Age at Enrollment",
+                title=f"Age at Enrollment (median {_median:.1f})",
                 xaxis_title="Age (years)",
                 yaxis_title="Patients",
                 showlegend=False
             )
-            fig.add_vline(x=enroll_age_data['median'], line_dash="dash", line_color="red",
-                         annotation_text=f"Median: {enroll_age_data['median']:.1f}")
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.caption("Age at enrollment data not available")
@@ -483,15 +493,24 @@ with col_age:
         current_age_data = snapshot['demographics'].get('current_age', {})
         if current_age_data and 'histogram' in current_age_data:
             hist_data = current_age_data['histogram']
-            fig = go.Figure(data=[go.Bar(x=hist_data['bins'], y=hist_data['counts'])])
+            _median = current_age_data['median']
+            _bins = hist_data['bins']
+            _median_bin = None
+            for b in _bins:
+                parts = b.split('-')
+                if len(parts) == 2 and float(parts[0]) <= _median < float(parts[1]):
+                    _median_bin = b
+                    break
+            fig = go.Figure(data=[go.Bar(
+                x=_bins, y=hist_data['counts'],
+                marker_color=['#E53935' if b == _median_bin else '#636EFA' for b in _bins],
+            )])
             fig.update_layout(
-                title="Current Age (if alive)",
+                title=f"Current Age (median {_median:.1f})",
                 xaxis_title="Age (years)",
                 yaxis_title="Patients",
                 showlegend=False
             )
-            fig.add_vline(x=current_age_data['median'], line_dash="dash", line_color="red",
-                         annotation_text=f"Median: {current_age_data['median']:.1f}")
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.caption("Age data not available")
@@ -540,16 +559,24 @@ with col_dx_age:
         dx_age_data = snapshot['diagnosis'].get('diagnosis_age', {})
         if dx_age_data and 'histogram' in dx_age_data:
             hist_data = dx_age_data['histogram']
-            fig = go.Figure(data=[go.Bar(x=hist_data['bins'], y=hist_data['counts'],
-                                         marker_color='#00CC96')])
+            _median = dx_age_data['median']
+            _bins = hist_data['bins']
+            _median_bin = None
+            for b in _bins:
+                parts = b.split('-')
+                if len(parts) == 2 and float(parts[0]) <= _median < float(parts[1]):
+                    _median_bin = b
+                    break
+            fig = go.Figure(data=[go.Bar(
+                x=_bins, y=hist_data['counts'],
+                marker_color=['#E53935' if b == _median_bin else '#00CC96' for b in _bins],
+            )])
             fig.update_layout(
-                title="Age at Diagnosis",
+                title=f"Age at Diagnosis (median {_median:.1f})",
                 xaxis_title="Age (years)",
                 yaxis_title="Patients",
                 showlegend=False
             )
-            fig.add_vline(x=dx_age_data['median'], line_dash="dash", line_color="red",
-                         annotation_text=f"Median: {dx_age_data['median']:.1f}")
             st.plotly_chart(fig, use_container_width=True)
     elif 'lgdgag' in diag_df.columns:
         dx_ages = pd.to_numeric(diag_df['lgdgag'], errors='coerce').dropna()
@@ -571,16 +598,24 @@ with col_onset_age:
         onset_age_data = snapshot['diagnosis'].get('onset_age', {})
         if onset_age_data and 'histogram' in onset_age_data:
             hist_data = onset_age_data['histogram']
-            fig = go.Figure(data=[go.Bar(x=hist_data['bins'], y=hist_data['counts'],
-                                         marker_color='#636EFA')])
+            _median = onset_age_data['median']
+            _bins = hist_data['bins']
+            _median_bin = None
+            for b in _bins:
+                parts = b.split('-')
+                if len(parts) == 2 and float(parts[0]) <= _median < float(parts[1]):
+                    _median_bin = b
+                    break
+            fig = go.Figure(data=[go.Bar(
+                x=_bins, y=hist_data['counts'],
+                marker_color=['#E53935' if b == _median_bin else '#636EFA' for b in _bins],
+            )])
             fig.update_layout(
-                title="Age at Symptom Onset",
+                title=f"Age at Symptom Onset (median {_median:.1f})",
                 xaxis_title="Age (years)",
                 yaxis_title="Patients",
                 showlegend=False
             )
-            fig.add_vline(x=onset_age_data['median'], line_dash="dash", line_color="red",
-                         annotation_text=f"Median: {onset_age_data['median']:.1f}")
             st.plotly_chart(fig, use_container_width=True)
     elif 'dymonag' in diag_df.columns:
         onset_ages = pd.to_numeric(diag_df['dymonag'], errors='coerce').dropna()

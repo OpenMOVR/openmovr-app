@@ -56,18 +56,26 @@ def main():
             padding: 1rem 0 0.5rem 0;
         }
         [data-testid="stSidebarNav"]::after {
-            content: "MOVR Data Hub | MOVR 1.0";
+            content: "Open Source Project  \2022  openmovr.github.io";
             display: block;
-            font-size: 0.8em;
-            color: #666;
+            font-size: 0.75em;
+            color: #888;
             text-align: center;
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.5rem;
         }
         .clean-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
         .clean-table th { text-align: left; padding: 3px 8px; border-bottom: 2px solid #ddd; }
         .clean-table td { padding: 3px 8px; border-bottom: 1px solid #eee; }
+        /* PUBLIC label above first nav item */
+        [data-testid="stSidebarNav"] li:first-child {
+            margin-top: 0.5rem; padding-top: 0.5rem;
+        }
+        [data-testid="stSidebarNav"] li:first-child::before {
+            content: "PUBLIC"; display: block; font-size: 0.7em;
+            color: #4CAF50; font-weight: bold; padding: 0 14px 4px;
+            letter-spacing: 0.05em;
+        }
+        /* DUA REQUIRED separator before provisioned pages */
         [data-testid="stSidebarNav"] li:nth-last-child(2) {
             margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
         }
@@ -81,7 +89,7 @@ def main():
         unsafe_allow_html=True
     )
 
-    # Sidebar: logo (centered) + tier info + contact
+    # Sidebar: logo + links + contact
     with st.sidebar:
         if LOGO_PNG.exists():
             st.markdown(
@@ -93,16 +101,10 @@ def main():
         st.markdown("---")
         st.markdown(
             """
-            <div style='font-size: 0.85em; padding: 0 0.5rem;'>
-            <strong style='color: #4CAF50;'>Public</strong><br>
-            <span style='color: #666;'>Dashboard, Disease Explorer,
-            Facility View, Data Dictionary, LGMD Overview, About</span><br><br>
-            <strong style='color: #1E88E5;'>Provisioned (DUA Required)</strong><br>
-            <span style='color: #666;'>Site Analytics, Download Center</span><br>
-            <span style='font-size: 0.85em; color: #999;'>
-            Sites, PAGs, researchers &amp; patients |
-            <a href="https://mdausa.tfaforms.net/389761" target="_blank">Request Access</a>
-            </span>
+            <div style='text-align: center; font-size: 0.8em; color: #888;'>
+                <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a> |
+                <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a><br>
+                <a href="https://mdausa.tfaforms.net/389761" target="_blank">Request Access</a>
             </div>
             """,
             unsafe_allow_html=True,
@@ -110,14 +112,10 @@ def main():
         st.markdown("---")
         st.markdown(
             """
-            <div style='text-align: center; font-size: 0.8em; color: #888;'>
-                <strong>Open Source Project</strong><br>
-                <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a><br>
-                <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a><br><br>
-                <strong>Created by</strong> Andre D Paredes<br>
-                <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a><br>
-                <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a> (MDA)<br><br>
-                <a href="https://mdausa.tfaforms.net/389761" target="_blank"><strong>Request Data</strong></a>
+            <div style='text-align: center; font-size: 0.75em; color: #999;'>
+                Contact:
+                <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a> |
+                <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a>
             </div>
             """,
             unsafe_allow_html=True
@@ -182,18 +180,14 @@ def main():
         st.error(f"Error loading snapshot: {e}")
         st.stop()
 
-    # Snapshot info in sidebar
+    # Compact snapshot info in sidebar
     with st.sidebar:
-        st.info(
-            f"**Snapshot Info**\n\n"
-            f"Generated: {metadata['generated_timestamp']}\n\n"
-            f"Cohort: {metadata['cohort_type']}\n\n"
-            f"Age: {StatsAPI.get_snapshot_age()}"
+        st.markdown(
+            f"<div style='font-size: 0.7em; color: #999; text-align: center; padding: 4px 0;'>"
+            f"Snapshot: {metadata['generated_timestamp']} &middot; {StatsAPI.get_snapshot_age()}"
+            f"</div>",
+            unsafe_allow_html=True
         )
-
-        if st.button("Refresh Snapshot"):
-            st.cache_data.clear()
-            st.rerun()
 
     # Key Metrics Row
     st.markdown("---")
