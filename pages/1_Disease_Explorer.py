@@ -29,7 +29,7 @@ from components.charts import (
     create_facility_distribution_mini_chart,
 )
 from components.tables import display_cohort_summary, static_table
-from components.sidebar import inject_global_css, render_sidebar_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
 from utils.cache import get_cached_snapshot
 from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES
 
@@ -844,15 +844,4 @@ else:
     )
 
 # Footer
-st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; color: #666;'>"
-    "<strong>OpenMOVR App</strong> | MOVR Data Hub (MOVR 1.0)<br>"
-    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
-    "Use the sidebar to select different diseases and apply filters<br>"
-    "<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-    "<a href='mailto:andre.paredes@ymail.com'>andre.paredes@ymail.com</a> | "
-    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
-    "</div>",
-    unsafe_allow_html=True
-)
+render_page_footer()

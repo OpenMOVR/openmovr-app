@@ -19,7 +19,7 @@ import pandas as pd
 from api import StatsAPI
 from components.charts import create_site_map
 from components.tables import static_table
-from components.sidebar import inject_global_css, render_sidebar_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
 from utils.cache import get_cached_facility_stats
 from config.settings import PAGE_ICON, DEFAULT_TOP_N_FACILITIES
 
@@ -250,15 +250,4 @@ with col2:
     static_table(pd.DataFrame(stats_data))
 
 # Footer
-st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; color: #666;'>"
-    "<strong>OpenMOVR App</strong> | MOVR Data Hub (MOVR 1.0)<br>"
-    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
-    "Site data from the MOVR database (anonymized)<br>"
-    "<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-    "<a href='mailto:andre.paredes@ymail.com'>andre.paredes@ymail.com</a> | "
-    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
-    "</div>",
-    unsafe_allow_html=True
-)
+render_page_footer()

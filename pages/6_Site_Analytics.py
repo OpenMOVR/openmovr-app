@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 import yaml
 
 from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES
-from components.sidebar import inject_global_css, render_sidebar_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
 from utils.access import require_access
 from components.charts import (
     create_age_distribution_chart,
@@ -563,18 +563,5 @@ for ds in DISEASE_DISPLAY_ORDER:
                         st.caption(f"{label}: insufficient data")
 
 
-# ===================================================================
 # Footer
-# ===================================================================
-st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; color: #666;'>"
-    "<strong>OpenMOVR App</strong> | MOVR Data Hub (MOVR 1.0)<br>"
-    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
-    "Site Analytics — Provisioned Access<br>"
-    "<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-    "<a href='mailto:andre.paredes@ymail.com'>andre.paredes@ymail.com</a> | "
-    "<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
-    "</div>",
-    unsafe_allow_html=True,
-)
+render_page_footer()

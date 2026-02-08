@@ -15,7 +15,7 @@ from config.settings import (
     PAGE_ICON, APP_VERSION, STUDY_NAME, STUDY_PROTOCOL,
     STUDY_START, STUDY_END, STUDY_STATUS,
 )
-from components.sidebar import inject_global_css, render_sidebar_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
 
@@ -197,16 +197,4 @@ st.markdown(
 )
 
 # ---- Footer ----
-st.markdown("---")
-st.markdown(
-    """
-    <div style='text-align: center; color: #666; font-size: 0.9em;'>
-    <strong>Created by</strong> Andre D Paredes<br>
-    <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a> |
-    <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a> (MDA)<br><br>
-    <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a> |
-    <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+render_page_footer()

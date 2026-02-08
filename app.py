@@ -24,7 +24,7 @@ from components.charts import (
     create_site_map,
 )
 from components.tables import display_disease_table, static_table
-from components.sidebar import inject_global_css, render_sidebar_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
 
 
 # Page configuration — use logo as favicon
@@ -400,20 +400,7 @@ def main():
         st.caption("Combined from encounter and log tables.")
 
     # Footer
-    st.markdown("---")
-    st.markdown(
-        f"<div style='text-align: center; color: #666;'>"
-        f"<strong>OpenMOVR App</strong> Gen1 | v{APP_VERSION} (Prototype)<br>"
-        f"{STUDY_NAME} Study Protocol ({STUDY_PROTOCOL}) | "
-        f"{STUDY_START} &ndash; {STUDY_END} ({STUDY_STATUS})<br>"
-        f"<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a><br>"
-        f"Snapshot: {metadata['generated_timestamp']}<br>"
-        f"<span style='font-size: 0.9em;'>Created by Andre D Paredes | "
-        f"<a href='mailto:andre.paredes@ymail.com'>andre.paredes@ymail.com</a> | "
-        f"<a href='https://openmovr.github.io' target='_blank'>openmovr.github.io</a></span>"
-        f"</div>",
-        unsafe_allow_html=True
-    )
+    render_page_footer()
 
 
 if __name__ == "__main__":

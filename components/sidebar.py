@@ -10,7 +10,7 @@ import base64
 
 import streamlit as st
 
-from config.settings import LOGO_JPG, LOGO_PNG
+from config.settings import LOGO_JPG, LOGO_PNG, APP_VERSION, STUDY_NAME
 
 
 def inject_global_css() -> None:
@@ -119,3 +119,24 @@ def render_sidebar_footer() -> None:
             f'</div>',
             unsafe_allow_html=True,
         )
+
+
+def render_page_footer() -> None:
+    """Render the shared page footer (data source, version, contact).
+
+    Call this at the bottom of every page to keep footers consistent.
+    """
+    st.markdown("---")
+    st.markdown(
+        f"<div style='text-align: center; color: #888; font-size: 0.85em;'>"
+        f"Data Source: <a href='https://mdausa.tfaforms.net/389761' target='_blank' "
+        f"style='color: #1E88E5;'>MDA {STUDY_NAME} Study</a><br>"
+        f"Independently built via the "
+        f"<a href='https://openmovr.github.io' target='_blank' "
+        f"style='color: #1E88E5;'>OpenMOVR Initiative</a><br>"
+        f"Gen1 | v{APP_VERSION} (Prototype)<br>"
+        f"<a href='mailto:andre.paredes@ymail.com' style='color: #999;'>"
+        f"andre.paredes@ymail.com</a>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )

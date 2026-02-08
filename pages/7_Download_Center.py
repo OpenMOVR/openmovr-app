@@ -15,7 +15,7 @@ sys.path.insert(0, str(app_dir))
 import streamlit as st
 import pandas as pd
 from config.settings import PAGE_ICON
-from components.sidebar import inject_global_css, render_sidebar_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
 from utils.access import require_access
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -302,9 +302,4 @@ st.download_button(
 )
 
 # ---- Footer ----
-st.markdown("---")
-st.caption(
-    "All data is aggregated and de-identified.  No protected health information (PHI) "
-    "is included in any download.  Please cite OpenMOVR App and the MOVR Data Hub "
-    "in any publications or presentations using this data."
-)
+render_page_footer()
