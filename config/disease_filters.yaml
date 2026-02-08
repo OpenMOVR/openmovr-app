@@ -6,7 +6,7 @@
 universal_filters:
   demographics:
     - field: "calculated_age"
-      label: "Age Range"
+      label: "Age at Enrollment"
       widget: "range_slider"
       source_table: "demographics"
       compute_from: "dob"
@@ -32,6 +32,41 @@ disease_filters:
         widget: "multiselect"
         source_table: "diagnosis"
 
+      - field: "dmdgnrpt"
+        label: "Genetic Report Available"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "dmdmscbp"
+        label: "Muscle Biopsy"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "dmddysdf"
+        label: "Dystrophin Deficiency"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "dnads"
+        label: "DNA Dosage Analysis"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "exontype"
+        label: "Exon Type"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "frametype"
+        label: "Frame Type"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "dmdfam"
+        label: "Family History"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
       - field: "dmddgnag"
         label: "Age at Diagnosis"
         widget: "range_slider"
@@ -40,21 +75,58 @@ disease_filters:
         max_default: 60
         step: 1
 
-      - field: "dmdfam"
-        label: "Family History"
-        widget: "multiselect"
-        source_table: "diagnosis"
-
     clinical:
       - field: "glcouse"
-        label: "Steroid Use"
+        label: "Steroid Use (at Enrollment)"
         widget: "multiselect"
         source_table: "encounters"
+        per_patient: "first"
+
+      - field: "glcouse"
+        label: "Steroid Use (Last Encounter)"
+        widget: "multiselect"
+        source_table: "encounters"
+        per_patient: "last"
 
   BMD:
     diagnosis:
       - field: "bmdgntcf"
         label: "Genetic Confirmation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "bmdgnrpt"
+        label: "Genetic Report Available"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "bmdmscbp"
+        label: "Muscle Biopsy"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "bmddysdf"
+        label: "Dystrophin Deficiency"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "dnads"
+        label: "DNA Dosage Analysis"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "exontype"
+        label: "Exon Type"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "frametype"
+        label: "Frame Type"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "bmdfam"
+        label: "Family History"
         widget: "multiselect"
         source_table: "diagnosis"
 
@@ -66,20 +138,27 @@ disease_filters:
         max_default: 80
         step: 1
 
-      - field: "bmdfam"
-        label: "Family History"
+  ALS:
+    diagnosis:
+      - field: "escorial"
+        label: "El Escorial Criteria"
         widget: "multiselect"
         source_table: "diagnosis"
 
-  ALS:
-    diagnosis:
-      - field: "alsdgnag"
-        label: "Age at Diagnosis"
-        widget: "range_slider"
+      - field: "bdypt"
+        label: "Body Regions First Affected"
+        widget: "multiselect"
         source_table: "diagnosis"
-        min_default: 0
-        max_default: 95
-        step: 1
+
+      - field: "genemut"
+        label: "Gene Mutation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "famhst"
+        label: "Family History"
+        widget: "multiselect"
+        source_table: "diagnosis"
 
       - field: "alsonsag"
         label: "Symptom Onset Age"
@@ -89,13 +168,21 @@ disease_filters:
         max_default: 95
         step: 1
 
-      - field: "genemut"
-        label: "Gene Mutation"
-        widget: "multiselect"
+      - field: "alsdgnag"
+        label: "Age at Diagnosis"
+        widget: "range_slider"
         source_table: "diagnosis"
+        min_default: 0
+        max_default: 95
+        step: 1
 
   SMA:
     diagnosis:
+      - field: "smadgmad"
+        label: "Initial Method of Diagnosis"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
       - field: "smaclass"
         label: "SMA Classification"
         widget: "multiselect"
@@ -103,6 +190,26 @@ disease_filters:
 
       - field: "smadgcnf"
         label: "Genetic Confirmation"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "smn1cn"
+        label: "SMN1 Copy Number"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "smn2mutn"
+        label: "SMN2 Copy Number"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "nonsma"
+        label: "Non-SMN SMA"
+        widget: "multiselect"
+        source_table: "diagnosis"
+
+      - field: "nwfammbr"
+        label: "Family History"
         widget: "multiselect"
         source_table: "diagnosis"
 

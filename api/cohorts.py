@@ -173,7 +173,11 @@ class CohortAPI:
 
                 if wtype == "age_range" and f.get("compute_from") == "dob":
                     dob = pd.to_datetime(df.get("dob"), errors="coerce")
-                    age = (pd.Timestamp.now() - dob).dt.days / 365.25
+                    if "enroldt" in df.columns:
+                        enrol = pd.to_datetime(df["enroldt"], errors="coerce")
+                        age = (enrol - dob).dt.days / 365.25
+                    else:
+                        age = (pd.Timestamp.now() - dob).dt.days / 365.25
                     mask &= (age >= value[0]) & (age <= value[1])
 
                 elif wtype == "multiselect":

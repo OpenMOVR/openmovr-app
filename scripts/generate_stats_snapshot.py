@@ -118,16 +118,70 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
     """Compute per-disease demographic overview and diagnosis profile snapshots."""
     demo = base_cohort['demographics']
     diag = base_cohort['diagnosis']
+    enc = base_cohort['encounters']
     if demo.empty or 'dstype' not in demo.columns:
         return {}
+
+    _NULL_LIKE = {'', '0', 'nan', 'none', 'null', 'n/a', 'na'}
 
     def _value_counts(series, top_n=15):
         """Return value counts as list of {label, count} dicts."""
         vals = series.dropna()
-        vals = vals[vals.astype(str).str.strip() != '']
+        vals = vals[~vals.astype(str).str.strip().str.lower().isin(_NULL_LIKE)]
         if vals.empty:
             return []
         vc = vals.value_counts().head(top_n)
+        return [{"label": str(k), "count": int(v)} for k, v in vc.items()]
+
+    def _race_counts(series, top_n=15, min_cell=11):
+        """Clean race/ethnicity with HIPAA small-cell suppression.
+
+        - Single selection → kept as-is
+        - Multiple selections → 'Multiracial'
+        - Categories with n < min_cell → rolled into 'Suppressed (n<11)'
+        """
+        vals = series.dropna()
+        vals = vals[vals.astype(str).str.strip() != '']
+        if vals.empty:
+            return []
+
+        def _clean_race(v):
+            parts = [p.strip() for p in str(v).split(',')]
+            parts = [p for p in parts
+                     if p and not p.lower().startswith('specify:')]
+            if len(parts) == 0:
+                return None
+            if len(parts) == 1:
+                return parts[0]
+            return 'Multiracial'
+
+        cleaned = vals.map(_clean_race).dropna()
+        if cleaned.empty:
+            return []
+        vc = cleaned.value_counts()
+        # HIPAA small-cell suppression: categories with n < 11 → grouped
+        reportable = vc[vc >= min_cell]
+        suppressed = vc[vc < min_cell]
+        if not suppressed.empty:
+            reportable = reportable.copy()
+            reportable['Suppressed (n<11)'] = suppressed.sum()
+        result = reportable.sort_values(ascending=False).head(top_n)
+        return [{"label": str(k), "count": int(v)} for k, v in result.items()]
+
+    def _insurance_counts(series, top_n=15):
+        """Return insurance value counts after splitting multi-select entries."""
+        vals = series.dropna()
+        vals = vals[vals.astype(str).str.strip() != '']
+        if vals.empty:
+            return []
+        # Split comma-separated entries and explode
+        exploded = vals.str.split(',').explode().str.strip()
+        # Remove "specify:" free-text entries and blanks
+        exploded = exploded[~exploded.str.contains('specify:', case=False, na=False)]
+        exploded = exploded[exploded != '']
+        if exploded.empty:
+            return []
+        vc = exploded.value_counts().head(top_n)
         return [{"label": str(k), "count": int(v)} for k, v in vc.items()]
 
     def _age_histogram(dob_series, enrol_series):
@@ -148,29 +202,84 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
         except Exception:
             return []
 
+    # Disease → diagnosis-age field (in diagnosis table)
+    _DIAG_AGE_FIELDS = {
+        'ALS': 'alsdgnag',
+        'DMD': 'dmddgnag',
+        'BMD': 'bmddgnag',
+        'SMA': 'smadgnag',
+        'LGMD': 'lgdgag',
+        'FSHD': 'fshdgnag',
+    }
+
+    def _numeric_age_histogram(series, bins=None, labels=None):
+        """Compute a histogram from a numeric age column (already in years)."""
+        try:
+            ages = pd.to_numeric(series, errors='coerce').dropna()
+            ages = ages[(ages >= 0) & (ages <= 110)]
+            if ages.empty:
+                return []
+            if bins is None:
+                bins = [0, 5, 10, 18, 30, 40, 50, 60, 70, 80, 110]
+                labels = ['0-4', '5-9', '10-17', '18-29', '30-39', '40-49',
+                          '50-59', '60-69', '70-79', '80+']
+            cut = pd.cut(ages, bins=bins, labels=labels, include_lowest=True)
+            vc = cut.value_counts().sort_index()
+            return [{"label": str(k), "count": int(v)} for k, v in vc.items() if v > 0]
+        except Exception:
+            return []
+
     # Disease-specific diagnosis fields to snapshot
     _DIAGNOSIS_FIELDS = {
         'ALS': [
-            {'field': 'alselesc', 'label': 'El Escorial Criteria'},
+            {'field': 'escorial', 'label': 'El Escorial Criteria'},
+            {'field': 'bdypt', 'label': 'Body Regions First Affected'},
             {'field': 'genemut', 'label': 'Gene Mutation'},
+            {'field': 'famhst', 'label': 'Family History'},
+            {'field': 'alsonsag', 'label': 'Age at Symptom Onset', 'numeric': True},
             {'field': 'alsdgnag', 'label': 'Age at Diagnosis', 'numeric': True},
         ],
         'DMD': [
             {'field': 'dmdgntcf', 'label': 'Genetic Confirmation'},
+            {'field': 'dmdgnrpt', 'label': 'Genetic Report Available'},
+            {'field': 'dmdmscbp', 'label': 'Muscle Biopsy'},
+            {'field': 'dmddysdf', 'label': 'Dystrophin Deficiency'},
+            {'field': 'dnads', 'label': 'DNA Dosage Analysis'},
+            {'field': 'exontype', 'label': 'Exon Type'},
+            {'field': 'frametype', 'label': 'Frame Type'},
             {'field': 'dmdfam', 'label': 'Family History'},
+            {'field': 'dmddgnag', 'label': 'Age at Diagnosis', 'numeric': True},
         ],
         'BMD': [
             {'field': 'bmdgntcf', 'label': 'Genetic Confirmation'},
+            {'field': 'bmdgnrpt', 'label': 'Genetic Report Available'},
+            {'field': 'bmdmscbp', 'label': 'Muscle Biopsy'},
+            {'field': 'bmddysdf', 'label': 'Dystrophin Deficiency'},
+            {'field': 'dnads', 'label': 'DNA Dosage Analysis'},
+            {'field': 'exontype', 'label': 'Exon Type'},
+            {'field': 'frametype', 'label': 'Frame Type'},
             {'field': 'bmdfam', 'label': 'Family History'},
+            {'field': 'bmddgnag', 'label': 'Age at Diagnosis', 'numeric': True},
         ],
         'SMA': [
+            {'field': 'smadgmad', 'label': 'Initial Method of Diagnosis'},
             {'field': 'smaclass', 'label': 'SMA Classification'},
             {'field': 'smadgcnf', 'label': 'Genetic Confirmation'},
+            {'field': 'smn1cn', 'label': 'SMN1 Copy Number'},
+            {'field': 'smn2mutn', 'label': 'SMN2 Copy Number'},
+            {'field': 'nonsma', 'label': 'Non-SMN SMA'},
+            {'field': 'nwfammbr', 'label': 'Family History'},
+            {'field': 'smadgnag', 'label': 'Age at Diagnosis', 'numeric': True},
         ],
         'LGMD': [
             {'field': 'lgtype', 'label': 'LGMD Subtype', 'top_n': 20},
             {'field': 'lggntcf', 'label': 'Genetic Confirmation'},
+            {'field': 'lgidvar', 'label': 'Gene/Protein'},
             {'field': 'lgmscbp', 'label': 'Muscle Biopsy'},
+            {'field': 'sym1st', 'label': 'First Symptoms'},
+            {'field': 'lgfam', 'label': 'Family History'},
+            {'field': 'lgdgag', 'label': 'Age at Diagnosis', 'numeric': True},
+            {'field': 'dymonag', 'label': 'Symptom Onset Age', 'numeric': True},
         ],
         'FSHD': [
             {'field': 'fshdel', 'label': '4q35 Deletion'},
@@ -186,15 +295,34 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
         ds_demo = demo[demo['FACPATID'].isin(ds_pts)]
         ds_diag = diag[diag['FACPATID'].isin(ds_pts)] if not diag.empty else pd.DataFrame()
 
+        # Consolidate education level (use first non-null across form versions)
+        _edu = None
+        if 'edulvl' in ds_demo.columns:
+            _edu = ds_demo['edulvl']
+        for _alt in ('edulvl1', 'edulvl2'):
+            if _alt in ds_demo.columns and _edu is not None:
+                _edu = _edu.fillna(ds_demo[_alt])
+            elif _alt in ds_demo.columns:
+                _edu = ds_demo[_alt]
+
         profile = {
             "patient_count": len(ds_pts),
             "demographics": {
                 "gender": _value_counts(ds_demo['gender']) if 'gender' in ds_demo.columns else [],
-                "ethnicity": _value_counts(ds_demo['ethnic']) if 'ethnic' in ds_demo.columns else [],
+                "ethnicity": _race_counts(ds_demo['ethnic']) if 'ethnic' in ds_demo.columns else [],
                 "age_at_enrollment": _age_histogram(
                     ds_demo.get('dob', pd.Series(dtype='object')),
                     ds_demo.get('enroldt', pd.Series(dtype='object')),
                 ),
+                "age_at_diagnosis": (
+                    _numeric_age_histogram(ds_diag[_DIAG_AGE_FIELDS[disease]])
+                    if disease in _DIAG_AGE_FIELDS and not ds_diag.empty
+                    and _DIAG_AGE_FIELDS[disease] in ds_diag.columns
+                    else []
+                ),
+                "health_insurance": _insurance_counts(ds_demo['hltin']) if 'hltin' in ds_demo.columns else [],
+                "education_level": _value_counts(_edu) if _edu is not None else [],
+                "employment_status": _value_counts(ds_demo['employ']) if 'employ' in ds_demo.columns else [],
             },
             "diagnosis": [],
         }
@@ -228,6 +356,36 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
                         "type": "categorical",
                         "values": counts,
                     })
+
+        # Clinical encounter fields (per-patient: first/last encounter)
+        _CLINICAL_ENC_FIELDS = {
+            'DMD': [
+                {'field': 'glcouse', 'label': 'Steroid Use (at Enrollment)', 'per_patient': 'first'},
+                {'field': 'glcouse', 'label': 'Steroid Use (Last Encounter)', 'per_patient': 'last'},
+            ],
+        }
+        ds_enc = enc[enc['FACPATID'].isin(ds_pts)] if not enc.empty else pd.DataFrame()
+        for cdef in _CLINICAL_ENC_FIELDS.get(disease, []):
+            cfield = cdef['field']
+            if ds_enc.empty or cfield not in ds_enc.columns:
+                continue
+            if 'FACPATID' not in ds_enc.columns or 'encntdt' not in ds_enc.columns:
+                continue
+            enc_sorted = ds_enc.copy()
+            enc_sorted['encntdt'] = pd.to_datetime(enc_sorted['encntdt'], errors='coerce')
+            enc_sorted = enc_sorted.dropna(subset=['encntdt']).sort_values('encntdt')
+            if cdef['per_patient'] == 'first':
+                deduped = enc_sorted.groupby('FACPATID').first().reset_index()
+            else:
+                deduped = enc_sorted.groupby('FACPATID').last().reset_index()
+            counts = _value_counts(deduped[cfield])
+            if counts:
+                profile["diagnosis"].append({
+                    "field": cfield,
+                    "label": cdef['label'],
+                    "type": "categorical",
+                    "values": counts,
+                })
 
         profiles[disease] = profile
 

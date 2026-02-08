@@ -26,4 +26,9 @@ try:
 except Exception:
     LGMDAPI = None
 
-__all__ = ['CohortAPI', 'StatsAPI', 'ReportsAPI', 'DataDictionaryAPI', 'LGMDAPI']
+try:
+    from .dmd import DMDAPI
+except Exception:
+    DMDAPI = None
+
+__all__ = ['CohortAPI', 'StatsAPI', 'ReportsAPI', 'DataDictionaryAPI', 'LGMDAPI', 'DMDAPI']

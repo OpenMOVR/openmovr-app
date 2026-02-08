@@ -163,6 +163,11 @@ def _load_filter_config(config_path: Path = _DEFAULT_FILTER_CONFIG) -> Dict[str,
         return yaml.safe_load(f)
 
 
+def load_filter_config() -> Dict[str, Any]:
+    """Public: load the disease filter config (re-reads YAML each call)."""
+    return _load_filter_config()
+
+
 def _get_dataframe_for_source(cohort: Dict[str, Any], source_table: str) -> pd.DataFrame:
     """Map a source_table name from the config to the cohort dict key."""
     table_map = {
@@ -181,12 +186,16 @@ def _get_dataframe_for_source(cohort: Dict[str, Any], source_table: str) -> pd.D
 
 
 def _compute_age_column(df: pd.DataFrame, dob_field: str = "dob") -> Optional[pd.Series]:
-    """Compute current age from a date-of-birth column."""
+    """Compute age at enrollment (enroldt − dob). Falls back to current age if enroldt missing."""
     if dob_field not in df.columns:
         return None
     dob = pd.to_datetime(df[dob_field], errors="coerce")
-    today = pd.Timestamp.now()
-    age = (today - dob).dt.days / 365.25
+    if "enroldt" in df.columns:
+        enrol = pd.to_datetime(df["enroldt"], errors="coerce")
+        age = (enrol - dob).dt.days / 365.25
+    else:
+        age = (pd.Timestamp.now() - dob).dt.days / 365.25
+    age = age[age >= 0]
     return age.dropna()
 
 
@@ -203,7 +212,9 @@ def _render_single_widget(
     widget_type = filter_def["widget"]
     label = filter_def["label"]
     source_table = filter_def["source_table"]
-    key = f"filter_{disease}_{field}"
+    # Include per_patient suffix to avoid key collisions for same field with different dedup
+    _suffix = f"_{filter_def['per_patient']}" if "per_patient" in filter_def else ""
+    key = f"filter_{disease}_{field}{_suffix}"
 
     df = _get_dataframe_for_source(cohort, source_table)
 
