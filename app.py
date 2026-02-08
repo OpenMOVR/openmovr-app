@@ -88,13 +88,13 @@ def main():
         st.markdown(
             """
             <div style='font-size: 0.85em; padding: 0 0.5rem;'>
-            <strong>Public Pages</strong><br>
-            <span style='color: #666;'>Dashboard, Disease Explorer, Facility View,
-            Data Dictionary, LGMD Overview</span><br><br>
-            <strong>Provisioned Access</strong><br>
+            <strong style='color: #4CAF50;'>Public</strong><br>
+            <span style='color: #666;'>Dashboard, Disease Explorer,
+            Facility View, Data Dictionary, LGMD Overview, About</span><br><br>
+            <strong style='color: #1E88E5;'>Provisioned (DUA Required)</strong><br>
             <span style='color: #666;'>Site Analytics, Download Center</span><br>
             <span style='font-size: 0.85em; color: #999;'>
-            Free for sites &amp; researchers |
+            Sites, PAGs, researchers &amp; patients |
             <a href="https://mdausa.tfaforms.net/389761" target="_blank">Request Access</a>
             </span>
             </div>

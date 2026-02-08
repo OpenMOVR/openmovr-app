@@ -115,8 +115,9 @@ require_access(
     description=(
         "Site-level analytics including facility identification, per-site patient "
         "demographics, disease breakdowns, and benchmark comparisons.\n\n"
-        "Free for participating sites, researchers with a DUA, and patients.  "
-        "Industry / pharma access requires a commercial license.\n\n"
+        "Available to participating sites, researchers, PAGs, and patients "
+        "with an approved Data Use Agreement.  All other inquiries should be "
+        "directed to the MOVR team.\n\n"
         "**[Request Access](https://mdausa.tfaforms.net/389761)**"
     ),
 )

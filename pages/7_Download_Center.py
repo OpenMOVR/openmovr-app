@@ -58,8 +58,9 @@ require_access(
     page_title="Download Center",
     description=(
         "Export aggregated statistics, gene therapy breakdowns, and clinical "
-        "data summaries for your own analyses.  Free for researchers, sites, "
-        "and patients with a DUA.  Industry access requires a commercial license.\n\n"
+        "data summaries for your own analyses.  Available to participating sites, "
+        "researchers, PAGs, and patients with an approved Data Use Agreement.  "
+        "All other inquiries should be directed to the MOVR team.\n\n"
         "**[Request Access](https://mdausa.tfaforms.net/389761)**"
     ),
 )

@@ -45,8 +45,9 @@ def require_access(
     else:
         st.info(
             "This page requires provisioned access.  "
-            "Free for participating sites, researchers with a DUA, and patients.  "
-            "Industry / pharma access is available under a commercial license.\n\n"
+            "Available to participating sites, researchers, PAGs, and patients "
+            "with an approved Data Use Agreement.  All other inquiries should be "
+            "directed to the MOVR team.\n\n"
             "**[Request Access](https://mdausa.tfaforms.net/389761)**"
         )
 

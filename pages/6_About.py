@@ -77,8 +77,10 @@ st.subheader("Access Tiers")
 
 st.markdown(
     """
-    OpenMOVR App operates on a **two-tier access model** designed to maximize
-    the value of MOVR data while sustaining development.
+    OpenMOVR App is built for the **patient advocacy and research community**
+    first.  The two-tier model ensures that aggregated registry insights are
+    openly available, while site-level and downloadable data are shared
+    responsibly under the MOVR Data Hub's mission and Data Use Agreement.
     """
 )
 
@@ -88,10 +90,10 @@ with col_pub:
     st.markdown(
         """
         <div style='background: #E8F5E9; border-left: 4px solid #4CAF50;
-        padding: 16px; border-radius: 0 4px 4px 0; min-height: 360px;'>
+        padding: 16px; border-radius: 0 4px 4px 0; min-height: 380px;'>
         <h4 style='margin-top:0;'>Public Access</h4>
         <p style='font-size:0.95em;'>
-        Available to everyone -- no login required.
+        Available to everyone &mdash; no login required.
         </p>
         <ul style='font-size:0.9em;'>
             <li>Aggregated enrollment &amp; disease distribution</li>
@@ -115,24 +117,27 @@ with col_prov:
     st.markdown(
         """
         <div style='background: #E3F2FD; border-left: 4px solid #1E88E5;
-        padding: 16px; border-radius: 0 4px 4px 0; min-height: 360px;'>
+        padding: 16px; border-radius: 0 4px 4px 0; min-height: 380px;'>
         <h4 style='margin-top:0;'>Provisioned Access</h4>
         <p style='font-size:0.95em;'>
-        Requires an access key.
+        Requires an access key &mdash; granted under an approved DUA.
         </p>
         <ul style='font-size:0.9em;'>
-            <li><strong>Site Analytics</strong> -- site-level reports with
+            <li><strong>Site Analytics</strong> &mdash; site-level reports with
                 facility names, site-vs-overall comparisons, per-disease
                 breakdowns</li>
-            <li><strong>Download Center</strong> -- export tables as CSV,
+            <li><strong>Download Center</strong> &mdash; export tables as CSV,
                 download snapshot data for custom analytics</li>
             <li><em>Coming soon:</em> Cohort Builder, custom longitudinal
                 analytics</li>
         </ul>
         <p style='font-size:0.85em; color:#666;'>
-        <strong>Free</strong> for participating sites, researchers with an
-        approved DUA, and patients.<br>
-        <strong>Commercial license</strong> required for pharma / industry.
+        Available to <strong>participating sites</strong>, <strong>PAGs</strong>,
+        <strong>researchers</strong>, and <strong>patients</strong> with an
+        approved Data Use Agreement.<br><br>
+        All other inquiries &mdash; including those from organizations seeking
+        data access &mdash; should be directed to the MOVR team to discuss
+        licensing that aligns with the registry's mission and objectives.
         </p>
         </div>
         """,
