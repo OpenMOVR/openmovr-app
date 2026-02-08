@@ -24,6 +24,9 @@ Thumbs.db
 
 # Data files - DO NOT COMMIT (may contain PHI)
 data/*.parquet
+data/*.xlsx
+data/*.csv
+
 
 # Cache
 .cache/
