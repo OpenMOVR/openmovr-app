@@ -57,9 +57,17 @@ st.markdown(
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
     }
-    .clean-table { width: 100%; border-collapse: collapse; }
-    .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
-    .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+    .clean-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    .clean-table th { text-align: left; padding: 3px 8px; border-bottom: 2px solid #ddd; }
+    .clean-table td { padding: 3px 8px; border-bottom: 1px solid #eee; }
+    [data-testid="stSidebarNav"] li:nth-last-child(2) {
+        margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
+    }
+    [data-testid="stSidebarNav"] li:nth-last-child(2)::before {
+        content: "DUA REQUIRED"; display: block; font-size: 0.7em;
+        color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
+        letter-spacing: 0.05em;
+    }
     </style>
     """,
     unsafe_allow_html=True

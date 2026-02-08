@@ -55,9 +55,17 @@ st.markdown(
         margin-bottom: 1rem;
         border-bottom: 1px solid #ddd;
     }
-    .clean-table { width: 100%; border-collapse: collapse; }
-    .clean-table th { text-align: left; padding: 6px 12px; border-bottom: 2px solid #ddd; }
-    .clean-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+    .clean-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    .clean-table th { text-align: left; padding: 3px 8px; border-bottom: 2px solid #ddd; }
+    .clean-table td { padding: 3px 8px; border-bottom: 1px solid #eee; }
+    [data-testid="stSidebarNav"] li:nth-last-child(2) {
+        margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
+    }
+    [data-testid="stSidebarNav"] li:nth-last-child(2)::before {
+        content: "DUA REQUIRED"; display: block; font-size: 0.7em;
+        color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
+        letter-spacing: 0.05em;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -438,7 +446,7 @@ else:
 
     # Show count info
     total_matching = len(filtered_df)
-    showing = min(500, total_matching)
+    showing = min(100, total_matching)
 
     col_info, col_calc = st.columns([2, 1])
 
@@ -470,7 +478,7 @@ else:
     if selected_disease != "All":
         display_cols.extend(["Valid", "Validity Note"])
     available_cols = [c for c in display_cols if c in filtered_df.columns]
-    display_df = filtered_df[available_cols].head(500).copy()
+    display_df = filtered_df[available_cols].head(100).copy()
 
     # Truncate long descriptions
     if "Description" in display_df.columns:
@@ -481,7 +489,7 @@ else:
         with st.spinner("Calculating data completeness..."):
             try:
                 completeness_df = DataDictionaryAPI.calculate_completeness(
-                    filtered_df.head(500),
+                    filtered_df.head(100),
                     disease=selected_disease if selected_disease != "All" else None
                 )
                 if "Completeness %" in completeness_df.columns:
@@ -533,17 +541,9 @@ else:
     caption_parts = ["'* REQUIRED' = mandatory field"]
     if selected_disease != "All":
         caption_parts.append("'INVALID' = field may be mislabeled for this disease")
+    if showing < total_matching:
+        caption_parts.append(f"Showing {showing} of {total_matching} — use sidebar filters to narrow results")
     st.caption(" | ".join(caption_parts))
-
-    # Download button
-    csv_data = filtered_df.to_csv(index=False)
-    st.download_button(
-        label="Download Filtered Fields (CSV)",
-        data=csv_data,
-        file_name="data_dictionary_export.csv",
-        mime="text/csv",
-        key="dd_download"
-    )
 
 
 # ---------------------------------------------------------------------------

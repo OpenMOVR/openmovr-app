@@ -50,6 +50,14 @@ st.markdown(
         font-size: 0.8em; color: #666; text-align: center;
         padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #ddd;
     }
+    [data-testid="stSidebarNav"] li:nth-last-child(2) {
+        margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
+    }
+    [data-testid="stSidebarNav"] li:nth-last-child(2)::before {
+        content: "DUA REQUIRED"; display: block; font-size: 0.7em;
+        color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
+        letter-spacing: 0.05em;
+    }
     </style>
     """,
     unsafe_allow_html=True,
