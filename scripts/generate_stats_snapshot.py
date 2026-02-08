@@ -107,9 +107,132 @@ def generate_snapshot(include_usndr: bool = False) -> dict:
         "longitudinal": _compute_longitudinal_stats(base_cohort),
 
         "clinical_availability": _compute_clinical_availability(base_cohort),
+
+        "disease_profiles": _compute_disease_profiles(base_cohort),
     }
 
     return snapshot
+
+
+def _compute_disease_profiles(base_cohort: dict) -> dict:
+    """Compute per-disease demographic overview and diagnosis profile snapshots."""
+    demo = base_cohort['demographics']
+    diag = base_cohort['diagnosis']
+    if demo.empty or 'dstype' not in demo.columns:
+        return {}
+
+    def _value_counts(series, top_n=15):
+        """Return value counts as list of {label, count} dicts."""
+        vals = series.dropna()
+        vals = vals[vals.astype(str).str.strip() != '']
+        if vals.empty:
+            return []
+        vc = vals.value_counts().head(top_n)
+        return [{"label": str(k), "count": int(v)} for k, v in vc.items()]
+
+    def _age_histogram(dob_series, enrol_series):
+        """Compute age-at-enrollment histogram bins."""
+        try:
+            dob = pd.to_datetime(dob_series, format='mixed', dayfirst=False)
+            enrol = pd.to_datetime(enrol_series, format='mixed', dayfirst=False)
+            ages = ((enrol - dob).dt.days / 365.25).dropna()
+            ages = ages[(ages >= 0) & (ages <= 110)]
+            if ages.empty:
+                return []
+            bins = [0, 5, 10, 18, 30, 40, 50, 60, 70, 80, 110]
+            labels = ['0-4', '5-9', '10-17', '18-29', '30-39', '40-49',
+                      '50-59', '60-69', '70-79', '80+']
+            cut = pd.cut(ages, bins=bins, labels=labels, include_lowest=True)
+            vc = cut.value_counts().sort_index()
+            return [{"label": str(k), "count": int(v)} for k, v in vc.items() if v > 0]
+        except Exception:
+            return []
+
+    # Disease-specific diagnosis fields to snapshot
+    _DIAGNOSIS_FIELDS = {
+        'ALS': [
+            {'field': 'alselesc', 'label': 'El Escorial Criteria'},
+            {'field': 'genemut', 'label': 'Gene Mutation'},
+            {'field': 'alsdgnag', 'label': 'Age at Diagnosis', 'numeric': True},
+        ],
+        'DMD': [
+            {'field': 'dmdgntcf', 'label': 'Genetic Confirmation'},
+            {'field': 'dmdfam', 'label': 'Family History'},
+        ],
+        'BMD': [
+            {'field': 'bmdgntcf', 'label': 'Genetic Confirmation'},
+            {'field': 'bmdfam', 'label': 'Family History'},
+        ],
+        'SMA': [
+            {'field': 'smaclass', 'label': 'SMA Classification'},
+            {'field': 'smadgcnf', 'label': 'Genetic Confirmation'},
+        ],
+        'LGMD': [
+            {'field': 'lgtype', 'label': 'LGMD Subtype', 'top_n': 20},
+            {'field': 'lggntcf', 'label': 'Genetic Confirmation'},
+            {'field': 'lgmscbp', 'label': 'Muscle Biopsy'},
+        ],
+        'FSHD': [
+            {'field': 'fshdel', 'label': '4q35 Deletion'},
+        ],
+        'Pompe': [],
+    }
+
+    profiles = {}
+    all_diseases = sorted(demo['dstype'].dropna().unique())
+
+    for disease in all_diseases:
+        ds_pts = set(demo.loc[demo['dstype'] == disease, 'FACPATID'])
+        ds_demo = demo[demo['FACPATID'].isin(ds_pts)]
+        ds_diag = diag[diag['FACPATID'].isin(ds_pts)] if not diag.empty else pd.DataFrame()
+
+        profile = {
+            "patient_count": len(ds_pts),
+            "demographics": {
+                "gender": _value_counts(ds_demo['gender']) if 'gender' in ds_demo.columns else [],
+                "ethnicity": _value_counts(ds_demo['ethnic']) if 'ethnic' in ds_demo.columns else [],
+                "age_at_enrollment": _age_histogram(
+                    ds_demo.get('dob', pd.Series(dtype='object')),
+                    ds_demo.get('enroldt', pd.Series(dtype='object')),
+                ),
+            },
+            "diagnosis": [],
+        }
+
+        # Disease-specific diagnosis distributions
+        for fdef in _DIAGNOSIS_FIELDS.get(disease, []):
+            field = fdef['field']
+            if ds_diag.empty or field not in ds_diag.columns:
+                continue
+            top_n = fdef.get('top_n', 15)
+            if fdef.get('numeric'):
+                # For numeric fields, compute summary stats
+                vals = pd.to_numeric(ds_diag[field], errors='coerce').dropna()
+                if not vals.empty:
+                    profile["diagnosis"].append({
+                        "field": field,
+                        "label": fdef['label'],
+                        "type": "numeric",
+                        "n": int(len(vals)),
+                        "mean": round(float(vals.mean()), 1),
+                        "median": round(float(vals.median()), 1),
+                        "min": round(float(vals.min()), 1),
+                        "max": round(float(vals.max()), 1),
+                    })
+            else:
+                counts = _value_counts(ds_diag[field], top_n=top_n)
+                if counts:
+                    profile["diagnosis"].append({
+                        "field": field,
+                        "label": fdef['label'],
+                        "type": "categorical",
+                        "values": counts,
+                    })
+
+        profiles[disease] = profile
+
+    print(f"   Disease profiles: {len(profiles)} diseases computed")
+    return profiles
 
 
 def _compute_longitudinal_stats(base_cohort: dict) -> dict:

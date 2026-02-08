@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-07T20:13:18.522777",
-    "generated_timestamp": "2026-02-07 20:13:18",
+    "generated_at": "2026-02-07T20:54:22.258711",
+    "generated_timestamp": "2026-02-07 20:54:22",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -1930,6 +1930,1017 @@
       "multidisciplinary_plan": 2034,
       "specialists_seen": 3401,
       "specialists_referred": 3390
+    }
+  },
+  "disease_profiles": {
+    "ALS": {
+      "patient_count": 1652,
+      "demographics": {
+        "gender": [
+          {
+            "label": "Male",
+            "count": 930
+          },
+          {
+            "label": "Female",
+            "count": 720
+          },
+          {
+            "label": "Unspecified",
+            "count": 2
+          }
+        ],
+        "ethnicity": [
+          {
+            "label": "White",
+            "count": 1373
+          },
+          {
+            "label": "Unknown",
+            "count": 100
+          },
+          {
+            "label": "Black or African American",
+            "count": 86
+          },
+          {
+            "label": "Not Reported",
+            "count": 34
+          },
+          {
+            "label": "Asian",
+            "count": 29
+          },
+          {
+            "label": "Other",
+            "count": 21
+          },
+          {
+            "label": "American Indian / Alaska Native",
+            "count": 3
+          },
+          {
+            "label": "Native Hawaiian or Other Pacific Islander",
+            "count": 2
+          },
+          {
+            "label": "Asian,Native Hawaiian or Other Pacific Islander",
+            "count": 2
+          },
+          {
+            "label": "Asian,White",
+            "count": 1
+          },
+          {
+            "label": "Other,White",
+            "count": 1
+          }
+        ],
+        "age_at_enrollment": [
+          {
+            "label": "18-29",
+            "count": 6
+          },
+          {
+            "label": "30-39",
+            "count": 44
+          },
+          {
+            "label": "40-49",
+            "count": 117
+          },
+          {
+            "label": "50-59",
+            "count": 376
+          },
+          {
+            "label": "60-69",
+            "count": 594
+          },
+          {
+            "label": "70-79",
+            "count": 410
+          },
+          {
+            "label": "80+",
+            "count": 94
+          }
+        ]
+      },
+      "diagnosis": [
+        {
+          "field": "genemut",
+          "label": "Gene Mutation",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Not Tested",
+              "count": 708
+            },
+            {
+              "label": "Unknown",
+              "count": 461
+            },
+            {
+              "label": "Tested, no mutation found",
+              "count": 293
+            },
+            {
+              "label": "Other",
+              "count": 80
+            },
+            {
+              "label": "C90RF72",
+              "count": 76
+            },
+            {
+              "label": "SOD1",
+              "count": 21
+            },
+            {
+              "label": "FUS",
+              "count": 6
+            },
+            {
+              "label": "TDP-43/TARDBP",
+              "count": 5
+            }
+          ]
+        },
+        {
+          "field": "alsdgnag",
+          "label": "Age at Diagnosis",
+          "type": "numeric",
+          "n": 1616,
+          "mean": 62.9,
+          "median": 63.3,
+          "min": 20.9,
+          "max": 92.9
+        }
+      ]
+    },
+    "BMD": {
+      "patient_count": 150,
+      "demographics": {
+        "gender": [
+          {
+            "label": "Male",
+            "count": 149
+          },
+          {
+            "label": "Female",
+            "count": 1
+          }
+        ],
+        "ethnicity": [
+          {
+            "label": "White",
+            "count": 113
+          },
+          {
+            "label": "Not Reported",
+            "count": 10
+          },
+          {
+            "label": "Black or African American",
+            "count": 10
+          },
+          {
+            "label": "Unknown",
+            "count": 9
+          },
+          {
+            "label": "Other",
+            "count": 5
+          },
+          {
+            "label": "Asian",
+            "count": 2
+          },
+          {
+            "label": "Black or African American,White",
+            "count": 1
+          }
+        ],
+        "age_at_enrollment": [
+          {
+            "label": "0-4",
+            "count": 9
+          },
+          {
+            "label": "5-9",
+            "count": 27
+          },
+          {
+            "label": "10-17",
+            "count": 46
+          },
+          {
+            "label": "18-29",
+            "count": 23
+          },
+          {
+            "label": "30-39",
+            "count": 21
+          },
+          {
+            "label": "40-49",
+            "count": 8
+          },
+          {
+            "label": "50-59",
+            "count": 11
+          },
+          {
+            "label": "60-69",
+            "count": 3
+          },
+          {
+            "label": "70-79",
+            "count": 1
+          }
+        ]
+      },
+      "diagnosis": [
+        {
+          "field": "bmdgntcf",
+          "label": "Genetic Confirmation",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes - Laboratory confirmation",
+              "count": 124
+            },
+            {
+              "label": "Unknown",
+              "count": 8
+            },
+            {
+              "label": "No",
+              "count": 7
+            },
+            {
+              "label": "Attempted but unable to find a mutation",
+              "count": 5
+            },
+            {
+              "label": "Yes - In a family member",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "field": "bmdfam",
+          "label": "Family History",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes",
+              "count": 69
+            },
+            {
+              "label": "No",
+              "count": 50
+            },
+            {
+              "label": "Unknown",
+              "count": 22
+            }
+          ]
+        }
+      ]
+    },
+    "DMD": {
+      "patient_count": 687,
+      "demographics": {
+        "gender": [
+          {
+            "label": "Male",
+            "count": 679
+          },
+          {
+            "label": "Female",
+            "count": 7
+          },
+          {
+            "label": "Unspecified",
+            "count": 1
+          }
+        ],
+        "ethnicity": [
+          {
+            "label": "White",
+            "count": 472
+          },
+          {
+            "label": "Other",
+            "count": 60
+          },
+          {
+            "label": "Black or African American",
+            "count": 42
+          },
+          {
+            "label": "Not Reported",
+            "count": 40
+          },
+          {
+            "label": "Unknown",
+            "count": 40
+          },
+          {
+            "label": "Asian",
+            "count": 20
+          },
+          {
+            "label": "American Indian / Alaska Native",
+            "count": 4
+          },
+          {
+            "label": "Native Hawaiian or Other Pacific Islander",
+            "count": 4
+          },
+          {
+            "label": "Black or African American,White",
+            "count": 2
+          },
+          {
+            "label": "Asian,White",
+            "count": 1
+          },
+          {
+            "label": "American Indian / Alaska Native,White",
+            "count": 1
+          },
+          {
+            "label": "Asian,Other",
+            "count": 1
+          }
+        ],
+        "age_at_enrollment": [
+          {
+            "label": "0-4",
+            "count": 52
+          },
+          {
+            "label": "5-9",
+            "count": 171
+          },
+          {
+            "label": "10-17",
+            "count": 310
+          },
+          {
+            "label": "18-29",
+            "count": 137
+          },
+          {
+            "label": "30-39",
+            "count": 13
+          },
+          {
+            "label": "40-49",
+            "count": 1
+          },
+          {
+            "label": "50-59",
+            "count": 1
+          },
+          {
+            "label": "60-69",
+            "count": 1
+          }
+        ]
+      },
+      "diagnosis": [
+        {
+          "field": "dmdgntcf",
+          "label": "Genetic Confirmation",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes - Laboratory confirmation",
+              "count": 641
+            },
+            {
+              "label": "Unknown",
+              "count": 19
+            },
+            {
+              "label": "Yes - In a family member",
+              "count": 17
+            },
+            {
+              "label": "No",
+              "count": 6
+            },
+            {
+              "label": "Attempted but unable to find a mutation",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "field": "dmdfam",
+          "label": "Family History",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "No",
+              "count": 322
+            },
+            {
+              "label": "Yes",
+              "count": 227
+            },
+            {
+              "label": "Unknown",
+              "count": 110
+            }
+          ]
+        }
+      ]
+    },
+    "FSHD": {
+      "patient_count": 184,
+      "demographics": {
+        "gender": [
+          {
+            "label": "Male",
+            "count": 97
+          },
+          {
+            "label": "Female",
+            "count": 87
+          }
+        ],
+        "ethnicity": [
+          {
+            "label": "White",
+            "count": 156
+          },
+          {
+            "label": "Unknown",
+            "count": 11
+          },
+          {
+            "label": "Black or African American",
+            "count": 5
+          },
+          {
+            "label": "Not Reported",
+            "count": 5
+          },
+          {
+            "label": "Other",
+            "count": 4
+          },
+          {
+            "label": "Asian",
+            "count": 3
+          }
+        ],
+        "age_at_enrollment": [
+          {
+            "label": "5-9",
+            "count": 3
+          },
+          {
+            "label": "10-17",
+            "count": 13
+          },
+          {
+            "label": "18-29",
+            "count": 20
+          },
+          {
+            "label": "30-39",
+            "count": 14
+          },
+          {
+            "label": "40-49",
+            "count": 30
+          },
+          {
+            "label": "50-59",
+            "count": 33
+          },
+          {
+            "label": "60-69",
+            "count": 44
+          },
+          {
+            "label": "70-79",
+            "count": 20
+          },
+          {
+            "label": "80+",
+            "count": 5
+          }
+        ]
+      },
+      "diagnosis": [
+        {
+          "field": "fshdel",
+          "label": "4q35 Deletion",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes",
+              "count": 83
+            },
+            {
+              "label": "Unknown",
+              "count": 79
+            },
+            {
+              "label": "No",
+              "count": 14
+            },
+            {
+              "label": "Not tested",
+              "count": 8
+            }
+          ]
+        }
+      ]
+    },
+    "LGMD": {
+      "patient_count": 210,
+      "demographics": {
+        "gender": [
+          {
+            "label": "Female",
+            "count": 109
+          },
+          {
+            "label": "Male",
+            "count": 100
+          },
+          {
+            "label": "Unspecified",
+            "count": 1
+          }
+        ],
+        "ethnicity": [
+          {
+            "label": "White",
+            "count": 155
+          },
+          {
+            "label": "Black or African American",
+            "count": 21
+          },
+          {
+            "label": "Unknown",
+            "count": 9
+          },
+          {
+            "label": "Other",
+            "count": 9
+          },
+          {
+            "label": "Asian",
+            "count": 6
+          },
+          {
+            "label": "Not Reported",
+            "count": 6
+          },
+          {
+            "label": "American Indian / Alaska Native,White",
+            "count": 2
+          },
+          {
+            "label": "American Indian / Alaska Native,Black or African American,White",
+            "count": 1
+          },
+          {
+            "label": "American Indian / Alaska Native",
+            "count": 1
+          }
+        ],
+        "age_at_enrollment": [
+          {
+            "label": "0-4",
+            "count": 1
+          },
+          {
+            "label": "5-9",
+            "count": 9
+          },
+          {
+            "label": "10-17",
+            "count": 40
+          },
+          {
+            "label": "18-29",
+            "count": 20
+          },
+          {
+            "label": "30-39",
+            "count": 26
+          },
+          {
+            "label": "40-49",
+            "count": 30
+          },
+          {
+            "label": "50-59",
+            "count": 36
+          },
+          {
+            "label": "60-69",
+            "count": 30
+          },
+          {
+            "label": "70-79",
+            "count": 15
+          },
+          {
+            "label": "80+",
+            "count": 1
+          }
+        ]
+      },
+      "diagnosis": [
+        {
+          "field": "lgtype",
+          "label": "LGMD Subtype",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "LGMD2A (CAPN3/Calpain-3)",
+              "count": 34
+            },
+            {
+              "label": "Undetermined",
+              "count": 27
+            },
+            {
+              "label": "LGMD2I (FKRP/Fukutin-related protein)",
+              "count": 26
+            },
+            {
+              "label": "LGMD2B (DYSF/Dysferlin)",
+              "count": 24
+            },
+            {
+              "label": "LGMD2L (ANO5/anoctamin 5)",
+              "count": 13
+            },
+            {
+              "label": "LGMD2J (TTN/Titin)",
+              "count": 12
+            },
+            {
+              "label": "LGMD1B (LMNA/Lamin A/C)",
+              "count": 10
+            },
+            {
+              "label": "LGMD1A (MYOT/Myotilin)",
+              "count": 9
+            },
+            {
+              "label": "LGMD2T (GMPPB/GDP-mannose pyrophosphorylase B)",
+              "count": 7
+            },
+            {
+              "label": "LGMD2C (SGCG/Gamma-Sarcoglycan)",
+              "count": 7
+            },
+            {
+              "label": "LGMD2E (SGCB/Beta-Sarcoglycan)",
+              "count": 5
+            },
+            {
+              "label": "LGMD1I (CAPN3/Calpain-3)",
+              "count": 5
+            },
+            {
+              "label": "LGMD2D (SGCA/Alpha-Sarcoglycan)",
+              "count": 4
+            },
+            {
+              "label": "LGMD1F (TNPO3/Transportin 3)",
+              "count": 3
+            },
+            {
+              "label": "LGMD2S (TRAPPC11/transport protein particle complex 11)",
+              "count": 3
+            },
+            {
+              "label": "LGMD1G (HNRNPDL/Heterogeneous nuclear ribonucleoprotein D-like)",
+              "count": 2
+            },
+            {
+              "label": "LGMD1D (DNAJB6/HSP40)",
+              "count": 2
+            },
+            {
+              "label": "LGMD2M (FKTN/Fukutin)",
+              "count": 2
+            },
+            {
+              "label": "LGMD2R (DES/Desmin)",
+              "count": 2
+            },
+            {
+              "label": "LGMD2N (POMT2/Protein-O-mannosyl transferase 2)",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "field": "lggntcf",
+          "label": "Genetic Confirmation",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes \u2013 Laboratory confirmation",
+              "count": 188
+            },
+            {
+              "label": "Yes \u2013 In a family member",
+              "count": 9
+            },
+            {
+              "label": "Attempted but unable to find mutation",
+              "count": 6
+            },
+            {
+              "label": "Unknown",
+              "count": 4
+            },
+            {
+              "label": "No",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "field": "lgmscbp",
+          "label": "Muscle Biopsy",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes",
+              "count": 114
+            },
+            {
+              "label": "No",
+              "count": 56
+            },
+            {
+              "label": "Unknown",
+              "count": 38
+            }
+          ]
+        }
+      ]
+    },
+    "Pompe": {
+      "patient_count": 37,
+      "demographics": {
+        "gender": [
+          {
+            "label": "Male",
+            "count": 22
+          },
+          {
+            "label": "Female",
+            "count": 15
+          }
+        ],
+        "ethnicity": [
+          {
+            "label": "White",
+            "count": 32
+          },
+          {
+            "label": "Black or African American",
+            "count": 3
+          },
+          {
+            "label": "Not Reported",
+            "count": 2
+          }
+        ],
+        "age_at_enrollment": [
+          {
+            "label": "0-4",
+            "count": 5
+          },
+          {
+            "label": "5-9",
+            "count": 3
+          },
+          {
+            "label": "10-17",
+            "count": 4
+          },
+          {
+            "label": "18-29",
+            "count": 1
+          },
+          {
+            "label": "30-39",
+            "count": 3
+          },
+          {
+            "label": "40-49",
+            "count": 1
+          },
+          {
+            "label": "50-59",
+            "count": 6
+          },
+          {
+            "label": "60-69",
+            "count": 8
+          },
+          {
+            "label": "70-79",
+            "count": 6
+          }
+        ]
+      },
+      "diagnosis": []
+    },
+    "SMA": {
+      "patient_count": 524,
+      "demographics": {
+        "gender": [
+          {
+            "label": "Male",
+            "count": 277
+          },
+          {
+            "label": "Female",
+            "count": 245
+          },
+          {
+            "label": "Non-binary",
+            "count": 2
+          }
+        ],
+        "ethnicity": [
+          {
+            "label": "White",
+            "count": 374
+          },
+          {
+            "label": "Black or African American",
+            "count": 47
+          },
+          {
+            "label": "Unknown",
+            "count": 31
+          },
+          {
+            "label": "Other",
+            "count": 23
+          },
+          {
+            "label": "Not Reported",
+            "count": 21
+          },
+          {
+            "label": "Asian",
+            "count": 20
+          },
+          {
+            "label": "American Indian / Alaska Native,White",
+            "count": 2
+          },
+          {
+            "label": "Black or African American,White",
+            "count": 2
+          },
+          {
+            "label": "American Indian / Alaska Native",
+            "count": 1
+          },
+          {
+            "label": "Black or African American,Other",
+            "count": 1
+          },
+          {
+            "label": "Native Hawaiian or Other Pacific Islander",
+            "count": 1
+          },
+          {
+            "label": "Asian,Other",
+            "count": 1
+          }
+        ],
+        "age_at_enrollment": [
+          {
+            "label": "0-4",
+            "count": 169
+          },
+          {
+            "label": "5-9",
+            "count": 98
+          },
+          {
+            "label": "10-17",
+            "count": 95
+          },
+          {
+            "label": "18-29",
+            "count": 65
+          },
+          {
+            "label": "30-39",
+            "count": 35
+          },
+          {
+            "label": "40-49",
+            "count": 34
+          },
+          {
+            "label": "50-59",
+            "count": 16
+          },
+          {
+            "label": "60-69",
+            "count": 10
+          },
+          {
+            "label": "70-79",
+            "count": 1
+          }
+        ]
+      },
+      "diagnosis": [
+        {
+          "field": "smaclass",
+          "label": "SMA Classification",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "SMA - Type 2 (symptoms present between 7 and 18 months, can sit unassisted but does not stand or walk independently)",
+              "count": 160
+            },
+            {
+              "label": "SMA - Type 1 (symptoms present by 6 months, does not sit unassisted)",
+              "count": 160
+            },
+            {
+              "label": "SMA - Type 3 (symptoms present after 18 months, can stand and walk independently)",
+              "count": 109
+            },
+            {
+              "label": "Pre-symptomatic",
+              "count": 42
+            },
+            {
+              "label": "SMA - Type 0 (symptoms present at birth)",
+              "count": 14
+            },
+            {
+              "label": "Unknown",
+              "count": 14
+            },
+            {
+              "label": "SMA - Type 4 (symptoms present late teens to adulthood)",
+              "count": 10
+            },
+            {
+              "label": "Other",
+              "count": 8
+            },
+            {
+              "label": "Non-SMN SMA",
+              "count": 6
+            }
+          ]
+        },
+        {
+          "field": "smadgcnf",
+          "label": "Genetic Confirmation",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes",
+              "count": 493
+            },
+            {
+              "label": "No",
+              "count": 14
+            },
+            {
+              "label": "Unknown",
+              "count": 12
+            },
+            {
+              "label": "Assumed based on sibling testing",
+              "count": 2
+            }
+          ]
+        }
+      ]
     }
   }
 }

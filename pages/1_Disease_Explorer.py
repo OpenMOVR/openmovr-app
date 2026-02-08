@@ -273,36 +273,134 @@ if not _has_parquet:
         static_table(table_df)
 
     # ===================================================================
-    # UNAVAILABLE SECTIONS (snapshot mode)
+    # DEMOGRAPHICS OVERVIEW (from snapshot disease_profiles)
     # ===================================================================
+    disease_profiles = snapshot.get('disease_profiles', {})
+    profile = disease_profiles.get(selected_disease, {})
+    demo_snap = profile.get('demographics', {})
+
     st.markdown("---")
     st.subheader("Demographics Overview")
-    _unavailable_section(
-        "Demographics Charts",
-        "Age distribution, gender, race/ethnicity, and facility breakdowns require patient-level data. "
-        "Only aggregate summaries are available in this prototype."
-    )
 
-    st.markdown("---")
-    st.subheader(f"{selected_disease} Diagnosis Profile")
-    _unavailable_section(
-        "Disease-Specific Diagnosis Charts",
-        "Diagnosis characteristics, clinical variables, and disease-specific filters "
-        "require a live connection to the MOVR dataset."
-    )
+    if demo_snap:
+        import plotly.graph_objects as go
 
-    st.markdown("---")
-    st.subheader("Data Tables")
-    _unavailable_section(
-        "Patient-Level Data Tables",
-        "Raw demographics, encounters, and medication records are not included in the public snapshot. "
-        "These tables contain patient-level data and require authenticated access."
-    )
+        col_age, col_gender = st.columns(2)
 
+        with col_age:
+            age_data = demo_snap.get('age_at_enrollment', [])
+            if age_data:
+                fig = go.Figure(go.Bar(
+                    x=[d['label'] for d in age_data],
+                    y=[d['count'] for d in age_data],
+                    marker_color='#636EFA',
+                ))
+                fig.update_layout(
+                    title="Age at Enrollment",
+                    xaxis_title="Age Range",
+                    yaxis_title="Patients",
+                    height=350,
+                    margin=dict(t=40, b=40),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.caption("Age distribution not available.")
+
+        with col_gender:
+            gender_data = demo_snap.get('gender', [])
+            if gender_data:
+                fig = go.Figure(go.Pie(
+                    labels=[d['label'] for d in gender_data],
+                    values=[d['count'] for d in gender_data],
+                    hole=0.4,
+                ))
+                fig.update_layout(
+                    title="Gender Distribution",
+                    height=350,
+                    margin=dict(t=40, b=40),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.caption("Gender data not available.")
+
+        eth_data = demo_snap.get('ethnicity', [])
+        if eth_data:
+            # Show top 8 categories, combine rest into "Other"
+            top = eth_data[:8]
+            rest = sum(d['count'] for d in eth_data[8:])
+            labels = [d['label'] for d in top]
+            values = [d['count'] for d in top]
+            if rest > 0:
+                labels.append("Other (combined)")
+                values.append(rest)
+            fig = go.Figure(go.Bar(
+                x=values, y=labels,
+                orientation='h',
+                marker_color='#AB63FA',
+            ))
+            fig.update_layout(
+                title="Race / Ethnicity",
+                xaxis_title="Patients",
+                height=max(250, len(labels) * 30 + 80),
+                margin=dict(t=40, b=40, l=200),
+            )
+            st.plotly_chart(fig, use_container_width=True)
+    else:
+        _unavailable_section("Demographics Charts", "Demographic data not available for this disease.")
+
+    # ===================================================================
+    # DIAGNOSIS PROFILE (from snapshot disease_profiles)
+    # ===================================================================
+    diag_snap = profile.get('diagnosis', [])
+
+    if diag_snap:
+        st.markdown("---")
+        st.subheader(f"{selected_disease} Diagnosis Profile")
+
+        import plotly.graph_objects as go
+
+        for i in range(0, len(diag_snap), 2):
+            cols = st.columns(2)
+            for j, col in enumerate(cols):
+                idx = i + j
+                if idx >= len(diag_snap):
+                    break
+                dx = diag_snap[idx]
+                with col:
+                    if dx['type'] == 'categorical':
+                        vals = dx['values']
+                        # Shorten long labels
+                        labels = [d['label'][:50] for d in vals]
+                        counts = [d['count'] for d in vals]
+                        fig = go.Figure(go.Bar(
+                            x=counts, y=labels,
+                            orientation='h',
+                            marker_color='#00CC96',
+                        ))
+                        fig.update_layout(
+                            title=dx['label'],
+                            xaxis_title="Patients",
+                            height=max(250, len(labels) * 25 + 80),
+                            margin=dict(t=40, b=40, l=200),
+                        )
+                        st.plotly_chart(fig, use_container_width=True)
+                    elif dx['type'] == 'numeric':
+                        st.markdown(f"**{dx['label']}**")
+                        mc1, mc2, mc3 = st.columns(3)
+                        with mc1:
+                            st.metric("Mean", f"{dx['mean']:.1f}")
+                        with mc2:
+                            st.metric("Median", f"{dx['median']:.1f}")
+                        with mc3:
+                            st.metric("N", f"{dx['n']:,}")
+
+    # ===================================================================
+    # DATA SUMMARY note
+    # ===================================================================
     st.markdown("---")
-    _unavailable_section(
-        "Patient IDs",
-        "Individual patient identifiers are not available in the public prototype."
+    st.caption(
+        "Full data tables and CSV downloads are available in the "
+        "**Download Center** (provisioned access required)."
     )
 
 
