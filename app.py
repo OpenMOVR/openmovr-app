@@ -24,6 +24,7 @@ from components.charts import (
     create_site_map,
 )
 from components.tables import display_disease_table, static_table
+from components.sidebar import inject_global_css, render_sidebar_footer
 
 
 # Page configuration — use logo as favicon
@@ -39,90 +40,8 @@ st.set_page_config(
 def main():
     """Main application entry point."""
 
-    # Custom CSS: branding + hide row indices on static tables
-    st.markdown(
-        """
-        <style>
-        [data-testid="stSidebarNav"] {
-            padding-top: 5rem;
-            position: relative;
-        }
-        [data-testid="stSidebarNav"]::before {
-            content: "OpenMOVR App";
-            position: absolute;
-            top: 0.5rem;
-            left: 0; right: 0;
-            text-align: center;
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #1E88E5;
-        }
-        [data-testid="stSidebarNav"]::after {
-            content: "Open Source Project | MOVR Data Hub | 1.0";
-            position: absolute;
-            top: 2.5rem;
-            left: 0; right: 0;
-            text-align: center;
-            font-size: 0.7em;
-            color: #888;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #eee;
-        }
-        .clean-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-        .clean-table th { text-align: left; padding: 3px 8px; border-bottom: 2px solid #ddd; }
-        .clean-table td { padding: 3px 8px; border-bottom: 1px solid #eee; }
-        /* PUBLIC label above first nav item */
-        [data-testid="stSidebarNav"] li:first-child {
-            margin-top: 0.5rem; padding-top: 0.5rem;
-        }
-        [data-testid="stSidebarNav"] li:first-child::before {
-            content: "PUBLIC"; display: block; font-size: 0.7em;
-            color: #4CAF50; font-weight: bold; padding: 0 14px 4px;
-            letter-spacing: 0.05em;
-        }
-        /* DUA REQUIRED separator before provisioned pages */
-        [data-testid="stSidebarNav"] li:nth-last-child(3) {
-            margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
-        }
-        [data-testid="stSidebarNav"] li:nth-last-child(3)::before {
-            content: "DUA REQUIRED"; display: block; font-size: 0.7em;
-            color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
-            letter-spacing: 0.05em;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Sidebar: links + logo + contact
-    with st.sidebar:
-        st.markdown(
-            """
-            <div style='text-align: center; font-size: 0.8em; color: #888; padding-bottom: 0.25rem;'>
-                <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a> |
-                <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        if LOGO_PNG.exists():
-            st.markdown(
-                "<div style='text-align: center;'>",
-                unsafe_allow_html=True
-            )
-            st.image(str(LOGO_PNG), width=160)
-            st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown("---")
-        st.markdown(
-            """
-            <div style='text-align: center; font-size: 0.75em; color: #999;'>
-                Contact:
-                <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a> |
-                <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    inject_global_css()
+    render_sidebar_footer()
 
     # Header with logo + branding
     header_left, header_right = st.columns([3, 1])
@@ -385,28 +304,25 @@ def main():
             col_left, col_right = st.columns(2)
 
             with col_left:
-                # Gene therapy by disease (from combo_drugs + gene therapy config)
-                gt_by_disease = meds.get('gene_therapy_by_disease', {})
-                if gt_by_disease:
-                    st.markdown("###### Advanced Therapies by Disease")
-                    disease_order = ['SMA', 'DMD', 'ALS', 'Pompe']
-                    gt_rows = []
-                    for disease in disease_order:
-                        dinfo = gt_by_disease.get(disease)
-                        if not dinfo:
-                            continue
-                        for t in dinfo.get('treatments', []):
-                            gt_rows.append({
-                                "Disease": disease,
-                                "Category": t['category'],
-                                "Treatment": t['label'],
-                                "Patients": t['patients'],
-                            })
-                    if gt_rows:
-                        static_table(pd.DataFrame(gt_rows))
-
-                # Drug class breakdown table
+                # Unified drug class table (advanced therapies + standard classes)
                 med_rows = []
+
+                # Advanced therapy categories — aggregate across diseases
+                gt_by_disease = meds.get('gene_therapy_by_disease', {})
+                cat_totals = {}
+                for dinfo in gt_by_disease.values():
+                    for t in dinfo.get('treatments', []):
+                        cat = t['category']
+                        cat_totals[cat] = cat_totals.get(cat, 0) + t.get('patients', 0)
+                for cat in ['Antisense', 'Gene Therapy', 'SMN2 Modifier',
+                            'Exon Skipping', 'ERT']:
+                    if cat in cat_totals:
+                        med_rows.append({
+                            "Drug Class": cat,
+                            "Participants": f"{cat_totals[cat]:,}",
+                        })
+
+                # Standard drug classes
                 for cls_key, label in [
                     ('disease_modifying_als', 'Disease-Modifying (ALS)'),
                     ('cardiac_meds', 'Cardiac'),
@@ -418,9 +334,9 @@ def main():
                         med_rows.append({
                             "Drug Class": label,
                             "Participants": f"{cls['patients']:,}",
-                            "Records": f"{cls['records']:,}",
                         })
                 if med_rows:
+                    st.markdown("###### Drug Classes Captured")
                     static_table(pd.DataFrame(med_rows))
 
             with col_right:
@@ -431,33 +347,15 @@ def main():
                 st.metric("Total Medication Records", f"{total_recs:,}",
                           help=f"Across {total_pts:,} participants ({source_label})")
 
-                # Top prescribed medications
+                # Top prescribed drugs
                 top_meds = meds.get('top_medications', [])
                 if top_meds:
                     st.markdown("###### Top Prescribed")
                     top_rows = [
-                        {"Medication": m['name'], "Patients": f"{m['patients']:,}"}
+                        {"Drug Name": m['name'], "Patients": f"{m['patients']:,}"}
                         for m in top_meds[:10]
                     ]
                     static_table(pd.DataFrame(top_rows))
-
-            # Footnotes
-            footnotes = []
-            glc_enc = meds.get('glucocorticoid_encounter', {})
-            if glc_enc.get('patients', 0) > 0:
-                footnotes.append(
-                    f"*Glucocorticoid use is also captured as a dedicated eCRF field "
-                    f"({glc_enc['patients']:,} participants, {glc_enc.get('data_points', 0):,} data points).*"
-                )
-            spinraza = clinical.get('spinraza', {})
-            if spinraza and spinraza.get('ecrf_fields', 0) > 0:
-                footnotes.append(
-                    f"*Spinraza (Nusinersen) has {spinraza['ecrf_fields']} dedicated eCRF fields "
-                    f"baked into the registry, with {spinraza.get('maintenance_records', 0):,} "
-                    f"maintenance dose records across {spinraza.get('patients_with_maintenance', 0):,} patients.*"
-                )
-            if footnotes:
-                st.caption("  \n".join(footnotes))
 
         # --- Row 3: Clinical Trials | Pulmonary & Cardiology ---
         col_left, col_right = st.columns(2)
@@ -487,33 +385,19 @@ def main():
             ]
             static_table(pd.DataFrame(pc_rows))
 
-        # --- Row 4: Devices & Hospitalizations | Surgeries ---
-        col_left, col_right = st.columns(2)
-
-        with col_left:
-            st.markdown("##### Hospitalizations & Devices")
-            hosp = clinical.get('hospitalizations', {})
-            devs = clinical.get('devices', {})
-            hd_rows = [
-                {"Category": "Hospitalizations", "Participants": f"{hosp.get('patients', 0):,}", "Records": f"{hosp.get('records', 0):,}"},
-                {"Category": "Assistive Devices", "Participants": f"{devs.get('assistive_patients', 0):,}", "Records": f"{devs.get('assistive_records', 0):,}"},
-                {"Category": "Pulmonary Devices", "Participants": f"{devs.get('pulmonary_patients', 0):,}", "Records": f"{devs.get('pulmonary_records', 0):,}"},
-            ]
-            static_table(pd.DataFrame(hd_rows))
-            st.caption("Combined from encounter and log tables.")
-
-        with col_right:
-            st.markdown("##### Surgeries")
-            surg = clinical.get('surgeries', {})
-            if surg and surg.get('patients', 0) > 0:
-                st.metric("Patients", f"{surg['patients']:,}",
-                          help=f"{surg.get('records', 0):,} total records")
-                surg_types = surg.get('types', {})
-                if surg_types:
-                    surg_rows = [{"Type": k, "Count": f"{v:,}"} for k, v in surg_types.items() if k.strip()]
-                    static_table(pd.DataFrame(surg_rows))
-            else:
-                st.caption("Surgery data not available.")
+        # --- Row 4: Hospitalizations, Surgeries & Devices ---
+        st.markdown("##### Hospitalizations, Surgeries & Devices")
+        hosp = clinical.get('hospitalizations', {})
+        surg = clinical.get('surgeries', {})
+        devs = clinical.get('devices', {})
+        hd_rows = [
+            {"Category": "Hospitalizations", "Participants": f"{hosp.get('patients', 0):,}", "Records": f"{hosp.get('records', 0):,}"},
+            {"Category": "Surgeries", "Participants": f"{surg.get('patients', 0):,}", "Records": f"{surg.get('records', 0):,}"},
+            {"Category": "Assistive Devices", "Participants": f"{devs.get('assistive_patients', 0):,}", "Records": f"{devs.get('assistive_records', 0):,}"},
+            {"Category": "Pulmonary Devices", "Participants": f"{devs.get('pulmonary_patients', 0):,}", "Records": f"{devs.get('pulmonary_records', 0):,}"},
+        ]
+        static_table(pd.DataFrame(hd_rows))
+        st.caption("Combined from encounter and log tables.")
 
     # Footer
     st.markdown("---")

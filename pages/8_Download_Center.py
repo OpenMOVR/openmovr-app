@@ -14,7 +14,8 @@ sys.path.insert(0, str(app_dir))
 
 import streamlit as st
 import pandas as pd
-from config.settings import PAGE_ICON, LOGO_PNG
+from config.settings import PAGE_ICON
+from components.sidebar import inject_global_css, render_sidebar_footer
 from utils.access import require_access
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -25,41 +26,8 @@ st.set_page_config(
     layout="wide",
 )
 
-# Branding CSS
-st.markdown(
-    """
-    <style>
-    [data-testid="stSidebarNav"] { padding-top: 0rem; }
-    [data-testid="stSidebarNav"]::before {
-        content: "OpenMOVR App"; display: block; font-size: 1.4em;
-        font-weight: bold; color: #1E88E5; text-align: center;
-        padding: 1rem 0 0.5rem 0;
-    }
-    [data-testid="stSidebarNav"]::after {
-        content: "MOVR Data Hub | MOVR 1.0"; display: block;
-        font-size: 0.8em; color: #666; text-align: center;
-        padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #ddd;
-    }
-    [data-testid="stSidebarNav"] li:nth-last-child(2) {
-        margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
-    }
-    [data-testid="stSidebarNav"] li:nth-last-child(2)::before {
-        content: "DUA REQUIRED"; display: block; font-size: 0.7em;
-        color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
-        letter-spacing: 0.05em;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Sidebar
-with st.sidebar:
-    if LOGO_PNG.exists():
-        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-        st.image(str(LOGO_PNG), width=160)
-        st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("---")
+inject_global_css()
+render_sidebar_footer()
 
 # ---- Access gate ----
 require_access(

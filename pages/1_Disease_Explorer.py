@@ -27,8 +27,9 @@ from components.charts import (
     create_facility_distribution_mini_chart,
 )
 from components.tables import display_cohort_summary, static_table
+from components.sidebar import inject_global_css, render_sidebar_footer
 from utils.cache import get_cached_snapshot
-from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES, LOGO_PNG
+from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
 
@@ -39,70 +40,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS to add branding above page navigation
-st.markdown(
-    """
-    <style>
-    [data-testid="stSidebarNav"] {
-        padding-top: 0rem;
-    }
-    [data-testid="stSidebarNav"]::before {
-        content: "OpenMOVR App";
-        display: block;
-        font-size: 1.4em;
-        font-weight: bold;
-        color: #1E88E5;
-        text-align: center;
-        padding: 1rem 0 0.5rem 0;
-    }
-    [data-testid="stSidebarNav"]::after {
-        content: "MOVR Data Hub | MOVR 1.0";
-        display: block;
-        font-size: 0.8em;
-        color: #666;
-        text-align: center;
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
-        border-bottom: 1px solid #ddd;
-    }
-    .clean-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-    .clean-table th { text-align: left; padding: 3px 8px; border-bottom: 2px solid #ddd; }
-    .clean-table td { padding: 3px 8px; border-bottom: 1px solid #eee; }
-    [data-testid="stSidebarNav"] li:nth-last-child(2) {
-        margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
-    }
-    [data-testid="stSidebarNav"] li:nth-last-child(2)::before {
-        content: "DUA REQUIRED"; display: block; font-size: 0.7em;
-        color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
-        letter-spacing: 0.05em;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Contact info function for sidebar (called at end of sidebar content)
-def _render_sidebar_contact():
-    st.sidebar.markdown("---")
-    if LOGO_PNG.exists():
-        st.sidebar.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-        st.sidebar.image(str(LOGO_PNG), width=160)
-        st.sidebar.markdown("</div>", unsafe_allow_html=True)
-    st.sidebar.markdown("---")
-    st.sidebar.markdown(
-        """
-        <div style='text-align: center; font-size: 0.8em; color: #888;'>
-            <strong>Open Source Project</strong><br>
-            <a href="https://openmovr.github.io" target="_blank">openmovr.github.io</a><br>
-            <a href="https://github.com/OpenMOVR/openmovr-app" target="_blank">GitHub</a><br><br>
-            <strong>Created by</strong> Andre D Paredes<br>
-            <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a><br>
-            <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a> (MDA)<br><br>
-            <a href="https://mdausa.tfaforms.net/389761" target="_blank"><strong>Request Data</strong></a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+inject_global_css()
 
 
 def _unavailable_section(title, detail=None):
@@ -193,7 +131,7 @@ if not _has_parquet:
         )
         st.markdown("---")
         st.info("Advanced filters are disabled in snapshot mode.")
-        _render_sidebar_contact()
+        render_sidebar_footer()
 
     # Find selected disease data
     disease_info = next(
@@ -455,7 +393,7 @@ else:
         )
 
         # Contact info at bottom
-        _render_sidebar_contact()
+        render_sidebar_footer()
 
     # Apply filters
     if active_filters:
