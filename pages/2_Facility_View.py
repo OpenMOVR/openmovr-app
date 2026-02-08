@@ -19,7 +19,7 @@ import pandas as pd
 from api import StatsAPI
 from components.charts import create_site_map
 from components.tables import static_table
-from utils.cache import get_cached_facility_stats, get_cached_snapshot
+from utils.cache import get_cached_facility_stats
 from config.settings import PAGE_ICON, DEFAULT_TOP_N_FACILITIES, LOGO_PNG
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -113,16 +113,10 @@ with st.spinner("Loading facility data..."):
         facility_stats = get_cached_facility_stats()
         all_facilities = facility_stats['all_facilities']
         total_facilities = facility_stats['total_facilities']
+        site_locations = facility_stats.get('site_locations', [])
     except Exception as e:
         st.error(f"Error loading facility data: {e}")
         st.stop()
-
-# Load snapshot for site geography
-try:
-    snapshot = get_cached_snapshot()
-    site_locations = snapshot['facilities'].get('site_locations', [])
-except Exception:
-    site_locations = []
 
 # Summary metrics
 st.markdown("---")
