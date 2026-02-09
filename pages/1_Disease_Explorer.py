@@ -212,11 +212,12 @@ if not _has_parquet:
         static_table(table_df)
 
     # ===================================================================
-    # TABS: Demographics | Diagnosis
-    # Deep Dive tab is DUA-only (live mode) — not shown in public snapshot mode
+    # TABS: Demographics | Diagnosis | Deep Dive (alpha) | Data Summary
     # ===================================================================
     st.markdown("---")
-    tab_demo, tab_diag = st.tabs(["Demographics", "Diagnosis"])
+    tab_demo, tab_diag, tab_deep, tab_data = st.tabs([
+        "Demographics", "Diagnosis", "Deep Dive (Alpha)", "Data Summary"
+    ])
 
     # --- Tab 1: Demographics ---
     with tab_demo:
@@ -408,9 +409,106 @@ if not _has_parquet:
             st.subheader(f"{selected_disease} Diagnosis Profile")
             _unavailable_section("Diagnosis Profile", "Diagnosis data not available for this disease.")
 
-    st.caption(
-        "Deep dive analytics and data downloads require provisioned access (DUA)."
-    )
+    # --- Tab 3: Deep Dive (Alpha) ---
+    with tab_deep:
+        renderer = _DEEP_DIVE_RENDERERS.get(selected_disease)
+        if renderer:
+            st.info(
+                "**Alpha Preview** — Deep dive analytics rendered from pre-computed snapshots. "
+                "Full interactive deep dives with data tables are available in the "
+                "DUA-gated pages (DMD Deep Dive, LGMD Deep Dive)."
+            )
+            renderer()
+        else:
+            _disease_placeholders = {
+                "ALS": (
+                    "A clinical deep dive for ALS is in development. "
+                    "Upcoming features include ALSFRS-R longitudinal tracking, "
+                    "respiratory function (FVC) trends, loss of ambulation analysis, "
+                    "and therapeutic utilization."
+                ),
+                "SMA": (
+                    "A clinical deep dive for SMA is in development. "
+                    "Upcoming features include HFMSE/CHOP-INTEND longitudinal tracking, "
+                    "respiratory function trends, and therapeutic utilization "
+                    "(Spinraza, Zolgensma, Evrysdi)."
+                ),
+                "BMD": (
+                    "A clinical deep dive for BMD is in development. "
+                    "Upcoming features include functional outcome tracking, "
+                    "cardiac monitoring, and therapeutic utilization."
+                ),
+                "FSHD": (
+                    "A clinical deep dive for FSHD is in development. "
+                    "Upcoming features include CSS/Reachability scores, "
+                    "respiratory function trends, and genetic characterization."
+                ),
+                "POM": (
+                    "A clinical deep dive for Pompe disease is in development. "
+                    "Upcoming features include ERT utilization, respiratory and "
+                    "motor function tracking, and longitudinal outcomes."
+                ),
+            }
+            placeholder_msg = _disease_placeholders.get(
+                selected_disease,
+                f"A clinical deep dive for {selected_disease} has not been built yet. "
+                "This feature is under active development.",
+            )
+            _unavailable_section(f"{selected_disease} Deep Dive", placeholder_msg)
+
+    # --- Tab 4: Data Summary ---
+    with tab_data:
+        st.subheader("Data Summary")
+
+        # Show what's available from the snapshot for this disease
+        disease_profiles = snapshot.get('disease_profiles', {})
+        profile = disease_profiles.get(selected_disease, {})
+        demo_snap = profile.get('demographics', {})
+        diag_snap = profile.get('diagnosis', [])
+
+        col_s1, col_s2, col_s3 = st.columns(3)
+
+        with col_s1:
+            count = disease_info['patient_count'] if disease_info else 0
+            st.metric("Patients", f"{count:,}")
+        with col_s2:
+            n_demo_fields = len(demo_snap) if isinstance(demo_snap, dict) else 0
+            n_diag_fields = len(diag_snap) if isinstance(diag_snap, list) else 0
+            st.metric("Profile Sections", n_demo_fields + n_diag_fields)
+        with col_s3:
+            has_deep_dive = selected_disease in _DEEP_DIVE_RENDERERS
+            st.metric("Deep Dive", "Available" if has_deep_dive else "Planned")
+
+        st.markdown("---")
+        st.markdown("#### Available Data")
+
+        avail_rows = []
+        if demo_snap:
+            for key in demo_snap:
+                data = demo_snap[key]
+                if isinstance(data, list) and data:
+                    n = sum(d.get('count', 0) for d in data)
+                    avail_rows.append({"Domain": "Demographics", "Section": key.replace("_", " ").title(), "Records": n})
+        if diag_snap:
+            for dx in diag_snap:
+                label = dx.get('label', 'Unknown')
+                if dx.get('type') == 'categorical':
+                    n = sum(d.get('count', 0) for d in dx.get('values', []))
+                elif dx.get('type') == 'numeric':
+                    n = dx.get('n', 0)
+                else:
+                    n = 0
+                avail_rows.append({"Domain": "Diagnosis", "Section": label, "Records": n})
+
+        if avail_rows:
+            static_table(pd.DataFrame(avail_rows))
+        else:
+            st.caption("No profile data available for this disease in the snapshot.")
+
+        st.caption(
+            "Full data tables and CSV downloads are available in the "
+            "**Download Center** and **Deep Dive** pages (provisioned access required)."
+        )
 
 
 # ===================================================================
