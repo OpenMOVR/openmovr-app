@@ -87,7 +87,7 @@ Add `index.html`:
 
 ## Access Key Configuration
 
-DUA-gated pages (Site Analytics, Download Center, DMD/LGMD Deep Dives) require an access key.
+DUA-gated pages (Site Analytics, Download Center, DMD/LGMD Clinical Summaries) require an access key.
 
 ### Streamlit Cloud
 Add to Streamlit secrets (Settings → Secrets):

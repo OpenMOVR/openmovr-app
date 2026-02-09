@@ -37,7 +37,7 @@ MAX_TABLE_ROWS = 1000
 DEFAULT_CHART_TYPE = "bar"
 
 # Available diseases (in display order)
-DISEASE_DISPLAY_ORDER = ['ALS', 'DMD', 'SMA', 'LGMD', 'FSHD', 'BMD', 'POM']
+DISEASE_DISPLAY_ORDER = ['ALS','BMD','DMD','SMA', 'LGMD', 'FSHD','POM']
 
 # Color schemes
 COLOR_SCHEMES = {
@@ -52,7 +52,7 @@ COLOR_SCHEMES = {
 
 # Study metadata
 STUDY_NAME = "MOVR Data Hub"
-STUDY_PROTOCOL = "MOVR 1.0"
+STUDY_PROTOCOL = "MDA MOVR 1.0"
 STUDY_START = "November 1, 2018"
 STUDY_END = "April 1, 2025"
 STUDY_STATUS = "Concluded"

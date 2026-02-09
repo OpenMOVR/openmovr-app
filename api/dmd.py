@@ -1,7 +1,7 @@
 """
 DMD API Layer
 
-Provides DMD deep dive data from either live parquet files or pre-computed snapshots.
+Provides DMD clinical summary data from either live parquet files or pre-computed snapshots.
 Falls back to snapshot when parquet files are unavailable (e.g., Streamlit Cloud deployment).
 """
 
@@ -12,7 +12,7 @@ from typing import Dict, Any, Optional
 
 class DMDAPI:
     """
-    API for DMD deep dive data.
+    API for DMD clinical summary data.
 
     Tries to load live data from parquet files first.
     Falls back to snapshot data if parquet files are unavailable.

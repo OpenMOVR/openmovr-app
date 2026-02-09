@@ -55,18 +55,18 @@ def _unavailable_section(title, detail=None):
     )
 
 
-from components.deep_dive import render_dmd_deep_dive, render_lgmd_deep_dive
+from components.clinical_summary import render_dmd_clinical_summary, render_lgmd_clinical_summary
 
 # ---------------------------------------------------------------------------
-# Deep-dive renderer registry
-# Each disease with a deep-dive gets a function here.
-# To add a new disease: create render_{disease}_deep_dive() in components/deep_dive.py
+# Clinical summary renderer registry
+# Each disease with a clinical summary gets a function here.
+# To add a new disease: create render_{disease}_clinical_summary() in components/clinical_summary.py
 # ---------------------------------------------------------------------------
-_DEEP_DIVE_RENDERERS = {
-    'DMD': render_dmd_deep_dive,
-    'LGMD': render_lgmd_deep_dive,
-    # 'ALS': render_als_deep_dive,   # planned
-    # 'SMA': render_sma_deep_dive,   # planned
+_CLINICAL_SUMMARY_RENDERERS = {
+    'DMD': render_dmd_clinical_summary,
+    'LGMD': render_lgmd_clinical_summary,
+    # 'ALS': render_als_clinical_summary,   # planned
+    # 'SMA': render_sma_clinical_summary,   # planned
 }
 
 
@@ -212,11 +212,11 @@ if not _has_parquet:
         static_table(table_df)
 
     # ===================================================================
-    # TABS: Demographics | Diagnosis | Deep Dive (alpha) | Data Summary
+    # TABS: Demographics | Diagnosis | Clinical Summary (alpha) | Data Summary
     # ===================================================================
     st.markdown("---")
     tab_demo, tab_diag, tab_deep, tab_data = st.tabs([
-        "Demographics", "Diagnosis", "Deep Dive (Alpha)", "Data Summary"
+        "Demographics", "Diagnosis", "Clinical Summary (Alpha)", "Data Summary"
     ])
 
     # --- Tab 1: Demographics ---
@@ -409,52 +409,52 @@ if not _has_parquet:
             st.subheader(f"{selected_disease} Diagnosis Profile")
             _unavailable_section("Diagnosis Profile", "Diagnosis data not available for this disease.")
 
-    # --- Tab 3: Deep Dive (Alpha) ---
+    # --- Tab 3: Clinical Summary (Alpha) ---
     with tab_deep:
-        renderer = _DEEP_DIVE_RENDERERS.get(selected_disease)
+        renderer = _CLINICAL_SUMMARY_RENDERERS.get(selected_disease)
         if renderer:
             st.info(
-                "**Alpha Preview** — Deep dive analytics rendered from pre-computed snapshots. "
-                "Full interactive deep dives with data tables are available in the "
-                "DUA-gated pages (DMD Deep Dive, LGMD Deep Dive)."
+                "**Alpha Preview** — Clinical summary analytics rendered from pre-computed snapshots. "
+                "Full clinical summaries with data tables are available in the "
+                "DUA-gated pages (DMD Clinical Summary, LGMD Clinical Summary)."
             )
             renderer()
         else:
             _disease_placeholders = {
                 "ALS": (
-                    "A clinical deep dive for ALS is in development. "
+                    "A clinical summary for ALS is in development. "
                     "Upcoming features include ALSFRS-R longitudinal tracking, "
                     "respiratory function (FVC) trends, loss of ambulation analysis, "
                     "and therapeutic utilization."
                 ),
                 "SMA": (
-                    "A clinical deep dive for SMA is in development. "
+                    "A clinical summary for SMA is in development. "
                     "Upcoming features include HFMSE/CHOP-INTEND longitudinal tracking, "
                     "respiratory function trends, and therapeutic utilization "
                     "(Spinraza, Zolgensma, Evrysdi)."
                 ),
                 "BMD": (
-                    "A clinical deep dive for BMD is in development. "
+                    "A clinical summary for BMD is in development. "
                     "Upcoming features include functional outcome tracking, "
                     "cardiac monitoring, and therapeutic utilization."
                 ),
                 "FSHD": (
-                    "A clinical deep dive for FSHD is in development. "
+                    "A clinical summary for FSHD is in development. "
                     "Upcoming features include CSS/Reachability scores, "
                     "respiratory function trends, and genetic characterization."
                 ),
                 "POM": (
-                    "A clinical deep dive for Pompe disease is in development. "
+                    "A clinical summary for Pompe disease is in development. "
                     "Upcoming features include ERT utilization, respiratory and "
                     "motor function tracking, and longitudinal outcomes."
                 ),
             }
             placeholder_msg = _disease_placeholders.get(
                 selected_disease,
-                f"A clinical deep dive for {selected_disease} has not been built yet. "
+                f"A clinical summary for {selected_disease} has not been built yet. "
                 "This feature is under active development.",
             )
-            _unavailable_section(f"{selected_disease} Deep Dive", placeholder_msg)
+            _unavailable_section(f"{selected_disease} Clinical Summary", placeholder_msg)
 
     # --- Tab 4: Data Summary ---
     with tab_data:
@@ -476,8 +476,8 @@ if not _has_parquet:
             n_diag_fields = len(diag_snap) if isinstance(diag_snap, list) else 0
             st.metric("Profile Sections", n_demo_fields + n_diag_fields)
         with col_s3:
-            has_deep_dive = selected_disease in _DEEP_DIVE_RENDERERS
-            st.metric("Deep Dive", "Available" if has_deep_dive else "Planned")
+            has_clinical_summary = selected_disease in _CLINICAL_SUMMARY_RENDERERS
+            st.metric("Clinical Summary", "Available" if has_clinical_summary else "Planned")
 
         st.markdown("---")
         st.markdown("#### Available Data")
@@ -507,7 +507,7 @@ if not _has_parquet:
 
         st.caption(
             "Full data tables and CSV downloads are available in the "
-            "**Download Center** and **Deep Dive** pages (provisioned access required)."
+            "**Download Center** and **Clinical Summary** pages (provisioned access required)."
         )
 
 
@@ -616,12 +616,11 @@ else:
         )
 
     # ===================================================================
-    # TABS: Demographics | Diagnosis | Deep Dive | Data Summary
-    # Tab order: Demographics | [Clinical Summary - future] | Diagnosis | Deep Dive | Data Summary
+    # TABS: Demographics | Diagnosis | Clinical Summary | Data Summary
     # ===================================================================
     st.markdown("---")
     tab_demo, tab_diag, tab_deep, tab_data = st.tabs([
-        "Demographics", "Diagnosis", "Deep Dive", "Data Summary"
+        "Demographics", "Diagnosis", "Clinical Summary", "Data Summary"
     ])
 
     # --- Tab 1: Demographics ---
@@ -961,22 +960,21 @@ else:
             st.subheader(f"{selected_disease} Diagnosis Profile")
             _unavailable_section("Diagnosis Profile", "No diagnosis profile configured for this disease.")
 
-    # --- Tab 3: Deep Dive ---
+    # --- Tab 3: Clinical Summary ---
     with tab_deep:
-        renderer = _DEEP_DIVE_RENDERERS.get(selected_disease)
+        renderer = _CLINICAL_SUMMARY_RENDERERS.get(selected_disease)
         if renderer:
             renderer()
         else:
-            # Disease-specific placeholder descriptions
             _disease_placeholders = {
                 "ALS": (
-                    "A clinical deep dive for ALS is in development. "
+                    "A clinical summary for ALS is in development. "
                     "Upcoming features include ALSFRS-R longitudinal tracking, "
                     "respiratory function (FVC) trends, loss of ambulation analysis, "
                     "and therapeutic utilization."
                 ),
                 "SMA": (
-                    "A clinical deep dive for SMA is in development. "
+                    "A clinical summary for SMA is in development. "
                     "Upcoming features include HFMSE/CHOP-INTEND longitudinal tracking, "
                     "respiratory function trends, and therapeutic utilization "
                     "(Spinraza, Zolgensma, Evrysdi)."
@@ -984,11 +982,11 @@ else:
             }
             placeholder_msg = _disease_placeholders.get(
                 selected_disease,
-                f"A clinical deep dive for {selected_disease} is in development. "
+                f"A clinical summary for {selected_disease} is in development. "
                 "Upcoming features include longitudinal functional outcome tracking, "
                 "therapeutic utilization, and detailed cohort characterization.",
             )
-            _unavailable_section(f"{selected_disease} Deep Dive", placeholder_msg)
+            _unavailable_section(f"{selected_disease} Clinical Summary", placeholder_msg)
 
     # --- Tab 4: Data Summary ---
     with tab_data:

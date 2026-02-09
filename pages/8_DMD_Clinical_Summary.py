@@ -1,9 +1,9 @@
 """
-DMD Deep Dive — DUA-Gated Page
+DMD Clinical Summary — DUA-Gated Page
 
-Standalone page requiring provisioned access.  Shows all DMD deep-dive
-figures (downloadable via Plotly modebar) plus summary and patient-level
-data tables with CSV export.
+Standalone page requiring provisioned access.  Shows all DMD clinical
+summary figures (downloadable via Plotly modebar) plus summary and
+patient-level data tables with CSV export.
 """
 
 import sys
@@ -16,14 +16,14 @@ import streamlit as st
 import pandas as pd
 from config.settings import PAGE_ICON, APP_VERSION
 from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
-from components.deep_dive import render_dmd_deep_dive
+from components.clinical_summary import render_dmd_clinical_summary
 from utils.access import require_access
 from api.dmd import DMDAPI
 
 _logo_path = app_dir / "assets" / "movr_logo_clean_nobackground.png"
 
 st.set_page_config(
-    page_title="DMD Deep Dive - OpenMOVR App",
+    page_title="DMD Clinical Summary - OpenMOVR App",
     page_icon=str(_logo_path) if _logo_path.exists() else PAGE_ICON,
     layout="wide",
 )
@@ -33,9 +33,9 @@ render_sidebar_footer()
 
 # ---- Access gate ----
 require_access(
-    page_title="DMD Deep Dive",
+    page_title="DMD Clinical Summary",
     description=(
-        "In-depth clinical analytics for the **Duchenne Muscular Dystrophy (DMD)** cohort.  "
+        "Clinical summary analytics for the **Duchenne Muscular Dystrophy (DMD)** cohort.  "
         "Includes exon-skipping therapy utilization, functional outcomes, genetic profiles, "
         "and downloadable data tables.\n\n"
         "Available to participating sites, researchers, PAGs, and patients "
@@ -48,7 +48,7 @@ require_access(
 header_left, header_right = st.columns([3, 1])
 
 with header_left:
-    st.title("DMD Deep Dive")
+    st.title("DMD Clinical Summary")
     st.markdown("### Exon-skipping therapeutics, functional outcomes, genetics & more")
 
 with header_right:
@@ -64,8 +64,8 @@ with header_right:
         unsafe_allow_html=True,
     )
 
-# ---- Deep-dive charts (all downloadable via Plotly modebar) ----
-render_dmd_deep_dive()
+# ---- Clinical summary charts (all downloadable via Plotly modebar) ----
+render_dmd_clinical_summary()
 
 # ---- Data Tables ----
 st.markdown("---")

@@ -16,28 +16,28 @@ openmovr-app/
 ├── .streamlit/config.toml      # Streamlit theme/config
 │
 ├── pages/                      # Streamlit multi-page app
-│   ├── 1_Disease_Explorer.py   # Disease cohort filtering + deep-dive tabs
+│   ├── 1_Disease_Explorer.py   # Disease cohort filtering + clinical summary tabs
 │   ├── 2_Facility_View.py      # Facility distribution + site map
 │   ├── 3_Data_Dictionary.py    # Curated field browser (19 clinical domains)
 │   ├── 4_About.py              # Study info, access tiers, roadmap
 │   ├── 5_Sign_the_DUA.py       # DUA information + access request
 │   ├── 6_Site_Analytics.py     # [DUA] Site-level reports
 │   ├── 7_Download_Center.py    # [DUA] CSV/JSON data exports
-│   ├── 8_DMD_Deep_Dive.py      # [DUA] DMD analytics + data tables
-│   └── 9_LGMD_Deep_Dive.py     # [DUA] LGMD analytics + data tables
+│   ├── 8_DMD_Clinical_Summary.py      # [DUA] DMD analytics + data tables
+│   └── 9_LGMD_Clinical_Summary.py     # [DUA] LGMD analytics + data tables
 │
 ├── api/                        # Data Access Layer (facade pattern)
 │   ├── __init__.py
 │   ├── cohorts.py              # CohortAPI - cohort operations
 │   ├── stats.py                # StatsAPI - snapshot statistics
-│   ├── dmd.py                  # DMDAPI - DMD deep-dive data
-│   ├── lgmd.py                 # LGMDAPI - LGMD deep-dive data
+│   ├── dmd.py                  # DMDAPI - DMD clinical summary data
+│   ├── lgmd.py                 # LGMDAPI - LGMD clinical summary data
 │   ├── data_dictionary.py      # DataDictionaryAPI - field metadata
 │   └── reports.py              # ReportsAPI - report generation
 │
 ├── components/                 # Reusable UI Components
 │   ├── sidebar.py              # Global CSS, sidebar footer, page footer
-│   ├── deep_dive.py            # Shared deep-dive renderers (DMD, LGMD)
+│   ├── clinical_summary.py            # Shared clinical summary renderers (DMD, LGMD)
 │   ├── charts.py               # Plotly chart factories
 │   ├── tables.py               # DataFrame display helpers
 │   └── filters.py              # Filter widgets
@@ -88,14 +88,14 @@ openmovr-app/
 ┌─────────────────────────────────────────────────────────────────┐
 │                        STREAMLIT PAGES                          │
 │  Public: Disease Explorer, Facility View, Data Dictionary       │
-│  DUA: Site Analytics, Download Center, DMD/LGMD Deep Dive       │
+│  DUA: Site Analytics, Download Center, DMD/LGMD Clinical Summary       │
 └─────────────────────────────────────────────────────────────────┘
                               │
                     ┌─────────┴─────────┐
                     ▼                   ▼
           ┌──────────────┐    ┌──────────────────┐
           │  components/  │    │   utils/access.py │
-          │  deep_dive.py │    │   (access gate)   │
+          │  clinical_summary.py │    │   (access gate)   │
           │  sidebar.py   │    └──────────────────┘
           │  charts.py    │
           └──────────────┘
@@ -132,10 +132,10 @@ This makes it easy to:
 - Mock data for testing
 - Extract webapp to separate repo
 
-### 3. Shared Deep-Dive Renderers
-`components/deep_dive.py` contains disease-specific chart renderers shared by:
-- The Disease Explorer page (embedded in the Deep Dive tab, live mode)
-- Standalone DUA-gated pages (DMD/LGMD Deep Dive)
+### 3. Shared Clinical Summary Renderers
+`components/clinical_summary.py` contains disease-specific chart renderers shared by:
+- The Disease Explorer page (embedded in the Clinical Summary tab, live mode)
+- Standalone DUA-gated pages (DMD/LGMD Clinical Summary)
 
 This avoids code duplication while keeping pages independent.
 
@@ -166,10 +166,10 @@ Pages 5-9 require provisioned access. The access system:
 1. **Sign the DUA** (page 5) — informational, links to MDA access request form
 2. **Site Analytics** (page 6) — requires access key
 3. **Download Center** (page 7) — requires access key, CSV/JSON exports
-4. **DMD Deep Dive** (page 8) — requires access key, charts + data tables
-5. **LGMD Deep Dive** (page 9) — requires access key, charts + data tables
+4. **DMD Clinical Summary** (page 8) — requires access key, charts + data tables
+5. **LGMD Clinical Summary** (page 9) — requires access key, charts + data tables
 
-Deep Dive pages include two tabs:
+Clinical Summary pages include two tabs:
 - **Summary Tables** — aggregated data from snapshots with CSV download
 - **Patient-Level Data** — individual records from parquet (live mode only), behind a toggle checkbox
 
@@ -203,13 +203,13 @@ python scripts/generate_lgmd_snapshot.py
 python scripts/generate_curated_dictionary.py
 ```
 
-## Adding New Disease Deep Dives
+## Adding New Disease Clinical Summarys
 
 1. Create snapshot generator: `scripts/generate_{disease}_snapshot.py`
 2. Create API: `api/{disease}.py` with `{Disease}API` class
-3. Add renderer: `render_{disease}_deep_dive()` in `components/deep_dive.py`
-4. Register in Disease Explorer: add to `_DEEP_DIVE_RENDERERS` dict
-5. Create DUA page: `pages/X_{Disease}_Deep_Dive.py`
+3. Add renderer: `render_{disease}_clinical_summary()` in `components/clinical_summary.py`
+4. Register in Disease Explorer: add to `_CLINICAL_SUMMARY_RENDERERS` dict
+5. Create DUA page: `pages/X_{Disease}_Clinical_Summary.py`
 6. Update sidebar CSS: adjust `nth-last-child` in `components/sidebar.py`
 7. Update `api/__init__.py` to export new API
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate DMD Deep Dive Snapshot
+Generate DMD Clinical Summary Snapshot
 
 Creates a JSON file with pre-computed DMD statistics including
 exon-skipping amenability analysis, steroid use, and state distribution.
@@ -701,7 +701,7 @@ def _compute_functional_scores(
 # ---------------------------------------------------------------------------
 
 def generate_dmd_snapshot() -> dict:
-    """Generate comprehensive DMD deep dive statistics snapshot."""
+    """Generate comprehensive DMD clinical summary statistics snapshot."""
 
     print("Loading DMD cohort...")
     dmd_cohort = get_disease_cohort("DMD")
@@ -740,7 +740,7 @@ def generate_dmd_snapshot() -> dict:
             "generated_at": datetime.now().isoformat(),
             "generated_timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "disease": "DMD",
-            "description": "Duchenne Muscular Dystrophy Deep Dive Statistics",
+            "description": "Duchenne Muscular Dystrophy Clinical Summary Statistics",
         },
         "summary": {
             "total_patients": patient_count,
@@ -772,7 +772,7 @@ def save_snapshot(snapshot: dict, output_path: Path):
 def print_summary(snapshot: dict):
     """Print human-readable summary."""
     print("\n" + "=" * 70)
-    print("DMD DEEP DIVE SNAPSHOT SUMMARY")
+    print("DMD CLINICAL SUMMARY SNAPSHOT SUMMARY")
     print("=" * 70)
 
     print(f"\nGenerated: {snapshot['metadata']['generated_timestamp']}")
@@ -834,7 +834,7 @@ def print_summary(snapshot: dict):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate DMD deep dive snapshot")
+    parser = argparse.ArgumentParser(description="Generate DMD clinical summary snapshot")
     parser.add_argument(
         "--output", "-o",
         default="stats/dmd_snapshot.json",

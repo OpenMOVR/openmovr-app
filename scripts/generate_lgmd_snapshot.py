@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Generate LGMD Deep Dive Snapshot
+Generate LGMD Clinical Summary Snapshot
 
 Creates a JSON file with pre-computed LGMD statistics for the OpenMOVR App.
-This enables the LGMD Deep Dive to work without loading parquet files directly.
+This enables the LGMD Clinical Summary to work without loading parquet files directly.
 
 Usage:
     python scripts/generate_lgmd_snapshot.py
@@ -676,7 +676,7 @@ def _compute_diagnostic_journey(diag_df: pd.DataFrame, patient_count: int) -> di
 # ---------------------------------------------------------------------------
 
 def generate_lgmd_snapshot() -> dict:
-    """Generate comprehensive LGMD deep dive statistics snapshot."""
+    """Generate comprehensive LGMD clinical summary statistics snapshot."""
 
     print("Loading LGMD cohort...")
     lgmd_cohort = get_disease_cohort('LGMD')
@@ -715,7 +715,7 @@ def generate_lgmd_snapshot() -> dict:
             "generated_at": datetime.now().isoformat(),
             "generated_timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "disease": "LGMD",
-            "description": "Limb-Girdle Muscular Dystrophy Deep Dive Statistics"
+            "description": "Limb-Girdle Muscular Dystrophy Clinical Summary Statistics"
         },
 
         "summary": {
@@ -754,7 +754,7 @@ def print_summary(snapshot: dict):
     """Print human-readable summary."""
 
     print("\n" + "="*70)
-    print("LGMD DEEP DIVE SNAPSHOT SUMMARY")
+    print("LGMD CLINICAL SUMMARY SNAPSHOT SUMMARY")
     print("="*70)
 
     print(f"\nGenerated: {snapshot['metadata']['generated_timestamp']}")
@@ -813,7 +813,7 @@ def print_summary(snapshot: dict):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate LGMD deep dive snapshot")
+    parser = argparse.ArgumentParser(description="Generate LGMD clinical summary snapshot")
     parser.add_argument("--output", "-o",
                        default="stats/lgmd_snapshot.json",
                        help="Output file path (default: stats/lgmd_snapshot.json)")

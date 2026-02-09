@@ -32,9 +32,9 @@ Pages (UI) → API Layer (facade) → Snapshots OR Core Library (src/)
 ```
 
 - `app.py` - Main dashboard
-- `pages/` - 9 pages: Disease Explorer, Facility View, Data Dictionary, About, Sign the DUA, Site Analytics, Download Center, DMD Deep Dive, LGMD Deep Dive
+- `pages/` - 9 pages: Disease Explorer, Facility View, Data Dictionary, About, Sign the DUA, Site Analytics, Download Center, DMD Clinical Summary, LGMD Clinical Summary
 - `api/` - Data access facade (StatsAPI, CohortAPI, DMDAPI, LGMDAPI, DataDictionaryAPI)
-- `components/` - Shared UI (sidebar, deep_dive renderers, charts, tables, filters)
+- `components/` - Shared UI (sidebar, clinical_summary renderers, charts, tables, filters)
 - `src/` - Core analytics library (cohort management, data loading)
 - `stats/` - Pre-computed JSON snapshots (database, DMD, LGMD, curated dictionary)
 - `config/` - App settings, disease filters, clinical domains
@@ -42,12 +42,12 @@ Pages (UI) → API Layer (facade) → Snapshots OR Core Library (src/)
 
 ## Common Tasks
 
-### Add a new disease deep dive
+### Add a new disease clinical summary
 1. Create `scripts/generate_{disease}_snapshot.py`
 2. Create `api/{disease}.py` with `{Disease}API` class
-3. Add `render_{disease}_deep_dive()` in `components/deep_dive.py`
-4. Register in Disease Explorer `_DEEP_DIVE_RENDERERS` dict
-5. Create `pages/X_{Disease}_Deep_Dive.py` (DUA-gated)
+3. Add `render_{disease}_clinical_summary()` in `components/clinical_summary.py`
+4. Register in Disease Explorer `_CLINICAL_SUMMARY_RENDERERS` dict
+5. Create `pages/X_{Disease}_Clinical_Summary.py` (DUA-gated)
 6. Update sidebar CSS `nth-last-child` in `components/sidebar.py`
 7. Update `api/__init__.py`
 
@@ -77,14 +77,14 @@ python -c "from api import StatsAPI, CohortAPI, LGMDAPI; print('OK')"
 - Extracted standalone repo from movr-clinical-analytics
 - Curated data dictionary: 1,024 fields, 19 clinical domains
 
-### Session 2: Deep Dives & DUA Pages (Feb 2026)
-- DMD deep dive: exon-skipping therapeutics, steroids, functional outcomes (FVC, timed walk, loss of ambulation with longitudinal trends), genetics/mutations, state distribution, ambulatory status
-- LGMD deep dive: subtypes, diagnostic journey (onset vs dx age, median 4.7yr delay), functional outcomes (FVC, timed walk, ambulatory), medications (cardiac, pain, supplements), clinical characteristics, geographic distribution
-- Extracted deep-dive renderers to `components/deep_dive.py` (shared by Disease Explorer and standalone pages)
-- Created DUA-gated standalone pages: `pages/8_DMD_Deep_Dive.py`, `pages/9_LGMD_Deep_Dive.py`
+### Session 2: Clinical Summaries & DUA Pages (Feb 2026)
+- DMD clinical summary: exon-skipping therapeutics, steroids, functional outcomes (FVC, timed walk, loss of ambulation with longitudinal trends), genetics/mutations, state distribution, ambulatory status
+- LGMD clinical summary: subtypes, diagnostic journey (onset vs dx age, median 4.7yr delay), functional outcomes (FVC, timed walk, ambulatory), medications (cardiac, pain, supplements), clinical characteristics, geographic distribution
+- Extracted clinical summary renderers to `components/clinical_summary.py` (shared by Disease Explorer and standalone pages)
+- Created DUA-gated standalone pages: `pages/8_DMD_Clinical_Summary.py`, `pages/9_LGMD_Clinical_Summary.py`
 - Data tables with CSV export (summary tables from snapshot + patient-level from parquet with toggle)
 - Version bump to v0.2.0 across all files
-- Merged to main via PR #1 (clinical summary) and PR #2 (DUA deep dive pages)
+- Sections organized by canonical clinical domains from `config/clinical_domains.yaml`
 
 ### Key Decisions Made
 1. Disease-first filtering in Data Dictionary (disease → form → field type)
@@ -93,7 +93,7 @@ python -c "from api import StatsAPI, CohortAPI, LGMDAPI; print('OK')"
 4. Age at enrollment histogram (more accurate than current age)
 5. Parquet files excluded from git via .gitignore
 6. LGMD age bands: <18, 18-30, 30-40, 40-50, 50+ (adult-appropriate)
-7. Deep-dive renderers in shared module to avoid code duplication
+7. Clinical summary renderers in shared module to avoid code duplication
 8. DUA pages have both summary (snapshot) and patient-level (parquet) data tabs
 
 ### Deployment Status
@@ -118,7 +118,7 @@ streamlit run app.py
 | Main app | `app.py` |
 | Pages | `pages/*.py` (9 pages) |
 | API layer | `api/*.py` (stats, cohorts, dmd, lgmd, data_dictionary, reports) |
-| Deep-dive renderers | `components/deep_dive.py` |
+| Clinical summary renderers | `components/clinical_summary.py` |
 | Access control | `utils/access.py` |
 | Core library | `src/` |
 | Snapshots | `stats/*.json` (database, dmd, lgmd, curated_dictionary) |

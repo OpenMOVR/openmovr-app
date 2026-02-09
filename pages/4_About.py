@@ -124,8 +124,8 @@ with col_prov:
                 breakdowns</li>
             <li><strong>Download Center</strong> &mdash; export tables as CSV,
                 download snapshot data for custom analytics</li>
-            <li><strong>Disease Deep-Dives</strong> &mdash; custom disease-specific
-                analyses with advanced analytics</li>
+            <li><strong>Clinical Summaries</strong> &mdash; disease-specific
+                clinical analytics organized by clinical domain</li>
             <li><em>Coming soon:</em> Cohort Builder, custom longitudinal
                 analytics</li>
         </ul>
@@ -174,7 +174,7 @@ st.markdown(
     | Download Center (provisioned) | Prototype |
     | Cohort Builder with custom filters | Planned |
     | Custom longitudinal analytics | Planned |
-    | Additional disease deep-dives (SMA, ALS, DMD) | Planned |
+    | Additional clinical summaries (SMA, ALS, BMD) | Planned |
     | Patient-facing data summaries | Planned |
     """
 )

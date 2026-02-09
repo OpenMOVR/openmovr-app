@@ -1,8 +1,9 @@
 """
-Shared deep-dive renderers for DMD and LGMD.
+Shared clinical summary renderers for DMD and LGMD.
 
 These functions are used by both the Disease Explorer (embedded tab) and
-the standalone DUA-gated deep-dive pages.
+the standalone DUA-gated clinical summary pages. Sections are organized
+by the 19 canonical clinical domains from config/clinical_domains.yaml.
 """
 
 import streamlit as st
@@ -15,11 +16,24 @@ from components.tables import static_table
 
 
 # ======================================================================
-# LGMD Deep Dive
+# LGMD Clinical Summary
 # ======================================================================
 
-def render_lgmd_deep_dive():
-    """Render LGMD-specific deep-dive sections from the LGMD snapshot."""
+_ALL_DOMAINS = [
+    "Demographics & Enrollment", "Disease Classification & Diagnosis",
+    "Genetics & Molecular Testing", "Family History",
+    "Mobility & Ambulation", "Motor Function Assessments",
+    "Timed Function Tests", "Disease Milestones & Progression",
+    "Pulmonary & Respiratory", "Cardiology", "Nutrition & GI",
+    "Medications & Treatments", "Orthopedic & Surgical",
+    "Hospitalizations", "Vital Signs & Anthropometrics",
+    "Cognition & Behavioral", "Multidisciplinary Care",
+    "Clinical Research", "Discontinuation",
+]
+
+
+def render_lgmd_clinical_summary():
+    """Render LGMD clinical summary sections organized by clinical domains."""
     lgmd_snap = LGMDAPI.get_snapshot()
     if not lgmd_snap:
         return
@@ -27,10 +41,10 @@ def render_lgmd_deep_dive():
     summary = lgmd_snap.get("summary", {})
     total_patients = summary.get("total_patients", 0)
 
-    st.subheader("LGMD Deep-Dive")
+    st.subheader("LGMD Clinical Summary")
 
     # =================================================================
-    # Section 1: Subtype Distribution (hero)
+    # Disease Classification & Diagnosis — Subtype distribution
     # =================================================================
     subtypes = lgmd_snap.get("subtypes", {})
     dist = subtypes.get("distribution", [])
@@ -38,7 +52,8 @@ def render_lgmd_deep_dive():
     gc = diagnosis.get("genetic_confirmation", {})
 
     if dist:
-        st.markdown("##### Subtype Distribution")
+        st.markdown("##### Disease Classification & Diagnosis")
+        st.caption("_Subtype distribution_")
 
         # Metric row
         m1, m2, m3 = st.columns(3)
@@ -75,12 +90,13 @@ def render_lgmd_deep_dive():
             static_table(pd.DataFrame(rows))
 
     # =================================================================
-    # Section 2: Diagnostic Journey
+    # Disease Milestones & Progression — Diagnostic journey
     # =================================================================
     journey = lgmd_snap.get("diagnostic_journey", {})
     if journey.get("available"):
         st.markdown("---")
-        st.markdown("##### Diagnostic Journey")
+        st.markdown("##### Disease Milestones & Progression")
+        st.caption("_Diagnostic journey_")
         st.markdown(
             "LGMD patients often experience a significant delay between symptom onset "
             "and clinical diagnosis due to the heterogeneity of limb-girdle phenotypes."
@@ -158,12 +174,13 @@ def render_lgmd_deep_dive():
                 st.plotly_chart(fig, use_container_width=True)
 
     # =================================================================
-    # Section 3: Functional Outcomes
+    # Pulmonary & Respiratory (+ Timed Function Tests, Mobility & Ambulation)
     # =================================================================
     func = lgmd_snap.get("functional_scores", {})
     if func.get("available"):
         st.markdown("---")
-        st.markdown("##### Functional Outcomes")
+        st.markdown("##### Pulmonary & Respiratory")
+        st.caption("_Also includes: Timed Function Tests, Mobility & Ambulation_")
 
         fvc = func.get("fvc_pct", {})
         tw = func.get("timed_10m_walk", {})
@@ -268,12 +285,12 @@ def render_lgmd_deep_dive():
                 st.plotly_chart(fig, use_container_width=True)
 
     # =================================================================
-    # Section 4: Medication Utilization
+    # Medications & Treatments
     # =================================================================
     meds = lgmd_snap.get("medications", {})
     if meds.get("available"):
         st.markdown("---")
-        st.markdown("##### Medication Utilization")
+        st.markdown("##### Medications & Treatments")
         st.markdown(
             "LGMD management focuses on supportive care: cardiac protection, pain management, "
             "respiratory support, and nutritional supplementation. No disease-modifying therapies "
@@ -324,12 +341,13 @@ def render_lgmd_deep_dive():
                 st.plotly_chart(fig, use_container_width=True)
 
     # =================================================================
-    # Section 5: Clinical Characteristics
+    # Genetics & Molecular Testing (+ Disease Classification & Diagnosis)
     # =================================================================
     clinical = lgmd_snap.get("clinical", {})
     if clinical.get("available"):
         st.markdown("---")
-        st.markdown("##### Clinical Characteristics")
+        st.markdown("##### Genetics & Molecular Testing")
+        st.caption("_Also includes: Disease Classification & Diagnosis_")
 
         col_gen, col_biopsy, col_sym = st.columns(3)
 
@@ -364,14 +382,15 @@ def render_lgmd_deep_dive():
                 st.plotly_chart(fig, use_container_width=True)
 
     # =================================================================
-    # Section 6: State Distribution + Care Sites
+    # Demographics & Enrollment (+ Multidisciplinary Care)
     # =================================================================
     state_dist = lgmd_snap.get("state_distribution", {})
     fac_list = lgmd_snap.get("facilities", {}).get("facilities", [])
 
     if state_dist.get("available") or fac_list:
         st.markdown("---")
-        st.markdown("##### Geographic Distribution & Care Sites")
+        st.markdown("##### Demographics & Enrollment")
+        st.caption("_Also includes: Multidisciplinary Care_")
 
         col_state, col_sites = st.columns(2)
 
@@ -408,13 +427,33 @@ def render_lgmd_deep_dive():
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
+    # =================================================================
+    # Other Clinical Domains
+    # =================================================================
+    _lgmd_covered = {
+        "Disease Classification & Diagnosis",
+        "Disease Milestones & Progression",
+        "Pulmonary & Respiratory",
+        "Timed Function Tests",
+        "Mobility & Ambulation",
+        "Medications & Treatments",
+        "Genetics & Molecular Testing",
+        "Demographics & Enrollment",
+        "Multidisciplinary Care",
+    }
+    uncovered = [d for d in _ALL_DOMAINS if d not in _lgmd_covered]
+    with st.expander(f"Other Clinical Domains ({len(uncovered)} not yet available)"):
+        for d in uncovered:
+            st.markdown(f"- **{d}**")
+        st.caption("Additional domains will be added as analytics are developed.")
+
 
 # ======================================================================
-# DMD Deep Dive
+# DMD Clinical Summary
 # ======================================================================
 
-def render_dmd_deep_dive():
-    """Render DMD-specific deep-dive sections from the DMD snapshot."""
+def render_dmd_clinical_summary():
+    """Render DMD clinical summary sections organized by clinical domains."""
     dmd_snap = DMDAPI.get_snapshot()
     if not dmd_snap:
         return
@@ -422,14 +461,15 @@ def render_dmd_deep_dive():
     summary = dmd_snap.get("summary", {})
     total_patients = summary.get("total_patients", 0)
 
-    st.subheader("DMD Deep-Dive")
+    st.subheader("DMD Clinical Summary")
 
     # =================================================================
-    # Section 1: Exon-Skipping Therapeutics (hero section)
+    # Medications & Treatments — Exon-skipping therapeutics
     # =================================================================
     tx = dmd_snap.get("therapeutics", {})
     if tx.get("available"):
-        st.markdown("##### Exon-Skipping Therapeutics: Amenability & Utilization")
+        st.markdown("##### Medications & Treatments")
+        st.caption("_Exon-skipping therapeutics: amenability & utilization_")
         st.markdown(
             "Exon-skipping therapies target specific deletion mutations in the dystrophin gene. "
             "Patients are classified as *amenable* based on mutation type and exon range."
@@ -506,11 +546,11 @@ def render_dmd_deep_dive():
                 )
 
     # =================================================================
-    # Section 2: Glucocorticoid Use
+    # Medications & Treatments: Glucocorticoids
     # =================================================================
     steroids = dmd_snap.get("steroids", {})
     if steroids.get("available"):
-        st.markdown("##### Glucocorticoid Use in DMD")
+        st.markdown("##### Medications & Treatments: Glucocorticoids")
 
         col_glc, col_drugs, col_compare = st.columns(3)
 
@@ -575,11 +615,12 @@ def render_dmd_deep_dive():
             )
 
     # =================================================================
-    # Section 2.5: Functional Outcomes
+    # Pulmonary & Respiratory (+ Timed Function Tests, Disease Milestones & Progression)
     # =================================================================
     func = dmd_snap.get("functional_scores", {})
     if func.get("available"):
-        st.markdown("##### Functional Outcomes")
+        st.markdown("##### Pulmonary & Respiratory")
+        st.caption("_Also includes: Timed Function Tests, Disease Milestones & Progression_")
 
         # Metric row
         fvc_data = func.get("fvc_pct", {})
@@ -744,11 +785,11 @@ def render_dmd_deep_dive():
         )
 
     # =================================================================
-    # Section 3: Genetic & Mutation Profile
+    # Genetics & Molecular Testing
     # =================================================================
     genetics = dmd_snap.get("genetics", {})
     if genetics.get("available"):
-        st.markdown("##### Genetic & Mutation Profile")
+        st.markdown("##### Genetics & Molecular Testing")
 
         col_gc, col_mut, col_frame = st.columns(3)
 
@@ -805,13 +846,14 @@ def render_dmd_deep_dive():
                 st.plotly_chart(fig, use_container_width=True)
 
     # =================================================================
-    # Section 4: State-Level Distribution
+    # Demographics & Enrollment — Geographic distribution
     # =================================================================
     state_dist = dmd_snap.get("state_distribution", {})
     if state_dist.get("available"):
         states = state_dist.get("states", [])
         if states:
-            st.markdown("##### Geographic Distribution: Therapy Utilization by State")
+            st.markdown("##### Demographics & Enrollment")
+            st.caption("_Geographic distribution & therapy utilization by state_")
 
             # Top 15 states bar chart
             top_states = states[:15]
@@ -859,14 +901,15 @@ def render_dmd_deep_dive():
                 )
 
     # =================================================================
-    # Section 5: Care Sites & Ambulatory Status
+    # Mobility & Ambulation (+ Multidisciplinary Care)
     # =================================================================
     amb = dmd_snap.get("ambulatory", {})
     amb_dist = amb.get("current_status", {}).get("distribution", {})
     fac_list = dmd_snap.get("facilities", {}).get("facilities", [])
 
     if amb_dist or fac_list:
-        st.markdown("##### Care Sites & Ambulatory Status")
+        st.markdown("##### Mobility & Ambulation")
+        st.caption("_Also includes: Multidisciplinary Care_")
         col_amb, col_sites = st.columns(2)
 
         with col_amb:
@@ -897,3 +940,22 @@ def render_dmd_deep_dive():
                     margin=dict(t=40, b=40, l=120),
                 )
                 st.plotly_chart(fig, use_container_width=True)
+
+    # =================================================================
+    # Other Clinical Domains
+    # =================================================================
+    _dmd_covered = {
+        "Medications & Treatments",
+        "Pulmonary & Respiratory",
+        "Timed Function Tests",
+        "Disease Milestones & Progression",
+        "Genetics & Molecular Testing",
+        "Demographics & Enrollment",
+        "Mobility & Ambulation",
+        "Multidisciplinary Care",
+    }
+    uncovered = [d for d in _ALL_DOMAINS if d not in _dmd_covered]
+    with st.expander(f"Other Clinical Domains ({len(uncovered)} not yet available)"):
+        for d in uncovered:
+            st.markdown(f"- **{d}**")
+        st.caption("Additional domains will be added as analytics are developed.")
