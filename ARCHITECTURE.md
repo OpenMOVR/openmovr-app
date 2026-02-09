@@ -24,7 +24,8 @@ openmovr-app/
 │   ├── 6_Site_Analytics.py     # [DUA] Site-level reports
 │   ├── 7_Download_Center.py    # [DUA] CSV/JSON data exports
 │   ├── 8_DMD_Clinical_Summary.py      # [DUA] DMD analytics + data tables
-│   └── 9_LGMD_Clinical_Summary.py     # [DUA] LGMD analytics + data tables
+│   ├── 9_LGMD_Clinical_Summary.py     # [DUA] LGMD analytics + data tables
+│   └── 10_ALS_Clinical_Summary.py     # [DUA] ALS analytics + data tables
 │
 ├── api/                        # Data Access Layer (facade pattern)
 │   ├── __init__.py
@@ -32,12 +33,13 @@ openmovr-app/
 │   ├── stats.py                # StatsAPI - snapshot statistics
 │   ├── dmd.py                  # DMDAPI - DMD clinical summary data
 │   ├── lgmd.py                 # LGMDAPI - LGMD clinical summary data
+│   ├── als.py                  # ALSAPI - ALS clinical summary data
 │   ├── data_dictionary.py      # DataDictionaryAPI - field metadata
 │   └── reports.py              # ReportsAPI - report generation
 │
 ├── components/                 # Reusable UI Components
 │   ├── sidebar.py              # Global CSS, sidebar footer, page footer
-│   ├── clinical_summary.py            # Shared clinical summary renderers (DMD, LGMD)
+│   ├── clinical_summary.py            # Shared clinical summary renderers (DMD, LGMD, ALS)
 │   ├── charts.py               # Plotly chart factories
 │   ├── tables.py               # DataFrame display helpers
 │   └── filters.py              # Filter widgets
@@ -68,6 +70,7 @@ openmovr-app/
 │   ├── database_snapshot.json  # Overall database statistics
 │   ├── dmd_snapshot.json       # DMD-specific statistics
 │   ├── lgmd_snapshot.json      # LGMD-specific statistics
+│   ├── als_snapshot.json       # ALS-specific statistics
 │   └── curated_dictionary.json # Field metadata (1,024 fields, 19 domains)
 │
 ├── data/                       # Parquet Files (GITIGNORED - may contain PHI)
@@ -79,6 +82,7 @@ openmovr-app/
     ├── generate_stats_snapshot.py      # Regenerate database snapshot
     ├── generate_dmd_snapshot.py        # Regenerate DMD snapshot
     ├── generate_lgmd_snapshot.py       # Regenerate LGMD snapshot
+    ├── generate_als_snapshot.py        # Regenerate ALS snapshot
     └── generate_curated_dictionary.py  # Regenerate curated dictionary
 ```
 
@@ -103,7 +107,7 @@ openmovr-app/
                     ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                          API LAYER                              │
-│  StatsAPI, CohortAPI, DMDAPI, LGMDAPI, DataDictionaryAPI        │
+│  StatsAPI, CohortAPI, DMDAPI, LGMDAPI, ALSAPI, DataDictionaryAPI │
 │  - Provides clean interface for pages                           │
 │  - Handles snapshot vs live mode switching                      │
 └─────────────────────────────────────────────────────────────────┘
@@ -161,13 +165,14 @@ This matches how users think: "What LGMD fields are in Encounters?"
 
 ## DUA-Gated Pages
 
-Pages 5-9 require provisioned access. The access system:
+Pages 5-10 require provisioned access. The access system:
 
 1. **Sign the DUA** (page 5) — informational, links to MDA access request form
 2. **Site Analytics** (page 6) — requires access key
 3. **Download Center** (page 7) — requires access key, CSV/JSON exports
 4. **DMD Clinical Summary** (page 8) — requires access key, charts + data tables
 5. **LGMD Clinical Summary** (page 9) — requires access key, charts + data tables
+6. **ALS Clinical Summary** (page 10) — requires access key, ALSFRS-R + data tables
 
 Clinical Summary pages include two tabs:
 - **Summary Tables** — aggregated data from snapshots with CSV download
@@ -200,6 +205,7 @@ When data updates:
 python scripts/generate_stats_snapshot.py
 python scripts/generate_dmd_snapshot.py
 python scripts/generate_lgmd_snapshot.py
+python scripts/generate_als_snapshot.py
 python scripts/generate_curated_dictionary.py
 ```
 

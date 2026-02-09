@@ -1,0 +1,1023 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-09T00:18:31.445798",
+    "generated_timestamp": "2026-02-09 00:18:31",
+    "disease": "ALS",
+    "description": "Amyotrophic Lateral Sclerosis Clinical Summary Statistics"
+  },
+  "summary": {
+    "total_patients": 1652,
+    "total_facilities": 32
+  },
+  "alsfrs": {
+    "available": true,
+    "total_score": {
+      "count": 1461,
+      "median": 27.0,
+      "mean": 27.0,
+      "min": 0.0,
+      "max": 48.0,
+      "histogram": {
+        "bins": [
+          "0-4",
+          "4-8",
+          "8-12",
+          "12-16",
+          "16-20",
+          "20-24",
+          "24-28",
+          "28-32",
+          "32-36",
+          "36-40",
+          "40-44",
+          "44-48"
+        ],
+        "counts": [
+          13,
+          26,
+          59,
+          105,
+          152,
+          180,
+          198,
+          197,
+          214,
+          152,
+          111,
+          54
+        ]
+      },
+      "by_age_band": {
+        "<40": {
+          "count": 40,
+          "median": 24.5,
+          "mean": 25.6,
+          "min": 1.0,
+          "max": 46.0
+        },
+        "40-49": {
+          "count": 105,
+          "median": 27.0,
+          "mean": 26.9,
+          "min": 3.0,
+          "max": 48.0
+        },
+        "50-59": {
+          "count": 336,
+          "median": 27.0,
+          "mean": 26.2,
+          "min": 0.0,
+          "max": 48.0
+        },
+        "60-69": {
+          "count": 534,
+          "median": 28.0,
+          "mean": 27.5,
+          "min": 1.0,
+          "max": 48.0
+        },
+        "70+": {
+          "count": 436,
+          "median": 28.0,
+          "mean": 27.2,
+          "min": 4.0,
+          "max": 48.0
+        }
+      },
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 32.0,
+          "q1": 25.0,
+          "q3": 38.0,
+          "n": 3095
+        },
+        {
+          "year": 1,
+          "median": 27.0,
+          "q1": 19.0,
+          "q3": 34.0,
+          "n": 638
+        },
+        {
+          "year": 2,
+          "median": 25.0,
+          "q1": 17.0,
+          "q3": 31.0,
+          "n": 269
+        },
+        {
+          "year": 3,
+          "median": 24.0,
+          "q1": 18.8,
+          "q3": 30.2,
+          "n": 128
+        },
+        {
+          "year": 4,
+          "median": 22.0,
+          "q1": 15.0,
+          "q3": 33.5,
+          "n": 46
+        }
+      ]
+    },
+    "severity_bands": [
+      {
+        "label": "Very Severe (0-11)",
+        "count": 98,
+        "suppressed": false,
+        "percentage": 6.7
+      },
+      {
+        "label": "Severe (12-23)",
+        "count": 437,
+        "suppressed": false,
+        "percentage": 29.9
+      },
+      {
+        "label": "Moderate (24-35)",
+        "count": 609,
+        "suppressed": false,
+        "percentage": 41.7
+      },
+      {
+        "label": "Mild (36-48)",
+        "count": 317,
+        "suppressed": false,
+        "percentage": 21.7
+      }
+    ],
+    "patients_with_longitudinal": 908,
+    "sub_scores": {
+      "speech": {
+        "label": "Speech",
+        "distribution": {
+          "3 - Detectable speech with disturbances": 412,
+          "4 - Normal speech processes": 348,
+          "2 - Intelligible with repeating": 243,
+          "0 - Loss of useful speech": 213,
+          "1 - Speech combined with non-vocal communication": 163
+        },
+        "total_reported": 1379
+      },
+      "slvatn": {
+        "label": "Salivation",
+        "distribution": {
+          "4 - Normal": 587,
+          "3 - Slight but definite excessive saliva; may have nighttime drooling": 322,
+          "2 - Moderately excessive saliva; may have minimal drooling": 213,
+          "0 - Marked drooling; requires constant tissue or handkerchief": 170,
+          "1 - Marked excess of saliva with some drooling": 87
+        },
+        "total_reported": 1379
+      },
+      "swallow": {
+        "label": "Swallowing",
+        "distribution": {
+          "4 - Normal eating habits": 433,
+          "2 - Dietary consistency changes": 333,
+          "3 - Early eating problems; occasional choking": 332,
+          "0 - NPO (exclusively parenteral or enteral feeding)": 152,
+          "1 - Needs supplemental feeding tube": 129
+        },
+        "total_reported": 1379
+      },
+      "handwrit": {
+        "label": "Handwriting",
+        "distribution": {
+          "3 - Slow or sloppy; all words are legible": 461,
+          "0 - Unable to grip pen": 313,
+          "4 - Normal": 226,
+          "2 - Not all words are legible": 214,
+          "1 - Able to grip pen but unable to write": 164
+        },
+        "total_reported": 1378
+      },
+      "drshygn": {
+        "label": "Dressing & Hygiene",
+        "distribution": {
+          "2 - Intermittent assistance or substitute methods": 368,
+          "0 - Total dependence": 310,
+          "1 - Needs attendant for self-care": 292,
+          "3 - Independent and complete self-care with effort or decreased efficiency": 281,
+          "4 - Normal function": 127
+        },
+        "total_reported": 1378
+      },
+      "turnbed": {
+        "label": "Turning in Bed",
+        "distribution": {
+          "3 - Somewhat slow and clumsy, but no help needed": 346,
+          "2 - Can turn alone or adjust sheets, but with great difficulty": 310,
+          "0 - \"Helpless\" - Not able to initiate or assist": 248,
+          "4 - Normal": 248,
+          "1 - Can initiate, but not turn or adjust sheets alone": 226
+        },
+        "total_reported": 1378
+      },
+      "walking": {
+        "label": "Walking",
+        "distribution": {
+          "2 - Walks with assistance": 536,
+          "1 - Non-ambulatory functional movement only": 240,
+          "3 - Early ambulation difficulties": 232,
+          "0 - No purposeful leg movement": 204,
+          "4 - Normal": 167
+        },
+        "total_reported": 1379
+      },
+      "clmbstrs": {
+        "label": "Climbing Stairs",
+        "distribution": {
+          "0 - Cannot do": 289,
+          "1 - Needs assistance": 130,
+          "4 - Normal": 70,
+          "3 - Slow": 58,
+          "2 - Mild unsteadiness or fatigue": 47
+        },
+        "total_reported": 594
+      },
+      "dyspnea": {
+        "label": "Dyspnea",
+        "distribution": {
+          "4 - None": 593,
+          "2 - Occurs with one or more of the following:  eating, bathing, dressing": 322,
+          "3 - Occurs when walking": 231,
+          "1 - Occurs at rest; difficulty breathing when either sitting or lying": 184,
+          "0 - Significant difficulty; considering using mechanical respiratory support": 49
+        },
+        "total_reported": 1379
+      },
+      "orthpnea": {
+        "label": "Orthopnea",
+        "distribution": {
+          "4 - None": 685,
+          "2 - Needs extra pillow in order to sleep (more than two)": 248,
+          "3 - Some difficulty sleeping at night due to shortness of breath; does not routinely use more than two pillows": 168,
+          "0 - Unable to sleep": 164,
+          "1 - Can only sleep sitting up": 113
+        },
+        "total_reported": 1378
+      },
+      "respinsf": {
+        "label": "Respiratory Insufficiency",
+        "distribution": {
+          "4 - None": 768,
+          "2 - Continuous use of NIPPV during the night": 346,
+          "3 - Intermittent use of NIPPV": 175,
+          "1 - Continuous use of NIPPV during the night and day": 70,
+          "0 - Invasive mechanical ventilation by intubation or tracheostomy": 19
+        },
+        "total_reported": 1378
+      }
+    }
+  },
+  "diagnosis": {
+    "available": true,
+    "el_escorial": {
+      "distribution": {
+        "Definite": 628,
+        "Probable": 314,
+        "Lab Supported - Probable": 275,
+        "Possible": 113,
+        "Familial": 19
+      },
+      "total_reported": 1349
+    },
+    "body_region_onset": {
+      "distribution": {
+        "LE (Lower Extremity)": 507,
+        "UE (Upper Extremity)": 473,
+        "Bulbar": 341,
+        "LE (Lower Extremity),UE (Upper Extremity)": 86,
+        "Bulbar,UE (Upper Extremity)": 28,
+        "Trunk": 19,
+        "Bulbar,LE (Lower Extremity),UE (Upper Extremity)": 17,
+        "Respiratory": 17,
+        "LE (Lower Extremity),Trunk": 16,
+        "Other": 16,
+        "Bulbar,LE (Lower Extremity)": 13,
+        "LE (Lower Extremity),Trunk,UE (Upper Extremity)": 12,
+        "Suppressed (n<11)": 106
+      },
+      "total_reported": 1651
+    },
+    "gene_mutation": {
+      "distribution": {
+        "Not Tested": 708,
+        "Unknown": 461,
+        "Tested, no mutation found": 293,
+        "Other": 80,
+        "C90RF72": 76,
+        "SOD1": 21,
+        "Suppressed (n<11)": 11
+      },
+      "total_reported": 1650,
+      "tested_count": 481,
+      "tested_percentage": 29.1
+    },
+    "family_history": {
+      "distribution": {
+        "No": 1234,
+        "Unknown": 257,
+        "Yes": 159
+      },
+      "total_reported": 1650,
+      "familial_count": 159,
+      "familial_percentage": 9.6
+    }
+  },
+  "milestones": {
+    "available": true,
+    "onset_age": {
+      "count": 1526,
+      "median": 61.8,
+      "mean": 61.2,
+      "min": 9.6,
+      "max": 92.4,
+      "histogram": {
+        "bins": [
+          "0-5",
+          "5-10",
+          "10-15",
+          "15-20",
+          "20-25",
+          "25-30",
+          "30-35",
+          "35-40",
+          "40-45",
+          "45-50",
+          "50-55",
+          "55-60",
+          "60-65",
+          "65-70",
+          "70-75",
+          "75-80",
+          "80-85",
+          "85-90",
+          "90-95",
+          "95-100"
+        ],
+        "counts": [
+          0,
+          1,
+          0,
+          0,
+          5,
+          11,
+          24,
+          38,
+          54,
+          101,
+          170,
+          239,
+          280,
+          241,
+          204,
+          108,
+          38,
+          11,
+          1,
+          0
+        ]
+      }
+    },
+    "diagnosis_age": {
+      "count": 1616,
+      "median": 63.3,
+      "mean": 62.9,
+      "min": 20.9,
+      "max": 92.9,
+      "histogram": {
+        "bins": [
+          "0-5",
+          "5-10",
+          "10-15",
+          "15-20",
+          "20-25",
+          "25-30",
+          "30-35",
+          "35-40",
+          "40-45",
+          "45-50",
+          "50-55",
+          "55-60",
+          "60-65",
+          "65-70",
+          "70-75",
+          "75-80",
+          "80-85",
+          "85-90",
+          "90-95",
+          "95-100"
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          4,
+          7,
+          19,
+          30,
+          50,
+          81,
+          165,
+          234,
+          309,
+          269,
+          232,
+          140,
+          53,
+          21,
+          2,
+          0
+        ]
+      }
+    },
+    "diagnostic_delay": {
+      "count": 1505,
+      "median": 1.1,
+      "mean": 1.7,
+      "min": 0.0,
+      "max": 27.4,
+      "histogram": {
+        "bins": [
+          "0-0",
+          "0-1",
+          "1-2",
+          "2-3",
+          "3-5",
+          "5-10",
+          "10-20",
+          "20-30"
+        ],
+        "counts": [
+          182,
+          447,
+          475,
+          199,
+          132,
+          52,
+          12,
+          6
+        ]
+      }
+    },
+    "loss_of_ambulation": {
+      "distribution": {
+        "No": 1109,
+        "Yes": 540
+      },
+      "total_reported": 1649
+    },
+    "loss_of_speech": {
+      "distribution": {
+        "No": 1349,
+        "Yes": 299
+      },
+      "total_reported": 1648
+    },
+    "gastrostomy": {
+      "distribution": {
+        "No": 1281,
+        "Yes": 368
+      },
+      "total_reported": 1649
+    },
+    "niv_initiation": {
+      "distribution": {
+        "No": 1040,
+        "Yes": 609
+      },
+      "total_reported": 1649
+    }
+  },
+  "respiratory": {
+    "available": true,
+    "fvc_pct": {
+      "count": 1311,
+      "median": 58.0,
+      "mean": 59.2,
+      "min": 1.0,
+      "max": 139.0,
+      "histogram": {
+        "bins": [
+          "0-10",
+          "10-20",
+          "20-30",
+          "30-40",
+          "40-50",
+          "50-60",
+          "60-70",
+          "70-80",
+          "80-90",
+          "90-100",
+          "100-110",
+          "110-120",
+          "120-130",
+          "130-140",
+          "140-150"
+        ],
+        "counts": [
+          8,
+          47,
+          111,
+          166,
+          181,
+          161,
+          158,
+          185,
+          128,
+          88,
+          51,
+          22,
+          3,
+          2,
+          0
+        ]
+      },
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 68.0,
+          "q1": 49.0,
+          "q3": 84.0,
+          "n": 2460
+        },
+        {
+          "year": 1,
+          "median": 63.0,
+          "q1": 44.0,
+          "q3": 81.0,
+          "n": 454
+        },
+        {
+          "year": 2,
+          "median": 63.0,
+          "q1": 44.0,
+          "q3": 78.0,
+          "n": 207
+        },
+        {
+          "year": 3,
+          "median": 60.0,
+          "q1": 42.5,
+          "q3": 80.0,
+          "n": 95
+        },
+        {
+          "year": 4,
+          "median": 71.5,
+          "q1": 41.8,
+          "q3": 77.2,
+          "n": 32
+        }
+      ]
+    },
+    "niv_status": {
+      "distribution": {
+        "No": 1006,
+        "Yes": 643
+      },
+      "total_reported": 1649
+    },
+    "trach_status": {
+      "distribution": {
+        "No": 1588,
+        "Yes": 31
+      },
+      "total_reported": 1619
+    }
+  },
+  "medications": {
+    "available": true,
+    "als_drugs": {
+      "Riluzole": {
+        "count": 488,
+        "suppressed": false,
+        "percentage": 29.5
+      },
+      "Radicava (edaravone)": {
+        "count": 96,
+        "suppressed": false,
+        "percentage": 5.8
+      },
+      "Nuedexta": {
+        "count": 126,
+        "suppressed": false,
+        "percentage": 7.6
+      },
+      "Relyvrio": {
+        "count": 0,
+        "suppressed": true,
+        "percentage": 0.0
+      },
+      "Qalsody (tofersen)": {
+        "count": 0,
+        "suppressed": true,
+        "percentage": 0.0
+      }
+    },
+    "top_drugs": [
+      {
+        "drug": "Riluzole",
+        "patients": 470,
+        "percentage": 28.5
+      },
+      {
+        "drug": "Baclofen",
+        "patients": 127,
+        "percentage": 7.7
+      },
+      {
+        "drug": "Nuedexta",
+        "patients": 124,
+        "percentage": 7.5
+      },
+      {
+        "drug": "Radicava",
+        "patients": 90,
+        "percentage": 5.4
+      },
+      {
+        "drug": "Glycopyrrolate",
+        "patients": 89,
+        "percentage": 5.4
+      },
+      {
+        "drug": "Gabapentin",
+        "patients": 70,
+        "percentage": 4.2
+      },
+      {
+        "drug": "Lisinopril",
+        "patients": 60,
+        "percentage": 3.6
+      },
+      {
+        "drug": "Losartan",
+        "patients": 46,
+        "percentage": 2.8
+      },
+      {
+        "drug": "Lexapro (SSRI)",
+        "patients": 36,
+        "percentage": 2.2
+      },
+      {
+        "drug": "Lipitor",
+        "patients": 33,
+        "percentage": 2.0
+      },
+      {
+        "drug": "Zoloft (SSRI)",
+        "patients": 31,
+        "percentage": 1.9
+      },
+      {
+        "drug": "Albuterol inhaled",
+        "patients": 29,
+        "percentage": 1.8
+      },
+      {
+        "drug": "Amitriptyline",
+        "patients": 22,
+        "percentage": 1.3
+      },
+      {
+        "drug": "Xanax",
+        "patients": 22,
+        "percentage": 1.3
+      },
+      {
+        "drug": "Crestor",
+        "patients": 20,
+        "percentage": 1.2
+      }
+    ]
+  },
+  "state_distribution": {
+    "available": true,
+    "total_states_mapped": 24,
+    "states": [
+      {
+        "state": "TX",
+        "total": 587
+      },
+      {
+        "state": "CA",
+        "total": 196
+      },
+      {
+        "state": "MD",
+        "total": 94
+      },
+      {
+        "state": "OH",
+        "total": 93
+      },
+      {
+        "state": "CT",
+        "total": 82
+      },
+      {
+        "state": "PA",
+        "total": 73
+      },
+      {
+        "state": "MT",
+        "total": 68
+      },
+      {
+        "state": "TN",
+        "total": 60
+      },
+      {
+        "state": "MA",
+        "total": 56
+      },
+      {
+        "state": "MO",
+        "total": 54
+      },
+      {
+        "state": "DC",
+        "total": 51
+      },
+      {
+        "state": "WI",
+        "total": 49
+      },
+      {
+        "state": "LA",
+        "total": 44
+      },
+      {
+        "state": "AR",
+        "total": 31
+      },
+      {
+        "state": "NY",
+        "total": 30
+      },
+      {
+        "state": "IL",
+        "total": 27
+      },
+      {
+        "state": "FL",
+        "total": 12
+      },
+      {
+        "state": "MN",
+        "total": 11
+      },
+      {
+        "state": "Other States (n<11 each)",
+        "total": 24
+      }
+    ]
+  },
+  "demographics": {
+    "available": true,
+    "diagnosis_age": {
+      "count": 1616,
+      "median": 63.3,
+      "mean": 62.9,
+      "min": 20.9,
+      "max": 92.9,
+      "histogram": {
+        "bins": [
+          "0-5",
+          "5-10",
+          "10-15",
+          "15-20",
+          "20-25",
+          "25-30",
+          "30-35",
+          "35-40",
+          "40-45",
+          "45-50",
+          "50-55",
+          "55-60",
+          "60-65",
+          "65-70",
+          "70-75",
+          "75-80",
+          "80-85",
+          "85-90",
+          "90-95",
+          "95-100"
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          4,
+          7,
+          19,
+          30,
+          50,
+          81,
+          165,
+          234,
+          309,
+          269,
+          232,
+          140,
+          53,
+          21,
+          2,
+          0
+        ]
+      }
+    },
+    "gender": {
+      "distribution": {
+        "Male": 930,
+        "Female": 720,
+        "Unspecified": 2
+      }
+    }
+  },
+  "ambulatory": {
+    "available": true,
+    "current_status": {
+      "distribution": {
+        "Ambulatory with difficulty": 499,
+        "Not ambulatory": 326,
+        "Ambulatory without difficulty": 119,
+        "Suppressed (n<11)": 6
+      }
+    }
+  },
+  "facilities": {
+    "available": true,
+    "total_facilities": 32,
+    "facilities": [
+      {
+        "id": "1349",
+        "name": "Texas Neurology",
+        "patients": 390
+      },
+      {
+        "id": "1194",
+        "name": "Houston Methodist Neurological Institute",
+        "patients": 197
+      },
+      {
+        "id": "1379",
+        "name": "University of California San Francisco",
+        "patients": 123
+      },
+      {
+        "id": "1440",
+        "name": "Johns Hopkins University",
+        "patients": 94
+      },
+      {
+        "id": "1149",
+        "name": "Ohio State University Wexner Medical Center",
+        "patients": 93
+      },
+      {
+        "id": "1383",
+        "name": "Hospital for Special Care",
+        "patients": 79
+      },
+      {
+        "id": "1325",
+        "name": "UC Irvine Center for Clinical Research",
+        "patients": 73
+      },
+      {
+        "id": "1430",
+        "name": "Temple University Hospital",
+        "patients": 71
+      },
+      {
+        "id": "1359",
+        "name": "Billings Clinic",
+        "patients": 68
+      },
+      {
+        "id": "1441",
+        "name": "Massachusetts General Hospital",
+        "patients": 56
+      },
+      {
+        "id": "1100",
+        "name": "University of Missouri",
+        "patients": 54
+      },
+      {
+        "id": "1048",
+        "name": "Georgetown University",
+        "patients": 51
+      },
+      {
+        "id": "1184",
+        "name": "Wesley Neurology Clinic",
+        "patients": 48
+      },
+      {
+        "id": "1226",
+        "name": "Medical College of Wisconsin",
+        "patients": 47
+      },
+      {
+        "id": "1072",
+        "name": "Louisiana State University Health Science Center",
+        "patients": 44
+      },
+      {
+        "id": "1009",
+        "name": "University of Arkansas Medical Sciences",
+        "patients": 31
+      },
+      {
+        "id": "1392",
+        "name": "HSS - Hospital for Special Surgery",
+        "patients": 30
+      },
+      {
+        "id": "1341",
+        "name": "Southern Illinois University of Medicine",
+        "patients": 18
+      },
+      {
+        "id": "1185",
+        "name": "Vanderbilt University Medical Center",
+        "patients": 12
+      },
+      {
+        "id": "1254",
+        "name": "University of Miami Kessenich Family Center",
+        "patients": 12
+      },
+      {
+        "id": "1298",
+        "name": "Essentia Health of Duluth",
+        "patients": 11
+      },
+      {
+        "id": "1149_legacy",
+        "name": "Ohio State University Wexner Medical Center",
+        "patients": 10
+      },
+      {
+        "id": "1239",
+        "name": "Carle Neuroscience Institute, Carle Foundation Hospital",
+        "patients": 9
+      },
+      {
+        "id": "1206",
+        "name": "University of Vermont Medical Center",
+        "patients": 7
+      },
+      {
+        "id": "1114",
+        "name": "Rutgers New Jersey Medical School",
+        "patients": 7
+      },
+      {
+        "id": "1176",
+        "name": "Medical University of South Carolina",
+        "patients": 3
+      },
+      {
+        "id": "1448",
+        "name": "Yale University School of Medicine",
+        "patients": 3
+      },
+      {
+        "id": "1431",
+        "name": "Las Vegas Clinic",
+        "patients": 3
+      },
+      {
+        "id": "1234",
+        "name": "University of Puerto Rico Medical Sciences",
+        "patients": 2
+      },
+      {
+        "id": "1364",
+        "name": "Prevea Health",
+        "patients": 2
+      },
+      {
+        "id": "1446",
+        "name": "Geisinger Medical Center",
+        "patients": 2
+      },
+      {
+        "id": "9000",
+        "name": "Idaho Physical Medicine & Rehabilitation",
+        "patients": 2
+      }
+    ]
+  }
+}

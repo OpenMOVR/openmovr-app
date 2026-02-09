@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-07T20:54:22.258711",
-    "generated_timestamp": "2026-02-07 20:54:22",
+    "generated_at": "2026-02-08T23:48:43.836657",
+    "generated_timestamp": "2026-02-08 23:48:43",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -1976,24 +1976,8 @@
             "count": 21
           },
           {
-            "label": "American Indian / Alaska Native",
-            "count": 3
-          },
-          {
-            "label": "Native Hawaiian or Other Pacific Islander",
-            "count": 2
-          },
-          {
-            "label": "Asian,Native Hawaiian or Other Pacific Islander",
-            "count": 2
-          },
-          {
-            "label": "Asian,White",
-            "count": 1
-          },
-          {
-            "label": "Other,White",
-            "count": 1
+            "label": "Suppressed (n<11)",
+            "count": 9
           }
         ],
         "age_at_enrollment": [
@@ -2025,9 +2009,267 @@
             "label": "80+",
             "count": 94
           }
+        ],
+        "age_at_diagnosis": [
+          {
+            "label": "18-29",
+            "count": 12
+          },
+          {
+            "label": "30-39",
+            "count": 49
+          },
+          {
+            "label": "40-49",
+            "count": 132
+          },
+          {
+            "label": "50-59",
+            "count": 402
+          },
+          {
+            "label": "60-69",
+            "count": 584
+          },
+          {
+            "label": "70-79",
+            "count": 363
+          },
+          {
+            "label": "80+",
+            "count": 74
+          }
+        ],
+        "health_insurance": [
+          {
+            "label": "Medicare",
+            "count": 919
+          },
+          {
+            "label": "Private or group health insurance",
+            "count": 625
+          },
+          {
+            "label": "Other",
+            "count": 121
+          },
+          {
+            "label": "Medicaid",
+            "count": 83
+          },
+          {
+            "label": "Unknown",
+            "count": 45
+          },
+          {
+            "label": "Veteran's Administration Benefits / Military Insurance",
+            "count": 28
+          },
+          {
+            "label": "Employer-Sponsored Disability Insurance",
+            "count": 22
+          },
+          {
+            "label": "Not Reported",
+            "count": 18
+          },
+          {
+            "label": "No Insurance/Self-pay",
+            "count": 16
+          }
+        ],
+        "education_level": [
+          {
+            "label": "Unknown",
+            "count": 561
+          },
+          {
+            "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+            "count": 221
+          },
+          {
+            "label": "High School Graduate, received diploma",
+            "count": 141
+          },
+          {
+            "label": "Some College, no degree",
+            "count": 101
+          },
+          {
+            "label": "Master's Degree (e.g., MA, MS, MEng, MEd, MBA)",
+            "count": 97
+          },
+          {
+            "label": "Associate degree:  academic program",
+            "count": 34
+          },
+          {
+            "label": "Associate degree:  occupational, technical or vocational program",
+            "count": 32
+          },
+          {
+            "label": "Professional Degree (e.g., MD, DDS, DVM, JD)",
+            "count": 31
+          },
+          {
+            "label": "12th Grade",
+            "count": 19
+          },
+          {
+            "label": "GED or equivalent",
+            "count": 19
+          },
+          {
+            "label": "Doctoral Degree (e.g., PhD, EdD)",
+            "count": 18
+          },
+          {
+            "label": "8th Grade",
+            "count": 5
+          },
+          {
+            "label": "10th Grade",
+            "count": 4
+          },
+          {
+            "label": "11th Grade",
+            "count": 3
+          },
+          {
+            "label": "3rd Grade",
+            "count": 2
+          }
+        ],
+        "employment_status": [
+          {
+            "label": "Retired",
+            "count": 618
+          },
+          {
+            "label": "Full-time",
+            "count": 304
+          },
+          {
+            "label": "Not employed",
+            "count": 288
+          },
+          {
+            "label": "Unknown",
+            "count": 251
+          },
+          {
+            "label": "Part-time",
+            "count": 40
+          },
+          {
+            "label": "Self-Employed",
+            "count": 31
+          },
+          {
+            "label": "Volunteer",
+            "count": 3
+          },
+          {
+            "label": "Patient Declined to Share",
+            "count": 3
+          }
         ]
       },
       "diagnosis": [
+        {
+          "field": "escorial",
+          "label": "El Escorial Criteria",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Definite",
+              "count": 628
+            },
+            {
+              "label": "Probable",
+              "count": 314
+            },
+            {
+              "label": "Lab Supported - Probable",
+              "count": 275
+            },
+            {
+              "label": "Possible",
+              "count": 113
+            },
+            {
+              "label": "Familial",
+              "count": 19
+            }
+          ]
+        },
+        {
+          "field": "bdypt",
+          "label": "Body Regions First Affected",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "LE (Lower Extremity)",
+              "count": 507
+            },
+            {
+              "label": "UE (Upper Extremity)",
+              "count": 473
+            },
+            {
+              "label": "Bulbar",
+              "count": 341
+            },
+            {
+              "label": "LE (Lower Extremity),UE (Upper Extremity)",
+              "count": 86
+            },
+            {
+              "label": "Bulbar,UE (Upper Extremity)",
+              "count": 28
+            },
+            {
+              "label": "Trunk",
+              "count": 19
+            },
+            {
+              "label": "Bulbar,LE (Lower Extremity),UE (Upper Extremity)",
+              "count": 17
+            },
+            {
+              "label": "Respiratory",
+              "count": 17
+            },
+            {
+              "label": "LE (Lower Extremity),Trunk",
+              "count": 16
+            },
+            {
+              "label": "Other",
+              "count": 16
+            },
+            {
+              "label": "Bulbar,LE (Lower Extremity)",
+              "count": 13
+            },
+            {
+              "label": "LE (Lower Extremity),Trunk,UE (Upper Extremity)",
+              "count": 12
+            },
+            {
+              "label": "Unknown",
+              "count": 10
+            },
+            {
+              "label": "Bulbar,Respiratory",
+              "count": 9
+            },
+            {
+              "label": "Respiratory,UE (Upper Extremity)",
+              "count": 8
+            }
+          ]
+        },
         {
           "field": "genemut",
           "label": "Gene Mutation",
@@ -2068,6 +2310,35 @@
           ]
         },
         {
+          "field": "famhst",
+          "label": "Family History",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "No",
+              "count": 1234
+            },
+            {
+              "label": "Unknown",
+              "count": 257
+            },
+            {
+              "label": "Yes",
+              "count": 159
+            }
+          ]
+        },
+        {
+          "field": "alsonsag",
+          "label": "Age at Symptom Onset",
+          "type": "numeric",
+          "n": 1527,
+          "mean": 61.1,
+          "median": 61.8,
+          "min": -13.1,
+          "max": 92.4
+        },
+        {
           "field": "alsdgnag",
           "label": "Age at Diagnosis",
           "type": "numeric",
@@ -2098,28 +2369,8 @@
             "count": 113
           },
           {
-            "label": "Not Reported",
-            "count": 10
-          },
-          {
-            "label": "Black or African American",
-            "count": 10
-          },
-          {
-            "label": "Unknown",
-            "count": 9
-          },
-          {
-            "label": "Other",
-            "count": 5
-          },
-          {
-            "label": "Asian",
-            "count": 2
-          },
-          {
-            "label": "Black or African American,White",
-            "count": 1
+            "label": "Suppressed (n<11)",
+            "count": 37
           }
         ],
         "age_at_enrollment": [
@@ -2159,6 +2410,142 @@
             "label": "70-79",
             "count": 1
           }
+        ],
+        "age_at_diagnosis": [
+          {
+            "label": "0-4",
+            "count": 38
+          },
+          {
+            "label": "5-9",
+            "count": 45
+          },
+          {
+            "label": "10-17",
+            "count": 33
+          },
+          {
+            "label": "18-29",
+            "count": 12
+          },
+          {
+            "label": "30-39",
+            "count": 9
+          },
+          {
+            "label": "40-49",
+            "count": 2
+          },
+          {
+            "label": "50-59",
+            "count": 2
+          }
+        ],
+        "health_insurance": [
+          {
+            "label": "Private or group health insurance",
+            "count": 75
+          },
+          {
+            "label": "Medicaid",
+            "count": 46
+          },
+          {
+            "label": "Medicare",
+            "count": 25
+          },
+          {
+            "label": "Other",
+            "count": 13
+          },
+          {
+            "label": "Employer-Sponsored Disability Insurance",
+            "count": 5
+          },
+          {
+            "label": "Unknown",
+            "count": 5
+          },
+          {
+            "label": "No Insurance/Self-pay",
+            "count": 1
+          },
+          {
+            "label": "Not Reported",
+            "count": 1
+          },
+          {
+            "label": "Veteran's Administration Benefits / Military Insurance",
+            "count": 1
+          }
+        ],
+        "education_level": [
+          {
+            "label": "Unknown",
+            "count": 19
+          },
+          {
+            "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+            "count": 11
+          },
+          {
+            "label": "Some College, no degree",
+            "count": 6
+          },
+          {
+            "label": "High School Graduate, received diploma",
+            "count": 6
+          },
+          {
+            "label": "Never attended / Kindergarten only",
+            "count": 6
+          },
+          {
+            "label": "Associate degree:  occupational, technical or vocational program",
+            "count": 2
+          },
+          {
+            "label": "12th Grade",
+            "count": 2
+          },
+          {
+            "label": "Associate degree:  academic program",
+            "count": 2
+          },
+          {
+            "label": "Master's Degree (e.g., MA, MS, MEng, MEd, MBA)",
+            "count": 1
+          },
+          {
+            "label": "7th Grade",
+            "count": 1
+          }
+        ],
+        "employment_status": [
+          {
+            "label": "Not employed",
+            "count": 26
+          },
+          {
+            "label": "Full-time",
+            "count": 14
+          },
+          {
+            "label": "Unknown",
+            "count": 11
+          },
+          {
+            "label": "Retired",
+            "count": 7
+          },
+          {
+            "label": "Self-Employed",
+            "count": 2
+          },
+          {
+            "label": "Part-time",
+            "count": 2
+          }
         ]
       },
       "diagnosis": [
@@ -2190,6 +2577,148 @@
           ]
         },
         {
+          "field": "bmdgnrpt",
+          "label": "Genetic Report Available",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes",
+              "count": 101
+            },
+            {
+              "label": "No",
+              "count": 33
+            },
+            {
+              "label": "Family report only - no confirmation",
+              "count": 14
+            }
+          ]
+        },
+        {
+          "field": "bmdmscbp",
+          "label": "Muscle Biopsy",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "No",
+              "count": 76
+            },
+            {
+              "label": "Yes",
+              "count": 39
+            },
+            {
+              "label": "Unknown",
+              "count": 34
+            }
+          ]
+        },
+        {
+          "field": "bmddysdf",
+          "label": "Dystrophin Deficiency",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Unknown",
+              "count": 17
+            },
+            {
+              "label": "Yes - Partial absence",
+              "count": 9
+            },
+            {
+              "label": "Yes - Absent",
+              "count": 8
+            },
+            {
+              "label": "Dystrophin analysis not performed",
+              "count": 3
+            },
+            {
+              "label": "No",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "field": "dnads",
+          "label": "DNA Dosage Analysis",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Other",
+              "count": 19
+            },
+            {
+              "label": "MLPA",
+              "count": 12
+            },
+            {
+              "label": "Southern Blot",
+              "count": 9
+            },
+            {
+              "label": "Fluorescent",
+              "count": 8
+            },
+            {
+              "label": "CGH",
+              "count": 7
+            },
+            {
+              "label": "CGH,MLPA",
+              "count": 2
+            },
+            {
+              "label": "MAPH",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "field": "exontype",
+          "label": "Exon Type",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Multiple Exons",
+              "count": 92
+            },
+            {
+              "label": "Single Exon",
+              "count": 13
+            },
+            {
+              "label": "Non-exon region",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "field": "frametype",
+          "label": "Frame Type",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Inframe",
+              "count": 59
+            },
+            {
+              "label": "Unknown",
+              "count": 40
+            },
+            {
+              "label": "Out of frame",
+              "count": 7
+            },
+            {
+              "label": "In frame",
+              "count": 1
+            }
+          ]
+        },
+        {
           "field": "bmdfam",
           "label": "Family History",
           "type": "categorical",
@@ -2207,6 +2736,16 @@
               "count": 22
             }
           ]
+        },
+        {
+          "field": "bmddgnag",
+          "label": "Age at Diagnosis",
+          "type": "numeric",
+          "n": 142,
+          "mean": 11.4,
+          "median": 8.1,
+          "min": -1.0,
+          "max": 57.5
         }
       ]
     },
@@ -2253,28 +2792,8 @@
             "count": 20
           },
           {
-            "label": "American Indian / Alaska Native",
-            "count": 4
-          },
-          {
-            "label": "Native Hawaiian or Other Pacific Islander",
-            "count": 4
-          },
-          {
-            "label": "Black or African American,White",
-            "count": 2
-          },
-          {
-            "label": "Asian,White",
-            "count": 1
-          },
-          {
-            "label": "American Indian / Alaska Native,White",
-            "count": 1
-          },
-          {
-            "label": "Asian,Other",
-            "count": 1
+            "label": "Suppressed (n<11)",
+            "count": 13
           }
         ],
         "age_at_enrollment": [
@@ -2310,6 +2829,150 @@
             "label": "60-69",
             "count": 1
           }
+        ],
+        "age_at_diagnosis": [
+          {
+            "label": "0-4",
+            "count": 329
+          },
+          {
+            "label": "5-9",
+            "count": 279
+          },
+          {
+            "label": "10-17",
+            "count": 31
+          },
+          {
+            "label": "18-29",
+            "count": 5
+          },
+          {
+            "label": "30-39",
+            "count": 2
+          },
+          {
+            "label": "50-59",
+            "count": 2
+          }
+        ],
+        "health_insurance": [
+          {
+            "label": "Medicaid",
+            "count": 305
+          },
+          {
+            "label": "Private or group health insurance",
+            "count": 287
+          },
+          {
+            "label": "Other",
+            "count": 64
+          },
+          {
+            "label": "Medicare",
+            "count": 25
+          },
+          {
+            "label": "Employer-Sponsored Disability Insurance",
+            "count": 18
+          },
+          {
+            "label": "Unknown",
+            "count": 15
+          },
+          {
+            "label": "Not Reported",
+            "count": 10
+          },
+          {
+            "label": "Veteran's Administration Benefits / Military Insurance",
+            "count": 6
+          },
+          {
+            "label": "No Insurance/Self-pay",
+            "count": 5
+          }
+        ],
+        "education_level": [
+          {
+            "label": "Never attended / Kindergarten only",
+            "count": 46
+          },
+          {
+            "label": "Unknown",
+            "count": 37
+          },
+          {
+            "label": "High School Graduate, received diploma",
+            "count": 36
+          },
+          {
+            "label": "Some College, no degree",
+            "count": 9
+          },
+          {
+            "label": "12th Grade",
+            "count": 8
+          },
+          {
+            "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+            "count": 8
+          },
+          {
+            "label": "7th Grade",
+            "count": 8
+          },
+          {
+            "label": "5th Grade",
+            "count": 5
+          },
+          {
+            "label": "6th Grade",
+            "count": 5
+          },
+          {
+            "label": "9th Grade",
+            "count": 4
+          },
+          {
+            "label": "10th Grade",
+            "count": 4
+          },
+          {
+            "label": "1st Grade",
+            "count": 3
+          },
+          {
+            "label": "8th Grade",
+            "count": 2
+          },
+          {
+            "label": "Associate degree:  occupational, technical or vocational program",
+            "count": 2
+          },
+          {
+            "label": "2nd Grade",
+            "count": 2
+          }
+        ],
+        "employment_status": [
+          {
+            "label": "Not employed",
+            "count": 95
+          },
+          {
+            "label": "Unknown",
+            "count": 27
+          },
+          {
+            "label": "Part-time",
+            "count": 10
+          },
+          {
+            "label": "Full-time",
+            "count": 5
+          }
         ]
       },
       "diagnosis": [
@@ -2341,6 +3004,152 @@
           ]
         },
         {
+          "field": "dmdgnrpt",
+          "label": "Genetic Report Available",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes",
+              "count": 469
+            },
+            {
+              "label": "No",
+              "count": 177
+            },
+            {
+              "label": "Family report only - no confirmation",
+              "count": 36
+            }
+          ]
+        },
+        {
+          "field": "dmdmscbp",
+          "label": "Muscle Biopsy",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "No",
+              "count": 390
+            },
+            {
+              "label": "Unknown",
+              "count": 182
+            },
+            {
+              "label": "Yes",
+              "count": 111
+            }
+          ]
+        },
+        {
+          "field": "dmddysdf",
+          "label": "Dystrophin Deficiency",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Unknown",
+              "count": 66
+            },
+            {
+              "label": "Yes - Absent",
+              "count": 27
+            },
+            {
+              "label": "Yes - Partial absence",
+              "count": 11
+            },
+            {
+              "label": "Dystrophin analysis not performed",
+              "count": 6
+            },
+            {
+              "label": "No",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "field": "dnads",
+          "label": "DNA Dosage Analysis",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "MLPA",
+              "count": 91
+            },
+            {
+              "label": "Other",
+              "count": 64
+            },
+            {
+              "label": "CGH",
+              "count": 47
+            },
+            {
+              "label": "Southern Blot",
+              "count": 27
+            },
+            {
+              "label": "Fluorescent",
+              "count": 24
+            },
+            {
+              "label": "CGH,MLPA",
+              "count": 8
+            },
+            {
+              "label": "Fluorescent,MLPA",
+              "count": 1
+            },
+            {
+              "label": "MAPH",
+              "count": 1
+            },
+            {
+              "label": "CGH,Other",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "field": "exontype",
+          "label": "Exon Type",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Multiple Exons",
+              "count": 361
+            },
+            {
+              "label": "Single exon",
+              "count": 152
+            },
+            {
+              "label": "Non-exon region",
+              "count": 9
+            }
+          ]
+        },
+        {
+          "field": "frametype",
+          "label": "Frame Type",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Unknown",
+              "count": 243
+            },
+            {
+              "label": "Out of frame",
+              "count": 220
+            },
+            {
+              "label": "In frame",
+              "count": 56
+            }
+          ]
+        },
+        {
           "field": "dmdfam",
           "label": "Family History",
           "type": "categorical",
@@ -2356,6 +3165,86 @@
             {
               "label": "Unknown",
               "count": 110
+            }
+          ]
+        },
+        {
+          "field": "dmddgnag",
+          "label": "Age at Diagnosis",
+          "type": "numeric",
+          "n": 651,
+          "mean": 5.4,
+          "median": 5.0,
+          "min": -1.0,
+          "max": 57.1
+        },
+        {
+          "field": "glcouse",
+          "label": "Steroid Use (at Enrollment)",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes, Deflazacort currently",
+              "count": 285
+            },
+            {
+              "label": "Yes, prednisone currently",
+              "count": 169
+            },
+            {
+              "label": "Never",
+              "count": 87
+            },
+            {
+              "label": "No, but previously",
+              "count": 59
+            },
+            {
+              "label": "Yes, Other",
+              "count": 41
+            },
+            {
+              "label": "No, but recommended at this visit",
+              "count": 16
+            },
+            {
+              "label": "Unknown",
+              "count": 11
+            }
+          ]
+        },
+        {
+          "field": "glcouse",
+          "label": "Steroid Use (Last Encounter)",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Yes, Deflazacort currently",
+              "count": 320
+            },
+            {
+              "label": "Yes, prednisone currently",
+              "count": 160
+            },
+            {
+              "label": "No, but previously",
+              "count": 68
+            },
+            {
+              "label": "Never",
+              "count": 60
+            },
+            {
+              "label": "Yes, Other",
+              "count": 42
+            },
+            {
+              "label": "Unknown",
+              "count": 9
+            },
+            {
+              "label": "No, but recommended at this visit",
+              "count": 8
             }
           ]
         }
@@ -2380,24 +3269,12 @@
             "count": 156
           },
           {
+            "label": "Suppressed (n<11)",
+            "count": 17
+          },
+          {
             "label": "Unknown",
             "count": 11
-          },
-          {
-            "label": "Black or African American",
-            "count": 5
-          },
-          {
-            "label": "Not Reported",
-            "count": 5
-          },
-          {
-            "label": "Other",
-            "count": 4
-          },
-          {
-            "label": "Asian",
-            "count": 3
           }
         ],
         "age_at_enrollment": [
@@ -2436,6 +3313,154 @@
           {
             "label": "80+",
             "count": 5
+          }
+        ],
+        "age_at_diagnosis": [
+          {
+            "label": "0-4",
+            "count": 6
+          },
+          {
+            "label": "5-9",
+            "count": 17
+          },
+          {
+            "label": "10-17",
+            "count": 26
+          },
+          {
+            "label": "18-29",
+            "count": 23
+          },
+          {
+            "label": "30-39",
+            "count": 18
+          },
+          {
+            "label": "40-49",
+            "count": 18
+          },
+          {
+            "label": "50-59",
+            "count": 27
+          },
+          {
+            "label": "60-69",
+            "count": 21
+          },
+          {
+            "label": "70-79",
+            "count": 7
+          },
+          {
+            "label": "80+",
+            "count": 1
+          }
+        ],
+        "health_insurance": [
+          {
+            "label": "Private or group health insurance",
+            "count": 100
+          },
+          {
+            "label": "Medicare",
+            "count": 67
+          },
+          {
+            "label": "Medicaid",
+            "count": 18
+          },
+          {
+            "label": "Other",
+            "count": 8
+          },
+          {
+            "label": "Unknown",
+            "count": 6
+          },
+          {
+            "label": "Veteran's Administration Benefits / Military Insurance",
+            "count": 3
+          },
+          {
+            "label": "Employer-Sponsored Disability Insurance",
+            "count": 2
+          },
+          {
+            "label": "Not Reported",
+            "count": 2
+          },
+          {
+            "label": "No Insurance/Self-pay",
+            "count": 1
+          }
+        ],
+        "education_level": [
+          {
+            "label": "Unknown",
+            "count": 44
+          },
+          {
+            "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+            "count": 23
+          },
+          {
+            "label": "High School Graduate, received diploma",
+            "count": 17
+          },
+          {
+            "label": "Some College, no degree",
+            "count": 12
+          },
+          {
+            "label": "Master's Degree (e.g., MA, MS, MEng, MEd, MBA)",
+            "count": 10
+          },
+          {
+            "label": "Associate degree:  occupational, technical or vocational program",
+            "count": 7
+          },
+          {
+            "label": "Associate degree:  academic program",
+            "count": 4
+          },
+          {
+            "label": "GED or equivalent",
+            "count": 2
+          },
+          {
+            "label": "12th Grade",
+            "count": 2
+          },
+          {
+            "label": "12th Grade, no diploma",
+            "count": 1
+          }
+        ],
+        "employment_status": [
+          {
+            "label": "Full-time",
+            "count": 43
+          },
+          {
+            "label": "Retired",
+            "count": 42
+          },
+          {
+            "label": "Not employed",
+            "count": 34
+          },
+          {
+            "label": "Unknown",
+            "count": 25
+          },
+          {
+            "label": "Part-time",
+            "count": 10
+          },
+          {
+            "label": "Self-Employed",
+            "count": 6
           }
         ]
       },
@@ -2488,36 +3513,12 @@
             "count": 155
           },
           {
+            "label": "Suppressed (n<11)",
+            "count": 34
+          },
+          {
             "label": "Black or African American",
             "count": 21
-          },
-          {
-            "label": "Unknown",
-            "count": 9
-          },
-          {
-            "label": "Other",
-            "count": 9
-          },
-          {
-            "label": "Asian",
-            "count": 6
-          },
-          {
-            "label": "Not Reported",
-            "count": 6
-          },
-          {
-            "label": "American Indian / Alaska Native,White",
-            "count": 2
-          },
-          {
-            "label": "American Indian / Alaska Native,Black or African American,White",
-            "count": 1
-          },
-          {
-            "label": "American Indian / Alaska Native",
-            "count": 1
           }
         ],
         "age_at_enrollment": [
@@ -2560,6 +3561,170 @@
           {
             "label": "80+",
             "count": 1
+          }
+        ],
+        "age_at_diagnosis": [
+          {
+            "label": "0-4",
+            "count": 10
+          },
+          {
+            "label": "5-9",
+            "count": 26
+          },
+          {
+            "label": "10-17",
+            "count": 38
+          },
+          {
+            "label": "18-29",
+            "count": 23
+          },
+          {
+            "label": "30-39",
+            "count": 22
+          },
+          {
+            "label": "40-49",
+            "count": 29
+          },
+          {
+            "label": "50-59",
+            "count": 30
+          },
+          {
+            "label": "60-69",
+            "count": 14
+          },
+          {
+            "label": "70-79",
+            "count": 3
+          }
+        ],
+        "health_insurance": [
+          {
+            "label": "Private or group health insurance",
+            "count": 89
+          },
+          {
+            "label": "Medicare",
+            "count": 66
+          },
+          {
+            "label": "Medicaid",
+            "count": 47
+          },
+          {
+            "label": "Other",
+            "count": 16
+          },
+          {
+            "label": "Unknown",
+            "count": 8
+          },
+          {
+            "label": "Employer-Sponsored Disability Insurance",
+            "count": 6
+          },
+          {
+            "label": "Veteran's Administration Benefits / Military Insurance",
+            "count": 5
+          },
+          {
+            "label": "Not Reported",
+            "count": 4
+          },
+          {
+            "label": "No Insurance/Self-pay",
+            "count": 1
+          }
+        ],
+        "education_level": [
+          {
+            "label": "Unknown",
+            "count": 50
+          },
+          {
+            "label": "High School Graduate, received diploma",
+            "count": 15
+          },
+          {
+            "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+            "count": 14
+          },
+          {
+            "label": "Some College, no degree",
+            "count": 6
+          },
+          {
+            "label": "Master's Degree (e.g., MA, MS, MEng, MEd, MBA)",
+            "count": 6
+          },
+          {
+            "label": "12th Grade",
+            "count": 6
+          },
+          {
+            "label": "Associate degree:  academic program",
+            "count": 5
+          },
+          {
+            "label": "Associate degree:  occupational, technical or vocational program",
+            "count": 3
+          },
+          {
+            "label": "12th Grade, no diploma",
+            "count": 2
+          },
+          {
+            "label": "Professional Degree (e.g., MD, DDS, DVM, JD)",
+            "count": 2
+          },
+          {
+            "label": "11th Grade",
+            "count": 1
+          },
+          {
+            "label": "1st Grade",
+            "count": 1
+          },
+          {
+            "label": "10th Grade",
+            "count": 1
+          },
+          {
+            "label": "6th Grade",
+            "count": 1
+          },
+          {
+            "label": "2nd Grade",
+            "count": 1
+          }
+        ],
+        "employment_status": [
+          {
+            "label": "Not employed",
+            "count": 47
+          },
+          {
+            "label": "Full-time",
+            "count": 33
+          },
+          {
+            "label": "Retired",
+            "count": 32
+          },
+          {
+            "label": "Unknown",
+            "count": 25
+          },
+          {
+            "label": "Part-time",
+            "count": 8
+          },
+          {
+            "label": "Self-Employed",
+            "count": 3
           }
         ]
       },
@@ -2696,6 +3861,112 @@
               "count": 38
             }
           ]
+        },
+        {
+          "field": "sym1st",
+          "label": "First Symptoms",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Weakness proximal",
+              "count": 42
+            },
+            {
+              "label": "Weakness distal",
+              "count": 37
+            },
+            {
+              "label": "Other",
+              "count": 33
+            },
+            {
+              "label": "Weakness distal,Weakness proximal",
+              "count": 24
+            },
+            {
+              "label": "Other,Weakness distal,Weakness proximal",
+              "count": 9
+            },
+            {
+              "label": "Other,Weakness proximal",
+              "count": 9
+            },
+            {
+              "label": "Other,Weakness distal",
+              "count": 7
+            },
+            {
+              "label": "Foot drop,Weakness distal,Weakness proximal",
+              "count": 4
+            },
+            {
+              "label": "Foot drop",
+              "count": 4
+            },
+            {
+              "label": "Motor Delay,Weakness distal,Weakness proximal",
+              "count": 4
+            },
+            {
+              "label": "Motor Delay",
+              "count": 3
+            },
+            {
+              "label": "Motor Delay,Other",
+              "count": 2
+            },
+            {
+              "label": "Scapular winging,Weakness proximal",
+              "count": 2
+            },
+            {
+              "label": "Motor Delay,Weakness distal",
+              "count": 2
+            },
+            {
+              "label": "Shortness of breath,Weakness distal,Weakness proximal",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "field": "lgfam",
+          "label": "Family History",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "No",
+              "count": 99
+            },
+            {
+              "label": "Yes",
+              "count": 71
+            },
+            {
+              "label": "Unknown",
+              "count": 40
+            }
+          ]
+        },
+        {
+          "field": "lgdgag",
+          "label": "Age at Diagnosis",
+          "type": "numeric",
+          "n": 195,
+          "mean": 31.6,
+          "median": 30.6,
+          "min": 0.0,
+          "max": 79.7
+        },
+        {
+          "field": "dymonag",
+          "label": "Symptom Onset Age",
+          "type": "numeric",
+          "n": 175,
+          "mean": 24.5,
+          "median": 20.2,
+          "min": 0.0,
+          "max": 76.9
         }
       ]
     },
@@ -2718,12 +3989,8 @@
             "count": 32
           },
           {
-            "label": "Black or African American",
-            "count": 3
-          },
-          {
-            "label": "Not Reported",
-            "count": 2
+            "label": "Suppressed (n<11)",
+            "count": 5
           }
         ],
         "age_at_enrollment": [
@@ -2762,6 +4029,85 @@
           {
             "label": "70-79",
             "count": 6
+          }
+        ],
+        "age_at_diagnosis": [],
+        "health_insurance": [
+          {
+            "label": "Private or group health insurance",
+            "count": 13
+          },
+          {
+            "label": "Medicare",
+            "count": 11
+          },
+          {
+            "label": "Medicaid",
+            "count": 11
+          },
+          {
+            "label": "Other",
+            "count": 4
+          },
+          {
+            "label": "Unknown",
+            "count": 1
+          }
+        ],
+        "education_level": [
+          {
+            "label": "Unknown",
+            "count": 12
+          },
+          {
+            "label": "Never attended / Kindergarten only",
+            "count": 4
+          },
+          {
+            "label": "High School Graduate, received diploma",
+            "count": 3
+          },
+          {
+            "label": "Some College, no degree",
+            "count": 1
+          },
+          {
+            "label": "3rd Grade",
+            "count": 1
+          },
+          {
+            "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+            "count": 1
+          },
+          {
+            "label": "Associate degree:  academic program",
+            "count": 1
+          },
+          {
+            "label": "4th Grade",
+            "count": 1
+          }
+        ],
+        "employment_status": [
+          {
+            "label": "Not employed",
+            "count": 6
+          },
+          {
+            "label": "Unknown",
+            "count": 6
+          },
+          {
+            "label": "Full-time",
+            "count": 5
+          },
+          {
+            "label": "Retired",
+            "count": 5
+          },
+          {
+            "label": "Self-Employed",
+            "count": 1
           }
         ]
       },
@@ -2810,28 +4156,8 @@
             "count": 20
           },
           {
-            "label": "American Indian / Alaska Native,White",
-            "count": 2
-          },
-          {
-            "label": "Black or African American,White",
-            "count": 2
-          },
-          {
-            "label": "American Indian / Alaska Native",
-            "count": 1
-          },
-          {
-            "label": "Black or African American,Other",
-            "count": 1
-          },
-          {
-            "label": "Native Hawaiian or Other Pacific Islander",
-            "count": 1
-          },
-          {
-            "label": "Asian,Other",
-            "count": 1
+            "label": "Suppressed (n<11)",
+            "count": 8
           }
         ],
         "age_at_enrollment": [
@@ -2871,9 +4197,192 @@
             "label": "70-79",
             "count": 1
           }
+        ],
+        "age_at_diagnosis": [
+          {
+            "label": "0-4",
+            "count": 383
+          },
+          {
+            "label": "5-9",
+            "count": 25
+          },
+          {
+            "label": "10-17",
+            "count": 21
+          },
+          {
+            "label": "18-29",
+            "count": 13
+          },
+          {
+            "label": "30-39",
+            "count": 10
+          },
+          {
+            "label": "40-49",
+            "count": 4
+          },
+          {
+            "label": "50-59",
+            "count": 4
+          },
+          {
+            "label": "60-69",
+            "count": 1
+          }
+        ],
+        "health_insurance": [
+          {
+            "label": "Private or group health insurance",
+            "count": 231
+          },
+          {
+            "label": "Medicaid",
+            "count": 225
+          },
+          {
+            "label": "Medicare",
+            "count": 54
+          },
+          {
+            "label": "Other",
+            "count": 30
+          },
+          {
+            "label": "Unknown",
+            "count": 20
+          },
+          {
+            "label": "Employer-Sponsored Disability Insurance",
+            "count": 16
+          },
+          {
+            "label": "Not Reported",
+            "count": 9
+          },
+          {
+            "label": "Veteran's Administration Benefits / Military Insurance",
+            "count": 7
+          }
+        ],
+        "education_level": [
+          {
+            "label": "Never attended / Kindergarten only",
+            "count": 125
+          },
+          {
+            "label": "Unknown",
+            "count": 45
+          },
+          {
+            "label": "High School Graduate, received diploma",
+            "count": 14
+          },
+          {
+            "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+            "count": 11
+          },
+          {
+            "label": "Some College, no degree",
+            "count": 10
+          },
+          {
+            "label": "Master's Degree (e.g., MA, MS, MEng, MEd, MBA)",
+            "count": 7
+          },
+          {
+            "label": "Associate degree:  academic program",
+            "count": 7
+          },
+          {
+            "label": "2nd Grade",
+            "count": 4
+          },
+          {
+            "label": "11th Grade",
+            "count": 3
+          },
+          {
+            "label": "6th Grade",
+            "count": 2
+          },
+          {
+            "label": "Associate degree:  occupational, technical or vocational program",
+            "count": 2
+          },
+          {
+            "label": "1st Grade",
+            "count": 2
+          },
+          {
+            "label": "7th Grade",
+            "count": 2
+          },
+          {
+            "label": "10th Grade",
+            "count": 2
+          },
+          {
+            "label": "5th Grade",
+            "count": 2
+          }
+        ],
+        "employment_status": [
+          {
+            "label": "Not employed",
+            "count": 67
+          },
+          {
+            "label": "Full-time",
+            "count": 38
+          },
+          {
+            "label": "Unknown",
+            "count": 27
+          },
+          {
+            "label": "Part-time",
+            "count": 10
+          },
+          {
+            "label": "Self-Employed",
+            "count": 3
+          },
+          {
+            "label": "Retired",
+            "count": 2
+          }
         ]
       },
       "diagnosis": [
+        {
+          "field": "smadgmad",
+          "label": "Initial Method of Diagnosis",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Clinical presentation of symptoms",
+              "count": 331
+            },
+            {
+              "label": "Newborn Screening",
+              "count": 102
+            },
+            {
+              "label": "Unknown",
+              "count": 33
+            },
+            {
+              "label": "Genetic screening based upon sibling diagnosis",
+              "count": 33
+            },
+            {
+              "label": "Prenatal Screening",
+              "count": 25
+            }
+          ]
+        },
         {
           "field": "smaclass",
           "label": "SMA Classification",
@@ -2939,6 +4448,112 @@
               "count": 2
             }
           ]
+        },
+        {
+          "field": "smn1cn",
+          "label": "SMN1 Copy Number",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Not Applicable",
+              "count": 34
+            },
+            {
+              "label": "Not Done",
+              "count": 17
+            },
+            {
+              "label": "1",
+              "count": 16
+            },
+            {
+              "label": "2",
+              "count": 10
+            }
+          ]
+        },
+        {
+          "field": "smn2mutn",
+          "label": "SMN2 Copy Number",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "3",
+              "count": 225
+            },
+            {
+              "label": "2",
+              "count": 161
+            },
+            {
+              "label": "Unknown",
+              "count": 52
+            },
+            {
+              "label": "4",
+              "count": 45
+            },
+            {
+              "label": "\u2265 4",
+              "count": 20
+            },
+            {
+              "label": "Not Done",
+              "count": 12
+            },
+            {
+              "label": "1",
+              "count": 3
+            },
+            {
+              "label": "\u2265 5",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "field": "nonsma",
+          "label": "Non-SMN SMA",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "Other",
+              "count": 2
+            },
+            {
+              "label": "SMA LED2 (BICD2 mutation)",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "field": "nwfammbr",
+          "label": "Family History",
+          "type": "categorical",
+          "values": [
+            {
+              "label": "No",
+              "count": 300
+            },
+            {
+              "label": "Unknown",
+              "count": 104
+            },
+            {
+              "label": "Yes",
+              "count": 102
+            }
+          ]
+        },
+        {
+          "field": "smadgnag",
+          "label": "Age at Diagnosis",
+          "type": "numeric",
+          "n": 477,
+          "mean": 4.1,
+          "median": 0.9,
+          "min": -1.3,
+          "max": 61.0
         }
       ]
     }

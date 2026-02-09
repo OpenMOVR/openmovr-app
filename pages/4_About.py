@@ -174,7 +174,8 @@ st.markdown(
     | Download Center (provisioned) | Prototype |
     | Cohort Builder with custom filters | Planned |
     | Custom longitudinal analytics | Planned |
-    | Additional clinical summaries (SMA, ALS, BMD) | Planned |
+    | ALS Clinical Summary (ALSFRS-R, milestones, respiratory) | Prototype |
+    | Additional clinical summaries (SMA, BMD) | Planned |
     | Patient-facing data summaries | Planned |
     """
 )

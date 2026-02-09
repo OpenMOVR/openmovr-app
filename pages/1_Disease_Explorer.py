@@ -55,7 +55,7 @@ def _unavailable_section(title, detail=None):
     )
 
 
-from components.clinical_summary import render_dmd_clinical_summary, render_lgmd_clinical_summary
+from components.clinical_summary import render_dmd_clinical_summary, render_lgmd_clinical_summary, render_als_clinical_summary
 
 # ---------------------------------------------------------------------------
 # Clinical summary renderer registry
@@ -65,7 +65,7 @@ from components.clinical_summary import render_dmd_clinical_summary, render_lgmd
 _CLINICAL_SUMMARY_RENDERERS = {
     'DMD': render_dmd_clinical_summary,
     'LGMD': render_lgmd_clinical_summary,
-    # 'ALS': render_als_clinical_summary,   # planned
+    'ALS': render_als_clinical_summary,
     # 'SMA': render_sma_clinical_summary,   # planned
 }
 

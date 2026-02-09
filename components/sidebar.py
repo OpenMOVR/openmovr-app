@@ -77,10 +77,10 @@ def inject_global_css() -> None:
         }
 
         /* --- DUA REQUIRED separator --- */
-        [data-testid="stSidebarNav"] li:nth-last-child(5) {
+        [data-testid="stSidebarNav"] li:nth-last-child(6) {
             margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
         }
-        [data-testid="stSidebarNav"] li:nth-last-child(5)::before {
+        [data-testid="stSidebarNav"] li:nth-last-child(6)::before {
             content: "DUA REQUIRED"; display: block; font-size: 0.7em;
             color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
             letter-spacing: 0.05em;

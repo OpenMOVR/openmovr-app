@@ -31,4 +31,9 @@ try:
 except Exception:
     DMDAPI = None
 
-__all__ = ['CohortAPI', 'StatsAPI', 'ReportsAPI', 'DataDictionaryAPI', 'LGMDAPI', 'DMDAPI']
+try:
+    from .als import ALSAPI
+except Exception:
+    ALSAPI = None
+
+__all__ = ['CohortAPI', 'StatsAPI', 'ReportsAPI', 'DataDictionaryAPI', 'LGMDAPI', 'DMDAPI', 'ALSAPI']
