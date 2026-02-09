@@ -16,30 +16,40 @@ openmovr-app/
 ├── .streamlit/config.toml      # Streamlit theme/config
 │
 ├── pages/                      # Streamlit multi-page app
-│   ├── 1_Disease_Explorer.py   # Disease cohort filtering
-│   ├── 2_Facility_View.py      # Facility distribution
-│   ├── 3_Data_Dictionary.py    # Field browser with completeness
-│   └── 4_LGMD_Overview.py      # LGMD-specific PAG presentation
+│   ├── 1_Disease_Explorer.py   # Disease cohort filtering + deep-dive tabs
+│   ├── 2_Facility_View.py      # Facility distribution + site map
+│   ├── 3_Data_Dictionary.py    # Curated field browser (19 clinical domains)
+│   ├── 4_About.py              # Study info, access tiers, roadmap
+│   ├── 5_Sign_the_DUA.py       # DUA information + access request
+│   ├── 6_Site_Analytics.py     # [DUA] Site-level reports
+│   ├── 7_Download_Center.py    # [DUA] CSV/JSON data exports
+│   ├── 8_DMD_Deep_Dive.py      # [DUA] DMD analytics + data tables
+│   └── 9_LGMD_Deep_Dive.py     # [DUA] LGMD analytics + data tables
 │
 ├── api/                        # Data Access Layer (facade pattern)
 │   ├── __init__.py
 │   ├── cohorts.py              # CohortAPI - cohort operations
 │   ├── stats.py                # StatsAPI - snapshot statistics
-│   ├── lgmd.py                 # LGMDAPI - LGMD-specific data
+│   ├── dmd.py                  # DMDAPI - DMD deep-dive data
+│   ├── lgmd.py                 # LGMDAPI - LGMD deep-dive data
 │   ├── data_dictionary.py      # DataDictionaryAPI - field metadata
 │   └── reports.py              # ReportsAPI - report generation
 │
 ├── components/                 # Reusable UI Components
+│   ├── sidebar.py              # Global CSS, sidebar footer, page footer
+│   ├── deep_dive.py            # Shared deep-dive renderers (DMD, LGMD)
 │   ├── charts.py               # Plotly chart factories
 │   ├── tables.py               # DataFrame display helpers
 │   └── filters.py              # Filter widgets
 │
 ├── config/                     # Configuration
-│   ├── settings.py             # App settings (title, theme, etc.)
+│   ├── settings.py             # App settings (title, version, paths, etc.)
 │   ├── disease_filters.yaml    # Disease-specific filter definitions
+│   ├── clinical_domains.yaml   # Curated clinical domain classifications
 │   └── *.yaml                  # Other config files
 │
 ├── utils/                      # Webapp utilities
+│   ├── access.py               # Access key auth (require_access, has_access)
 │   ├── cache.py                # Streamlit caching helpers
 │   └── formatting.py           # Display formatting
 │
@@ -56,14 +66,20 @@ openmovr-app/
 │
 ├── stats/                      # Pre-computed Snapshots (NO PHI)
 │   ├── database_snapshot.json  # Overall database statistics
-│   └── lgmd_snapshot.json      # LGMD-specific statistics
+│   ├── dmd_snapshot.json       # DMD-specific statistics
+│   ├── lgmd_snapshot.json      # LGMD-specific statistics
+│   └── curated_dictionary.json # Field metadata (1,024 fields, 19 domains)
 │
 ├── data/                       # Parquet Files (GITIGNORED - may contain PHI)
 │   └── README.md               # Instructions for obtaining data
 │
+├── assets/                     # Logo and branding assets
+│
 └── scripts/                    # Utility Scripts
-    ├── generate_stats_snapshot.py   # Regenerate database snapshot
-    └── generate_lgmd_snapshot.py    # Regenerate LGMD snapshot
+    ├── generate_stats_snapshot.py      # Regenerate database snapshot
+    ├── generate_dmd_snapshot.py        # Regenerate DMD snapshot
+    ├── generate_lgmd_snapshot.py       # Regenerate LGMD snapshot
+    └── generate_curated_dictionary.py  # Regenerate curated dictionary
 ```
 
 ## Data Flow
@@ -71,13 +87,23 @@ openmovr-app/
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        STREAMLIT PAGES                          │
-│  (Disease Explorer, Facility View, Data Dictionary, LGMD)       │
+│  Public: Disease Explorer, Facility View, Data Dictionary       │
+│  DUA: Site Analytics, Download Center, DMD/LGMD Deep Dive       │
 └─────────────────────────────────────────────────────────────────┘
                               │
-                              ▼
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+          ┌──────────────┐    ┌──────────────────┐
+          │  components/  │    │   utils/access.py │
+          │  deep_dive.py │    │   (access gate)   │
+          │  sidebar.py   │    └──────────────────┘
+          │  charts.py    │
+          └──────────────┘
+                    │
+                    ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                          API LAYER                              │
-│  CohortAPI, StatsAPI, LGMDAPI, DataDictionaryAPI                │
+│  StatsAPI, CohortAPI, DMDAPI, LGMDAPI, DataDictionaryAPI        │
 │  - Provides clean interface for pages                           │
 │  - Handles snapshot vs live mode switching                      │
 └─────────────────────────────────────────────────────────────────┘
@@ -106,16 +132,46 @@ This makes it easy to:
 - Mock data for testing
 - Extract webapp to separate repo
 
-### 3. Snapshot Pre-computation
+### 3. Shared Deep-Dive Renderers
+`components/deep_dive.py` contains disease-specific chart renderers shared by:
+- The Disease Explorer page (embedded in the Deep Dive tab, live mode)
+- Standalone DUA-gated pages (DMD/LGMD Deep Dive)
+
+This avoids code duplication while keeping pages independent.
+
+### 4. Access Key Authentication
+DUA-gated pages use `utils/access.py`:
+- `require_access()` shows login form and calls `st.stop()` if not authenticated
+- Access key resolved from `OPENMOVR_SITE_KEY` env var or `st.secrets`
+- Session state `provisioned_access` persists across page navigations
+
+### 5. Snapshot Pre-computation
 JSON snapshots contain aggregate statistics with no PHI:
 - Patient counts by disease
 - Facility distributions
 - Age histograms (binned)
 - Subtype breakdowns
+- Therapeutic utilization
+- Functional scores (medians, IQR)
+- HIPAA small-cell suppression (n<11)
 
-### 4. Disease-First Filtering
+### 6. Disease-First Filtering
 Data Dictionary uses disease as primary filter, then form/table.
 This matches how users think: "What LGMD fields are in Encounters?"
+
+## DUA-Gated Pages
+
+Pages 5-9 require provisioned access. The access system:
+
+1. **Sign the DUA** (page 5) — informational, links to MDA access request form
+2. **Site Analytics** (page 6) — requires access key
+3. **Download Center** (page 7) — requires access key, CSV/JSON exports
+4. **DMD Deep Dive** (page 8) — requires access key, charts + data tables
+5. **LGMD Deep Dive** (page 9) — requires access key, charts + data tables
+
+Deep Dive pages include two tabs:
+- **Summary Tables** — aggregated data from snapshots with CSV download
+- **Patient-Level Data** — individual records from parquet (live mode only), behind a toggle checkbox
 
 ## Deployment Options
 
@@ -123,6 +179,7 @@ This matches how users think: "What LGMD fields are in Encounters?"
 1. Push to GitHub (public or private repo)
 2. Connect at share.streamlit.io
 3. App runs at `your-app.streamlit.app`
+4. Configure `OPENMOVR_SITE_KEY` in Streamlit secrets
 
 ### Custom Domain
 1. Deploy to Streamlit Cloud
@@ -132,6 +189,7 @@ This matches how users think: "What LGMD fields are in Encounters?"
 ### Local Development
 ```bash
 pip install -r requirements.txt
+export OPENMOVR_SITE_KEY="your-key"  # for DUA pages
 streamlit run app.py
 ```
 
@@ -139,22 +197,23 @@ streamlit run app.py
 
 When data updates:
 ```bash
-# From movr-clinical-analytics repo (has parquet files)
 python scripts/generate_stats_snapshot.py
+python scripts/generate_dmd_snapshot.py
 python scripts/generate_lgmd_snapshot.py
-
-# Copy to openmovr-app
-cp stats/*.json /path/to/openmovr-app/stats/
+python scripts/generate_curated_dictionary.py
 ```
 
-## Adding New Disease Overview Pages
+## Adding New Disease Deep Dives
 
 1. Create snapshot generator: `scripts/generate_{disease}_snapshot.py`
-2. Create API: `api/{disease}.py` with snapshot fallback
-3. Create page: `pages/X_{Disease}_Overview.py`
-4. Update `api/__init__.py` to export new API
+2. Create API: `api/{disease}.py` with `{Disease}API` class
+3. Add renderer: `render_{disease}_deep_dive()` in `components/deep_dive.py`
+4. Register in Disease Explorer: add to `_DEEP_DIVE_RENDERERS` dict
+5. Create DUA page: `pages/X_{Disease}_Deep_Dive.py`
+6. Update sidebar CSS: adjust `nth-last-child` in `components/sidebar.py`
+7. Update `api/__init__.py` to export new API
 
 ## Contact
 
 Andre D Paredes
-aparedes@mdausa.org
+andre.paredes@ymail.com

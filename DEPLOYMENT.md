@@ -85,15 +85,32 @@ Add `index.html`:
 
 ---
 
+## Access Key Configuration
+
+DUA-gated pages (Site Analytics, Download Center, DMD/LGMD Deep Dives) require an access key.
+
+### Streamlit Cloud
+Add to Streamlit secrets (Settings → Secrets):
+```toml
+OPENMOVR_SITE_KEY = "your-access-key"
+```
+
+### Local Development
+```bash
+export OPENMOVR_SITE_KEY="your-access-key"
+```
+
+---
+
 ## Updating the App
 
 1. Make changes locally
 2. Regenerate snapshots if data changed:
    ```bash
-   # In movr-clinical-analytics (has parquet files):
    python scripts/generate_stats_snapshot.py
+   python scripts/generate_dmd_snapshot.py
    python scripts/generate_lgmd_snapshot.py
-   cp stats/*.json /path/to/openmovr-app/stats/
+   python scripts/generate_curated_dictionary.py
    ```
 3. Commit and push:
    ```bash
