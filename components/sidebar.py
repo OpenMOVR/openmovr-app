@@ -113,22 +113,59 @@ def inject_global_css() -> None:
 
 
 def render_sidebar_footer() -> None:
-    """Render the shared sidebar footer (contact + centred logo).
+    """Render the shared sidebar footer (contact + feedback + logo).
 
     Call this at the *end* of your ``with st.sidebar:`` block (or after
     all page-specific sidebar widgets) so the footer sits below filters.
     """
     st.sidebar.markdown("---")
-    st.sidebar.markdown(
-        """
+    
+    # Feedback button for clinicians
+    if SHOW_FEEDBACK_BUTTON:
+        if FEEDBACK_FORM_ENABLED:
+            st.sidebar.markdown(
+                f"""
+                <div style='text-align: center; margin-bottom: 0.5rem;'>
+                    <a href="{FEEDBACK_FORM_URL}" target="_blank" 
+                       style="display: inline-block; padding: 0.4rem 1rem; 
+                              background-color: #1E88E5; color: white; 
+                              text-decoration: none; border-radius: 4px;
+                              font-size: 0.85em;">
+                        📝 Report Issue or Feedback
+                    </a>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        else:
+            # Show email button if form not set up yet
+            st.sidebar.markdown(
+                f"""
+                <div style='text-align: center; margin-bottom: 0.5rem;'>
+                    <a href="mailto:{ADMIN_EMAIL}?subject=OpenMOVR App Feedback" 
+                       style="display: inline-block; padding: 0.4rem 1rem; 
+                              background-color: #1E88E5; color: white; 
+                              text-decoration: none; border-radius: 4px;
+                              font-size: 0.85em;">
+                        📧 Send Feedback
+                    </a>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    
+    # Contact information
+    contact_html = f"""
         <div style='text-align: center; font-size: 0.75em; color: #999;'>
-            Contact:
-            <a href="mailto:andre.paredes@ymail.com">andre.paredes@ymail.com</a> |
-            <a href="mailto:aparedes@mdausa.org">aparedes@mdausa.org</a>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+            Data/Support: <a href="mailto:{ADMIN_EMAIL}">{ADMIN_EMAIL}</a>
+    """
+    
+    if SHOW_DEVELOPER_CONTACT:
+        contact_html += f"""<br>OpenMOVR Initiative: <a href="mailto:{DEVELOPER_EMAIL}">{DEVELOPER_EMAIL}</a>"""
+    
+    contact_html += "</div>"
+    
+    st.sidebar.markdown(contact_html, unsafe_allow_html=True)
     _logo = LOGO_JPG if LOGO_JPG.exists() else LOGO_PNG
     if _logo.exists():
         _b64 = base64.b64encode(_logo.read_bytes()).decode()
@@ -178,7 +215,8 @@ def render_page_footer() -> None:
     Call this at the bottom of every page to keep footers consistent.
     """
     st.markdown("---")
-    st.markdown(
+    
+    footer_html = (
         f"<div style='text-align: center; color: #888; font-size: 0.85em;'>"
         f"Data Source: <a href='https://mdausa.tfaforms.net/389761' target='_blank' "
         f"style='color: #1E88E5;'>MDA {STUDY_NAME} Study</a><br>"
@@ -186,8 +224,12 @@ def render_page_footer() -> None:
         f"<a href='https://openmovr.github.io' target='_blank' "
         f"style='color: #1E88E5;'>OpenMOVR Initiative</a><br>"
         f"Gen1 | v{APP_VERSION} (Prototype)<br>"
-        f"<a href='mailto:andre.paredes@ymail.com' style='color: #999;'>"
-        f"andre.paredes@ymail.com</a>"
-        f"</div>",
-        unsafe_allow_html=True,
+        f"Data/Support: <a href='mailto:{ADMIN_EMAIL}' style='color: #999;'>{ADMIN_EMAIL}</a>"
     )
+    
+    if SHOW_DEVELOPER_CONTACT:
+        footer_html += f" | OpenMOVR: <a href='mailto:{DEVELOPER_EMAIL}' style='color: #999;'>{DEVELOPER_EMAIL}</a>"
+    
+    footer_html += "</div>"
+    
+    st.markdown(footer_html, unsafe_allow_html=True)

@@ -15,6 +15,10 @@ from config.settings import (
     PAGE_ICON, APP_VERSION, STUDY_NAME, STUDY_PROTOCOL,
     STUDY_START, STUDY_END, STUDY_STATUS,
 )
+from config.contact import (
+    ADMIN_EMAIL, FEEDBACK_FORM_URL, FEEDBACK_FORM_ENABLED,
+    GITHUB_ISSUES_URL
+)
 from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -217,6 +221,63 @@ st.markdown(
     - Download Center for data exports (DUA required)
     - Facility View with top-site rankings and geographic distribution
     """
+)
+
+# ---- Get Help / Contact ----
+st.markdown("---")
+st.subheader("Get Help or Provide Feedback")
+
+col_users, col_devs = st.columns(2)
+
+with col_users:
+    st.markdown("### For Users")
+    st.markdown(
+        f"""
+        **Clinicians • Researchers • Data Managers**
+        
+        - 📝 **Report issues or suggest features**:  
+          [Click here to submit feedback]({FEEDBACK_FORM_URL})
+          
+        - 📧 **Data access or study questions**:  
+          [{ADMIN_EMAIL}](mailto:{ADMIN_EMAIL})
+          
+        - 🩺 **Study participation**:  
+          [MDA MOVR Contact Form](https://mdausa.tfaforms.net/389761)
+        
+        <div style='background: #FFF3E0; padding: 12px; border-radius: 4px; 
+                    margin-top: 12px; border-left: 3px solid #FF9800;'>
+        <strong>⚠️ Privacy Note:</strong> Do not include patient names, medical 
+        record numbers, or other PHI in feedback submissions.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+with col_devs:
+    st.markdown("### For Developers & Initiative")
+    st.markdown(
+        f"""
+        **Open Source Contributors & OpenMOVR Initiative**
+        
+        - 💬 **OpenMOVR Initiative inquiries**:  
+          [andre.paredes@ymail.com](mailto:andre.paredes@ymail.com)
+        
+        - 🐛 **Report technical issues**:  
+          [GitHub Issues]({GITHUB_ISSUES_URL})
+          
+        - 🔧 **Submit code contributions**:  
+          [GitHub Repository](https://github.com/OpenMOVR/openmovr-app)
+          
+        - 📚 **View documentation**:  
+          See `docs/` folder in repository
+        
+        Contributions welcome! See CONTRIBUTING.md for guidelines.
+        """
+    )
+
+st.info(
+    "💡 **Tip**: Use the **'📝 Report Issue or Feedback'** button in the sidebar "
+    "for quick access to the feedback form from any page."
 )
 
 # ---- Footer ----
