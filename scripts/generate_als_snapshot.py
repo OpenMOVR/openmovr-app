@@ -557,13 +557,22 @@ def _compute_medications(patient_ids: list, total_patients: int) -> dict:
     stats["als_drugs"] = drug_stats
 
     # --- Top medications overall ---
-    med_col = "medname" if "medname" in meds_df.columns else "StandardName" if "StandardName" in meds_df.columns else None
-    if med_col:
-        vals = meds_df[med_col].dropna()
-        vals = vals[vals.astype(str).str.strip() != ""]
-        vals = vals[~vals.isin(["Other", "other", ""])]
-        # Count unique patients per medication
-        med_patient = meds_df[meds_df[med_col].isin(vals[med_col] if hasattr(vals, 'columns') else vals)].groupby(med_col)["FACPATID"].nunique()
+    # Use the same multi-column search approach as als_drugs so that any
+    # drug appearing in both charts shows identical counts.
+    _MED_COLS = [c for c in ["StandardName", "medname", "Medications", "medoth"]
+                 if c in meds_df.columns]
+    if _MED_COLS:
+        # Build a unified drug name per row: first non-empty value wins
+        unified = meds_df[_MED_COLS[0]].copy()
+        for col in _MED_COLS[1:]:
+            unified = unified.fillna(meds_df[col])
+        unified = unified.dropna()
+        unified = unified[unified.astype(str).str.strip() != ""]
+        unified = unified[~unified.isin(["Other", "other", ""])]
+
+        tmp = meds_df.loc[unified.index].copy()
+        tmp["_unified_drug"] = unified
+        med_patient = tmp.groupby("_unified_drug")["FACPATID"].nunique()
         med_patient = med_patient.sort_values(ascending=False).head(15)
         top_drugs = []
         for med, count in med_patient.items():
@@ -573,6 +582,23 @@ def _compute_medications(patient_ids: list, total_patients: int) -> dict:
                     "patients": int(count),
                     "percentage": round(count / total_patients * 100, 1),
                 })
+
+        # Reconcile: for known ALS drugs, use the multi-column search
+        # count from als_drugs (which merges brand/generic synonyms across
+        # all columns) so both charts show identical numbers.
+        _als_drug_terms = {}  # lowercase search term → canonical als_drugs name
+        for drug_name, terms in ALS_DRUGS.items():
+            for t in terms:
+                _als_drug_terms[t.lower()] = drug_name
+        for td in top_drugs:
+            td_lower = td["drug"].lower()
+            canonical = _als_drug_terms.get(td_lower)
+            if canonical and canonical in drug_stats:
+                ds = drug_stats[canonical]
+                if not ds.get("suppressed"):
+                    td["patients"] = ds["count"]
+                    td["percentage"] = ds["percentage"]
+
         stats["top_drugs"] = top_drugs
 
     return stats

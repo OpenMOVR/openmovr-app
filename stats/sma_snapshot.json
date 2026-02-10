@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-09T20:22:03.429796",
-    "generated_timestamp": "2026-02-09 20:22:03",
+    "generated_at": "2026-02-09T21:57:37.140949",
+    "generated_timestamp": "2026-02-09 21:57:37",
     "disease": "SMA",
     "description": "Spinal Muscular Atrophy Clinical Summary Statistics"
   },
@@ -615,8 +615,8 @@
     "top_drugs": [
       {
         "drug": "Spinraza",
-        "patients": 116,
-        "percentage": 22.1
+        "patients": 117,
+        "percentage": 22.3
       },
       {
         "drug": "Zyprexa",
@@ -630,8 +630,8 @@
       },
       {
         "drug": "Zolgensma",
-        "patients": 34,
-        "percentage": 6.5
+        "patients": 39,
+        "percentage": 7.4
       },
       {
         "drug": "Albuterol inhaled",
@@ -650,8 +650,8 @@
       },
       {
         "drug": "Evrysdi",
-        "patients": 11,
-        "percentage": 2.1
+        "patients": 31,
+        "percentage": 5.9
       }
     ]
   },

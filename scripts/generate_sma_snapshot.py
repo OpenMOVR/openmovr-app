@@ -469,13 +469,21 @@ def _compute_therapeutics(patient_ids: list, total_patients: int,
         except Exception:
             pass
 
-    # Top medications overall
-    med_col = "medname" if "medname" in meds_df.columns else "StandardName" if "StandardName" in meds_df.columns else None
-    if med_col:
-        vals = meds_df[med_col].dropna()
-        vals = vals[vals.astype(str).str.strip() != ""]
-        vals = vals[~vals.isin(["Other", "other", ""])]
-        med_patient = meds_df[meds_df[med_col].isin(vals)].groupby(med_col)["FACPATID"].nunique()
+    # Top medications overall — coalesce across all medication name columns
+    # so counts are consistent with sma_drugs (which also searches all columns).
+    _MED_COLS = [c for c in ["StandardName", "medname", "Medications", "medoth"]
+                 if c in meds_df.columns]
+    if _MED_COLS:
+        unified = meds_df[_MED_COLS[0]].copy()
+        for col in _MED_COLS[1:]:
+            unified = unified.fillna(meds_df[col])
+        unified = unified.dropna()
+        unified = unified[unified.astype(str).str.strip() != ""]
+        unified = unified[~unified.isin(["Other", "other", ""])]
+
+        tmp = meds_df.loc[unified.index].copy()
+        tmp["_unified_drug"] = unified
+        med_patient = tmp.groupby("_unified_drug")["FACPATID"].nunique()
         med_patient = med_patient.sort_values(ascending=False).head(15)
         top_drugs = []
         for med, count in med_patient.items():
@@ -485,6 +493,21 @@ def _compute_therapeutics(patient_ids: list, total_patients: int,
                     "patients": int(count),
                     "percentage": round(count / total_patients * 100, 1),
                 })
+
+        # Reconcile: for known SMA drugs, use the multi-column search
+        # count from sma_drugs so both charts show identical numbers.
+        _sma_drug_terms = {}
+        for dn, terms in SMA_DRUGS.items():
+            for t in terms:
+                _sma_drug_terms[t.lower()] = dn
+        for td in top_drugs:
+            canonical = _sma_drug_terms.get(td["drug"].lower())
+            if canonical and canonical in drug_stats:
+                ds = drug_stats[canonical]
+                if not ds.get("suppressed"):
+                    td["patients"] = ds["count"]
+                    td["percentage"] = ds["percentage"]
+
         stats["top_drugs"] = top_drugs
 
     return stats

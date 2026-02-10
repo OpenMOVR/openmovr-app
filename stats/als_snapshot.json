@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-09T00:18:31.445798",
-    "generated_timestamp": "2026-02-09 00:18:31",
+    "generated_at": "2026-02-09T21:57:21.307572",
+    "generated_timestamp": "2026-02-09 21:57:21",
     "disease": "ALS",
     "description": "Amyotrophic Lateral Sclerosis Clinical Summary Statistics"
   },
@@ -623,8 +623,8 @@
     "top_drugs": [
       {
         "drug": "Riluzole",
-        "patients": 470,
-        "percentage": 28.5
+        "patients": 488,
+        "percentage": 29.5
       },
       {
         "drug": "Baclofen",
@@ -633,13 +633,13 @@
       },
       {
         "drug": "Nuedexta",
-        "patients": 124,
-        "percentage": 7.5
+        "patients": 126,
+        "percentage": 7.6
       },
       {
         "drug": "Radicava",
-        "patients": 90,
-        "percentage": 5.4
+        "patients": 96,
+        "percentage": 5.8
       },
       {
         "drug": "Glycopyrrolate",
