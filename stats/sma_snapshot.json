@@ -1,0 +1,1118 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-09T20:22:03.429796",
+    "generated_timestamp": "2026-02-09 20:22:03",
+    "disease": "SMA",
+    "description": "Spinal Muscular Atrophy Clinical Summary Statistics"
+  },
+  "summary": {
+    "total_patients": 524,
+    "total_facilities": 45
+  },
+  "classification": {
+    "available": true,
+    "sma_type": {
+      "distribution": {
+        "SMA - Type 2 (symptoms present between 7 and 18 months, can sit unassisted but does not stand or walk independently)": 160,
+        "SMA - Type 1 (symptoms present by 6 months, does not sit unassisted)": 160,
+        "SMA - Type 3 (symptoms present after 18 months, can stand and walk independently)": 109,
+        "Pre-symptomatic": 42,
+        "SMA - Type 0 (symptoms present at birth)": 14,
+        "Unknown": 14,
+        "Suppressed (n<11)": 24
+      },
+      "total_reported": 523
+    },
+    "diagnosis_method": {
+      "distribution": {
+        "Clinical presentation of symptoms": 331,
+        "Newborn Screening": 102,
+        "Unknown": 33,
+        "Genetic screening based upon sibling diagnosis": 33,
+        "Prenatal Screening": 25
+      },
+      "total_reported": 524
+    },
+    "genetic_confirmation": {
+      "distribution": {
+        "Yes": 493,
+        "No": 14,
+        "Unknown": 12,
+        "Suppressed (n<11)": 2
+      },
+      "confirmed_percentage": 94.1
+    },
+    "diagnosis_age": {
+      "count": 461,
+      "median": 1.0,
+      "mean": 4.2,
+      "min": 0.0,
+      "max": 61.0,
+      "histogram": {
+        "bins": [
+          "0-0",
+          "0-1",
+          "1-2",
+          "2-5",
+          "5-10",
+          "10-18",
+          "18-30",
+          "30-50",
+          "50-80"
+        ],
+        "counts": [
+          169,
+          56,
+          89,
+          67,
+          27,
+          21,
+          13,
+          13,
+          6
+        ]
+      }
+    }
+  },
+  "genetics": {
+    "available": true,
+    "smn2_copy_number": {
+      "distribution": {
+        "3": 225,
+        "2": 161,
+        "Unknown": 52,
+        "4": 45,
+        "\u2265 4": 20,
+        "Not Done": 12,
+        "Suppressed (n<11)": 4
+      },
+      "total_reported": 519
+    },
+    "smn1_copy_number": {
+      "distribution": {
+        "0": 404,
+        "Not Applicable": 34,
+        "Not Done": 17,
+        "1": 16,
+        "Suppressed (n<11)": 10
+      },
+      "total_reported": 481
+    },
+    "smn2_by_sma_type": {
+      "Pre-symptomatic": {
+        "3": 16,
+        "4": 11,
+        "2": 11,
+        "Suppressed (n<11)": 4
+      },
+      "SMA - Type 0 (symptoms present at birth)": {
+        "Suppressed (n<11)": 14
+      },
+      "SMA - Type 1 (symptoms present by 6 months, does not sit unassisted)": {
+        "2": 118,
+        "3": 26,
+        "Suppressed (n<11)": 16
+      },
+      "SMA - Type 2 (symptoms present between 7 and 18 months, can sit unassisted but does not stand or walk independently)": {
+        "3": 117,
+        "Unknown": 18,
+        "2": 14,
+        "Suppressed (n<11)": 10
+      },
+      "SMA - Type 3 (symptoms present after 18 months, can stand and walk independently)": {
+        "3": 53,
+        "4": 23,
+        "Unknown": 11,
+        "Suppressed (n<11)": 22
+      },
+      "Unknown": {
+        "Suppressed (n<11)": 14
+      }
+    },
+    "family_history": {
+      "distribution": {
+        "No": 300,
+        "Unknown": 104,
+        "Yes": 102
+      },
+      "familial_count": 102,
+      "familial_percentage": 19.5
+    },
+    "non_smn_sma": {
+      "distribution": {
+        "Suppressed (n<11)": 3
+      }
+    }
+  },
+  "motor_scores": {
+    "available": true,
+    "hfmse": {
+      "available": true,
+      "total_score": {
+        "count": 276,
+        "median": 18.0,
+        "mean": 24.1,
+        "min": 0.0,
+        "max": 66.0,
+        "histogram": {
+          "bins": [
+            "0-5",
+            "5-10",
+            "10-15",
+            "15-20",
+            "20-25",
+            "25-30",
+            "30-35",
+            "35-40",
+            "40-45",
+            "45-50",
+            "50-55",
+            "55-60",
+            "60-65"
+          ],
+          "counts": [
+            71,
+            36,
+            19,
+            18,
+            14,
+            18,
+            13,
+            8,
+            15,
+            10,
+            12,
+            16,
+            22
+          ]
+        }
+      },
+      "by_sma_type": {
+        "Pre-symptomatic": {
+          "count": 26,
+          "median": 56.0,
+          "mean": 51.0,
+          "min": 13.0,
+          "max": 66.0
+        },
+        "SMA - Type 1 (symptoms present by 6 months, does not sit unassisted)": {
+          "count": 71,
+          "median": 16.0,
+          "mean": 18.5,
+          "min": 0.0,
+          "max": 66.0
+        },
+        "SMA - Type 2 (symptoms present between 7 and 18 months, can sit unassisted but does not stand or walk independently)": {
+          "count": 97,
+          "median": 5.0,
+          "mean": 14.6,
+          "min": 0.0,
+          "max": 60.0
+        },
+        "SMA - Type 3 (symptoms present after 18 months, can stand and walk independently)": {
+          "count": 64,
+          "median": 27.0,
+          "mean": 30.5,
+          "min": 0.0,
+          "max": 65.0
+        }
+      },
+      "by_age_band": {
+        "0-2": {
+          "count": 60,
+          "median": 40.0,
+          "mean": 39.5,
+          "min": 0.0,
+          "max": 66.0
+        },
+        "2-5": {
+          "count": 48,
+          "median": 23.5,
+          "mean": 29.4,
+          "min": 0.0,
+          "max": 66.0
+        },
+        "5-10": {
+          "count": 50,
+          "median": 19.5,
+          "mean": 24.6,
+          "min": 0.0,
+          "max": 66.0
+        },
+        "10-18": {
+          "count": 56,
+          "median": 7.0,
+          "mean": 16.3,
+          "min": 0.0,
+          "max": 64.0
+        },
+        "18-30": {
+          "count": 24,
+          "median": 6.5,
+          "mean": 14.0,
+          "min": 0.0,
+          "max": 65.0
+        },
+        "30+": {
+          "count": 37,
+          "median": 2.0,
+          "mean": 10.0,
+          "min": 0.0,
+          "max": 64.0
+        }
+      },
+      "patients_with_longitudinal": 155,
+      "total_data_points": 647,
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 19.0,
+          "q1": 5.0,
+          "q3": 43.0,
+          "n": 337
+        },
+        {
+          "year": 1,
+          "median": 28.0,
+          "q1": 8.0,
+          "q3": 48.0,
+          "n": 135
+        },
+        {
+          "year": 2,
+          "median": 19.0,
+          "q1": 3.8,
+          "q3": 49.2,
+          "n": 104
+        },
+        {
+          "year": 3,
+          "median": 48.0,
+          "q1": 6.2,
+          "q3": 59.8,
+          "n": 50
+        },
+        {
+          "year": 4,
+          "median": 7.0,
+          "q1": 0.0,
+          "q3": 23.0,
+          "n": 17
+        }
+      ]
+    },
+    "chop_intend": {
+      "available": true,
+      "total_score": {
+        "count": 165,
+        "median": 47.0,
+        "mean": 42.4,
+        "min": 0.0,
+        "max": 64.0,
+        "histogram": {
+          "bins": [
+            "0-4",
+            "4-8",
+            "8-12",
+            "12-16",
+            "16-20",
+            "20-24",
+            "24-28",
+            "28-32",
+            "32-36",
+            "36-40",
+            "40-44",
+            "44-48",
+            "48-52",
+            "52-56",
+            "56-60",
+            "60-64"
+          ],
+          "counts": [
+            9,
+            4,
+            4,
+            3,
+            6,
+            8,
+            8,
+            5,
+            6,
+            6,
+            16,
+            9,
+            12,
+            14,
+            15,
+            40
+          ]
+        }
+      },
+      "by_sma_type": {
+        "Pre-symptomatic": {
+          "count": 30,
+          "median": 63.5,
+          "mean": 59.2,
+          "min": 40.0,
+          "max": 64.0
+        },
+        "SMA - Type 1 (symptoms present by 6 months, does not sit unassisted)": {
+          "count": 96,
+          "median": 42.5,
+          "mean": 37.8,
+          "min": 0.0,
+          "max": 64.0
+        },
+        "SMA - Type 2 (symptoms present between 7 and 18 months, can sit unassisted but does not stand or walk independently)": {
+          "count": 22,
+          "median": 30.5,
+          "mean": 33.5,
+          "min": 3.0,
+          "max": 64.0
+        }
+      },
+      "by_age_band": {
+        "0-2": {
+          "count": 87,
+          "median": 58.0,
+          "mean": 54.4,
+          "min": 12.0,
+          "max": 64.0
+        },
+        "2-5": {
+          "count": 27,
+          "median": 43.0,
+          "mean": 39.4,
+          "min": 7.0,
+          "max": 62.0
+        },
+        "5-10": {
+          "count": 24,
+          "median": 29.5,
+          "mean": 29.7,
+          "min": 0.0,
+          "max": 61.0
+        },
+        "10-18": {
+          "count": 18,
+          "median": 16.0,
+          "mean": 15.9,
+          "min": 0.0,
+          "max": 41.0
+        }
+      },
+      "patients_with_longitudinal": 85,
+      "total_data_points": 348,
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 45.0,
+          "q1": 32.0,
+          "q3": 56.0,
+          "n": 249
+        },
+        {
+          "year": 1,
+          "median": 42.0,
+          "q1": 30.0,
+          "q3": 51.8,
+          "n": 54
+        },
+        {
+          "year": 2,
+          "median": 42.0,
+          "q1": 28.0,
+          "q3": 49.0,
+          "n": 29
+        },
+        {
+          "year": 3,
+          "median": 58.0,
+          "q1": 43.0,
+          "q3": 64.0,
+          "n": 13
+        }
+      ]
+    },
+    "rulm": {
+      "available": true,
+      "total_score": {
+        "count": 79,
+        "median": 16.0,
+        "mean": 16.4,
+        "min": 0.0,
+        "max": 37.0,
+        "histogram": {
+          "bins": [
+            "0-3",
+            "3-6",
+            "6-9",
+            "9-12",
+            "12-15",
+            "15-18",
+            "18-21",
+            "21-24",
+            "24-27",
+            "27-30",
+            "30-33",
+            "33-36",
+            "36-39"
+          ],
+          "counts": [
+            5,
+            9,
+            8,
+            8,
+            6,
+            7,
+            10,
+            7,
+            7,
+            0,
+            3,
+            3,
+            6
+          ]
+        }
+      },
+      "by_sma_type": {
+        "SMA - Type 1 (symptoms present by 6 months, does not sit unassisted)": {
+          "count": 17,
+          "median": 8.0,
+          "mean": 10.4,
+          "min": 0.0,
+          "max": 24.0
+        },
+        "SMA - Type 2 (symptoms present between 7 and 18 months, can sit unassisted but does not stand or walk independently)": {
+          "count": 33,
+          "median": 13.0,
+          "mean": 13.7,
+          "min": 0.0,
+          "max": 37.0
+        },
+        "SMA - Type 3 (symptoms present after 18 months, can stand and walk independently)": {
+          "count": 24,
+          "median": 21.0,
+          "mean": 22.1,
+          "min": 7.0,
+          "max": 37.0
+        }
+      },
+      "by_age_band": {
+        "10-18": {
+          "count": 23,
+          "median": 17.0,
+          "mean": 14.7,
+          "min": 0.0,
+          "max": 36.0
+        },
+        "18-30": {
+          "count": 20,
+          "median": 18.5,
+          "mean": 18.9,
+          "min": 0.0,
+          "max": 37.0
+        },
+        "30+": {
+          "count": 23,
+          "median": 11.0,
+          "mean": 14.3,
+          "min": 2.0,
+          "max": 37.0
+        }
+      },
+      "patients_with_longitudinal": 25,
+      "total_data_points": 122,
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 17.5,
+          "q1": 9.5,
+          "q3": 24.0,
+          "n": 92
+        },
+        {
+          "year": 1,
+          "median": 15.5,
+          "q1": 9.2,
+          "q3": 21.0,
+          "n": 20
+        }
+      ]
+    }
+  },
+  "therapeutics": {
+    "available": true,
+    "sma_drugs": {
+      "Spinraza (nusinersen)": {
+        "count": 117,
+        "suppressed": false,
+        "percentage": 22.3
+      },
+      "Evrysdi (risdiplam)": {
+        "count": 31,
+        "suppressed": false,
+        "percentage": 5.9
+      },
+      "Zolgensma (onasemnogene)": {
+        "count": 39,
+        "suppressed": false,
+        "percentage": 7.4
+      }
+    },
+    "total_on_therapy": {
+      "count": 160,
+      "percentage": 30.5
+    },
+    "therapy_by_sma_type": {
+      "Pre-symptomatic": {
+        "Spinraza (nusinersen)": 0,
+        "Evrysdi (risdiplam)": 0,
+        "Zolgensma (onasemnogene)": 13,
+        "total_on_therapy": 18,
+        "total_patients": 42
+      },
+      "SMA - Type 0 (symptoms present at birth)": {
+        "Spinraza (nusinersen)": 0,
+        "Evrysdi (risdiplam)": 0,
+        "Zolgensma (onasemnogene)": 0,
+        "total_on_therapy": 6,
+        "total_patients": 14
+      },
+      "SMA - Type 1 (symptoms present by 6 months, does not sit unassisted)": {
+        "Spinraza (nusinersen)": 40,
+        "Evrysdi (risdiplam)": 0,
+        "Zolgensma (onasemnogene)": 18,
+        "total_on_therapy": 52,
+        "total_patients": 160
+      },
+      "SMA - Type 2 (symptoms present between 7 and 18 months, can sit unassisted but does not stand or walk independently)": {
+        "Spinraza (nusinersen)": 33,
+        "Evrysdi (risdiplam)": 11,
+        "Zolgensma (onasemnogene)": 0,
+        "total_on_therapy": 43,
+        "total_patients": 160
+      },
+      "SMA - Type 3 (symptoms present after 18 months, can stand and walk independently)": {
+        "Spinraza (nusinersen)": 31,
+        "Evrysdi (risdiplam)": 0,
+        "Zolgensma (onasemnogene)": 0,
+        "total_on_therapy": 36,
+        "total_patients": 109
+      },
+      "Unknown": {
+        "Spinraza (nusinersen)": 0,
+        "Evrysdi (risdiplam)": 0,
+        "Zolgensma (onasemnogene)": 0,
+        "total_on_therapy": 1,
+        "total_patients": 14
+      }
+    },
+    "spinraza_maintenance": {
+      "total_records": 7783,
+      "unique_patients": 253
+    },
+    "top_drugs": [
+      {
+        "drug": "Spinraza",
+        "patients": 116,
+        "percentage": 22.1
+      },
+      {
+        "drug": "Zyprexa",
+        "patients": 54,
+        "percentage": 10.3
+      },
+      {
+        "drug": "Albuterol",
+        "patients": 38,
+        "percentage": 7.3
+      },
+      {
+        "drug": "Zolgensma",
+        "patients": 34,
+        "percentage": 6.5
+      },
+      {
+        "drug": "Albuterol inhaled",
+        "patients": 29,
+        "percentage": 5.5
+      },
+      {
+        "drug": "Budesonide",
+        "patients": 20,
+        "percentage": 3.8
+      },
+      {
+        "drug": "Prednisone",
+        "patients": 17,
+        "percentage": 3.2
+      },
+      {
+        "drug": "Evrysdi",
+        "patients": 11,
+        "percentage": 2.1
+      }
+    ]
+  },
+  "respiratory": {
+    "available": true,
+    "fvc_pct": {
+      "count": 162,
+      "median": 65.0,
+      "mean": 65.4,
+      "min": 6.0,
+      "max": 130.0,
+      "histogram": {
+        "bins": [
+          "0-10",
+          "10-20",
+          "20-30",
+          "30-40",
+          "40-50",
+          "50-60",
+          "60-70",
+          "70-80",
+          "80-90",
+          "90-100",
+          "100-110",
+          "110-120",
+          "120-130",
+          "130-140",
+          "140-150"
+        ],
+        "counts": [
+          2,
+          8,
+          13,
+          12,
+          19,
+          13,
+          22,
+          17,
+          17,
+          16,
+          9,
+          10,
+          2,
+          2,
+          0
+        ]
+      },
+      "longitudinal": [
+        {
+          "year": 0,
+          "median": 65.0,
+          "q1": 42.0,
+          "q3": 90.5,
+          "n": 143
+        },
+        {
+          "year": 1,
+          "median": 58.0,
+          "q1": 30.0,
+          "q3": 79.2,
+          "n": 48
+        },
+        {
+          "year": 2,
+          "median": 61.0,
+          "q1": 37.0,
+          "q3": 81.0,
+          "n": 49
+        },
+        {
+          "year": 3,
+          "median": 48.0,
+          "q1": 30.5,
+          "q3": 92.5,
+          "n": 19
+        }
+      ]
+    }
+  },
+  "milestones": {
+    "available": true,
+    "ambulatory_status": {
+      "distribution": {
+        "Not ambulatory": 252,
+        "Ambulatory without difficulty": 85,
+        "Ambulatory with difficulty": 49,
+        "Suppressed (n<11)": 5
+      },
+      "total_reported": 391
+    }
+  },
+  "state_distribution": {
+    "available": true,
+    "total_states_mapped": 28,
+    "states": [
+      {
+        "state": "FL",
+        "total": 91
+      },
+      {
+        "state": "MN",
+        "total": 51
+      },
+      {
+        "state": "CA",
+        "total": 47
+      },
+      {
+        "state": "PA",
+        "total": 44
+      },
+      {
+        "state": "VA",
+        "total": 35
+      },
+      {
+        "state": "WI",
+        "total": 34
+      },
+      {
+        "state": "KY",
+        "total": 27
+      },
+      {
+        "state": "TX",
+        "total": 25
+      },
+      {
+        "state": "MI",
+        "total": 21
+      },
+      {
+        "state": "OH",
+        "total": 18
+      },
+      {
+        "state": "TN",
+        "total": 15
+      },
+      {
+        "state": "MT",
+        "total": 15
+      },
+      {
+        "state": "KS",
+        "total": 13
+      },
+      {
+        "state": "Other States (n<11 each)",
+        "total": 52
+      }
+    ]
+  },
+  "demographics": {
+    "available": true,
+    "diagnosis_age": {
+      "count": 461,
+      "median": 1.0,
+      "mean": 4.2,
+      "min": 0.0,
+      "max": 61.0,
+      "histogram": {
+        "bins": [
+          "0-0",
+          "0-1",
+          "1-2",
+          "2-5",
+          "5-10",
+          "10-18",
+          "18-30",
+          "30-50",
+          "50-80"
+        ],
+        "counts": [
+          169,
+          56,
+          89,
+          67,
+          27,
+          21,
+          13,
+          13,
+          6
+        ]
+      }
+    },
+    "enrollment_age": {
+      "count": 523,
+      "median": 9.5,
+      "mean": 15.5,
+      "min": 0.0,
+      "max": 74.0,
+      "histogram": {
+        "bins": [
+          "0-2",
+          "2-5",
+          "5-10",
+          "10-18",
+          "18-30",
+          "30-50",
+          "50-80"
+        ],
+        "counts": [
+          96,
+          73,
+          98,
+          95,
+          65,
+          69,
+          27
+        ]
+      }
+    },
+    "gender": {
+      "distribution": {
+        "Male": 277,
+        "Female": 245,
+        "Non-binary": 2
+      }
+    }
+  },
+  "ambulatory": {
+    "available": true,
+    "current_status": {
+      "distribution": {
+        "Not ambulatory": 252,
+        "Ambulatory without difficulty": 85,
+        "Ambulatory with difficulty": 49,
+        "Suppressed (n<11)": 5
+      }
+    }
+  },
+  "facilities": {
+    "available": true,
+    "total_facilities": 45,
+    "facilities": [
+      {
+        "id": "1411",
+        "name": "Nemours Children's Hospital",
+        "patients": 62
+      },
+      {
+        "id": "1095",
+        "name": "University of Minnesota",
+        "patients": 48
+      },
+      {
+        "id": "1165",
+        "name": "Children's Hospital of Philadelphia",
+        "patients": 37
+      },
+      {
+        "id": "1408",
+        "name": "American Family Children Hospital",
+        "patients": 35
+      },
+      {
+        "id": "1434",
+        "name": "Children's Hospital of the King's Daughters",
+        "patients": 35
+      },
+      {
+        "id": "1225",
+        "name": "Children's Hospital of Wisconsin",
+        "patients": 28
+      },
+      {
+        "id": "1433",
+        "name": "University of Louisville (Pediatrics)",
+        "patients": 27
+      },
+      {
+        "id": "1254",
+        "name": "University of Miami Kessenich Family Center",
+        "patients": 22
+      },
+      {
+        "id": "1405",
+        "name": "Children's Hospital Los Angeles",
+        "patients": 21
+      },
+      {
+        "id": "1418",
+        "name": "Beaumont Health, Royal Oak",
+        "patients": 21
+      },
+      {
+        "id": "1259",
+        "name": "Cook Children's Medical Center",
+        "patients": 19
+      },
+      {
+        "id": "1359",
+        "name": "Billings Clinic",
+        "patients": 15
+      },
+      {
+        "id": "1064",
+        "name": "University of Kansas Medical Center",
+        "patients": 13
+      },
+      {
+        "id": "1438",
+        "name": "UCLA",
+        "patients": 11
+      },
+      {
+        "id": "1149",
+        "name": "Ohio State University Wexner Medical Center",
+        "patients": 9
+      },
+      {
+        "id": "1229",
+        "name": "Children's Hospital of Colorado",
+        "patients": 9
+      },
+      {
+        "id": "1328",
+        "name": "Cincinnati Children's Hospital Medical Center",
+        "patients": 9
+      },
+      {
+        "id": "1347",
+        "name": "UCSF Benioff Children's Hospital",
+        "patients": 9
+      },
+      {
+        "id": "1402",
+        "name": "Le Bonheur Children's Hospital",
+        "patients": 8
+      },
+      {
+        "id": "1184",
+        "name": "Wesley Neurology Clinic",
+        "patients": 7
+      },
+      {
+        "id": "1449",
+        "name": "UF Health Pediatrics",
+        "patients": 7
+      },
+      {
+        "id": "1364",
+        "name": "Prevea Health",
+        "patients": 6
+      },
+      {
+        "id": "1430",
+        "name": "Temple University Hospital",
+        "patients": 6
+      },
+      {
+        "id": "1100",
+        "name": "University of Missouri",
+        "patients": 6
+      },
+      {
+        "id": "1239",
+        "name": "Carle Neuroscience Institute, Carle Foundation Hospital",
+        "patients": 5
+      },
+      {
+        "id": "1048",
+        "name": "Georgetown University",
+        "patients": 5
+      },
+      {
+        "id": "1378",
+        "name": "Child Neurology Consultants of Austin",
+        "patients": 5
+      },
+      {
+        "id": "1063",
+        "name": "University of Iowa Hospitals & Clinics",
+        "patients": 4
+      },
+      {
+        "id": "1001",
+        "name": "University of Alabama at Birmingham",
+        "patients": 3
+      },
+      {
+        "id": "1448",
+        "name": "Yale University School of Medicine",
+        "patients": 3
+      },
+      {
+        "id": "1282",
+        "name": "Children's Healthcare of Atlanta / Emory Healthcare",
+        "patients": 3
+      },
+      {
+        "id": "1072",
+        "name": "Louisiana State University Health Science Center",
+        "patients": 3
+      },
+      {
+        "id": "1021",
+        "name": "Rady Children's Hospital- San Diego",
+        "patients": 3
+      },
+      {
+        "id": "1298",
+        "name": "Essentia Health of Duluth",
+        "patients": 3
+      },
+      {
+        "id": "1325",
+        "name": "UC Irvine Center for Clinical Research",
+        "patients": 3
+      },
+      {
+        "id": "1431",
+        "name": "Las Vegas Clinic",
+        "patients": 3
+      },
+      {
+        "id": "9001",
+        "name": "Arkansas Children's Research Institute",
+        "patients": 2
+      },
+      {
+        "id": "1441",
+        "name": "Massachusetts General Hospital",
+        "patients": 2
+      },
+      {
+        "id": "1114",
+        "name": "Rutgers New Jersey Medical School",
+        "patients": 1
+      },
+      {
+        "id": "1194",
+        "name": "Houston Methodist Neurological Institute",
+        "patients": 1
+      },
+      {
+        "id": "1282_legacy",
+        "name": "Children's Healthcare of Atlanta / Emory Healthcare",
+        "patients": 1
+      },
+      {
+        "id": "1392",
+        "name": "HSS - Hospital for Special Surgery",
+        "patients": 1
+      },
+      {
+        "id": "1383",
+        "name": "Hospital for Special Care",
+        "patients": 1
+      },
+      {
+        "id": "1446",
+        "name": "Geisinger Medical Center",
+        "patients": 1
+      },
+      {
+        "id": "9000",
+        "name": "Idaho Physical Medicine & Rehabilitation",
+        "patients": 1
+      }
+    ]
+  }
+}

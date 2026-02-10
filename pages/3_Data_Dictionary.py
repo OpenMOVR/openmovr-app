@@ -18,7 +18,7 @@ import pandas as pd
 
 from api.data_dictionary import DataDictionaryAPI
 from components.tables import static_table
-from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer, render_page_header
 from config.settings import PAGE_ICON
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -32,30 +32,13 @@ st.set_page_config(
 
 inject_global_css()
 
-# Header with branding
-header_left, header_right = st.columns([3, 1])
+render_page_header("Data Dictionary", "Explore 1,024 clinical fields across 19 domains")
 
-with header_left:
-    st.title("Data Dictionary Explorer")
-    st.markdown("### Browse and search MOVR field definitions")
-    _source = DataDictionaryAPI.get_data_source()
-    if _source == "curated_snapshot":
-        st.caption("Source: Curated dictionary with clinical domain classification")
-    else:
-        st.caption("Source: Raw data dictionary (parquet)")
-
-with header_right:
-    st.markdown(
-        """
-        <div style='text-align: right; padding-top: 10px;'>
-            <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
-            <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                Gen1 | v0.2.0
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+_source = DataDictionaryAPI.get_data_source()
+if _source == "curated_snapshot":
+    st.caption("Source: Curated dictionary with clinical domain classification")
+else:
+    st.caption("Source: Raw data dictionary (parquet)")
 
 
 # ---------------------------------------------------------------------------
@@ -408,7 +391,7 @@ else:
         calc_completeness = st.button(
             "Calculate Completeness %",
             key="dd_calc_complete",
-            help="Calculate % of patients with data for each field (may take a moment)"
+            help="Calculate % of participants with data for each field (may take a moment)"
         )
 
     # Prepare display dataframe
@@ -455,7 +438,7 @@ else:
     if "Completeness %" in display_df.columns:
         col_config["Completeness %"] = st.column_config.ProgressColumn(
             "Completeness %",
-            help="% of patients with data",
+            help="% of participants with data",
             min_value=0,
             max_value=100,
             format="%.1f%%",

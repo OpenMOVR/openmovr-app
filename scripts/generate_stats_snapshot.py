@@ -106,6 +106,8 @@ def generate_snapshot(include_usndr: bool = False) -> dict:
 
         "longitudinal": _compute_longitudinal_stats(base_cohort),
 
+        "enrollment_timeline": _compute_enrollment_timeline(base_cohort),
+
         "clinical_availability": _compute_clinical_availability(base_cohort),
 
         "disease_profiles": _compute_disease_profiles(base_cohort),
@@ -394,7 +396,18 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
 
 
 def _compute_longitudinal_stats(base_cohort: dict) -> dict:
-    """Compute encounter longitudinality statistics."""
+    """Compute encounter longitudinality statistics.
+
+    Metrics computed:
+    - Basic encounter counts (total, per-patient mean/median, 3+/5+ thresholds)
+    - Registry duration: enrollment to last encounter (observation period)
+    - Inter-visit interval: consecutive encounter date gaps per participant,
+      then population-level summary (median of per-participant medians)
+    - Total person-years: sum of individual observation periods
+    - Retention rates: % of participants enrolled ≥N years ago with encounter
+      after the N-year mark
+    - Active participants: those with encounter in last 12 months
+    """
     enc = base_cohort['encounters']
     if enc.empty or 'FACPATID' not in enc.columns:
         return {}
@@ -405,26 +418,320 @@ def _compute_longitudinal_stats(base_cohort: dict) -> dict:
         "total_encounters": len(enc),
         "patients_with_encounters": int(enc['FACPATID'].nunique()),
         "mean_encounters_per_patient": round(float(enc_per_pt.mean()), 1),
+        "std_encounters_per_patient": round(float(enc_per_pt.std()), 1),
         "median_encounters_per_patient": int(enc_per_pt.median()),
         "patients_3plus_encounters": int((enc_per_pt >= 3).sum()),
         "patients_5plus_encounters": int((enc_per_pt >= 5).sum()),
     }
 
-    # By disease
+    # --- Parse encounter dates once for reuse ---
+    enc_dated = None
+    if 'encntdt' in enc.columns:
+        enc_dated = enc[['FACPATID', 'encntdt']].copy()
+        enc_dated['encntdt'] = pd.to_datetime(enc_dated['encntdt'], errors='coerce')
+        enc_dated = enc_dated.dropna(subset=['encntdt'])
+
+    # --- Inter-visit interval ---
+    # For each participant with ≥2 visits: sort encounter dates, compute
+    # consecutive day gaps, take per-participant median interval.  Then
+    # report population-level median (robust to outliers) and mean ± SD.
+    ivi_overall = _compute_inter_visit_intervals(enc_dated)
+    if ivi_overall:
+        stats['inter_visit_interval'] = ivi_overall
+
+    # --- Registry duration (enrollment to last encounter) ---
+    duration_df = None
+    demo = base_cohort.get('demographics', pd.DataFrame())
+    # Reference date = data extract cutoff (not today).  All date-relative
+    # metrics (retention, active participants) are measured against this.
+    DATA_CUTOFF = pd.Timestamp('2025-04-01')
+    stats['data_cutoff_date'] = DATA_CUTOFF.strftime('%Y-%m-%d')
+
+    if (not demo.empty and 'enroldt' in demo.columns
+            and 'FACPATID' in demo.columns and enc_dated is not None):
+        enrol = demo[['FACPATID', 'enroldt']].copy()
+        enrol['enroldt'] = pd.to_datetime(enrol['enroldt'], errors='coerce')
+        enrol = enrol.dropna(subset=['enroldt']).drop_duplicates('FACPATID')
+
+        last_enc = enc_dated.groupby('FACPATID')['encntdt'].max().reset_index()
+        last_enc.columns = ['FACPATID', 'last_encounter']
+
+        merged = enrol.merge(last_enc, on='FACPATID', how='inner')
+        merged['years'] = (merged['last_encounter'] - merged['enroldt']).dt.days / 365.25
+        merged = merged[merged['years'] >= 0]
+
+        if len(merged) > 0:
+            stats['mean_duration_years'] = round(float(merged['years'].mean()), 1)
+            stats['std_duration_years'] = round(float(merged['years'].std()), 1)
+            stats['median_duration_years'] = round(float(merged['years'].median()), 1)
+
+            # --- Total person-years ---
+            stats['total_person_years'] = round(float(merged['years'].sum()), 1)
+
+            # --- Retention rates ---
+            # Of participants enrolled ≥N years before their last possible
+            # encounter date (DATA_CUTOFF), what % have an encounter after
+            # the N-year mark from enrollment?
+            merged_ret = merged.copy()
+            merged_ret['years_since_enrollment'] = (
+                (DATA_CUTOFF - merged_ret['enroldt']).dt.days / 365.25
+            )
+            retention = {}
+            for yr in [1, 2, 3]:
+                eligible = merged_ret[merged_ret['years_since_enrollment'] >= yr]
+                if len(eligible) > 0:
+                    retained = eligible[eligible['years'] >= yr]
+                    retention[f"year_{yr}"] = {
+                        "eligible": int(len(eligible)),
+                        "retained": int(len(retained)),
+                        "rate_pct": round(100.0 * len(retained) / len(eligible), 1),
+                    }
+            if retention:
+                stats['retention'] = retention
+
+            # --- Active participants (encounter in 12 months before data cutoff) ---
+            cutoff_12m = DATA_CUTOFF - pd.Timedelta(days=365)
+            active_12m = int((merged['last_encounter'] >= cutoff_12m).sum())
+            stats['active_last_12m'] = active_12m
+
+            # --- Observation period distribution ---
+            obs_bins = [0, 0.5, 1, 2, 3, 100]
+            obs_labels = ['<6 mo', '6-12 mo', '1-2 yr', '2-3 yr', '3+ yr']
+            obs_cut = pd.cut(merged['years'], bins=obs_bins, labels=obs_labels,
+                             include_lowest=True)
+            obs_dist = obs_cut.value_counts().sort_index()
+            stats['observation_period_distribution'] = [
+                {"label": str(k), "count": int(v)}
+                for k, v in obs_dist.items() if v > 0
+            ]
+
+            if 'dstype' in demo.columns:
+                ds_map = demo[['FACPATID', 'dstype']].drop_duplicates('FACPATID')
+                duration_df = merged.merge(ds_map, on='FACPATID', how='left')
+
+    # --- By disease ---
     if 'dstype' in enc.columns:
         by_disease = {}
         for ds in sorted(enc['dstype'].dropna().unique()):
             ds_enc = enc[enc['dstype'] == ds]
             ds_per_pt = ds_enc.groupby('FACPATID').size()
-            by_disease[ds] = {
+            ds_stats = {
                 "patients": int(ds_enc['FACPATID'].nunique()),
                 "encounters": int(len(ds_enc)),
                 "mean_per_patient": round(float(ds_per_pt.mean()), 1),
+                "median_per_patient": int(ds_per_pt.median()),
+                "std_per_patient": round(float(ds_per_pt.std()), 1),
                 "patients_3plus": int((ds_per_pt >= 3).sum()),
             }
+
+            # Duration per disease
+            if duration_df is not None and 'dstype' in duration_df.columns:
+                ds_dur = duration_df[duration_df['dstype'] == ds]['years']
+                if len(ds_dur) > 0:
+                    ds_stats['mean_duration_years'] = round(float(ds_dur.mean()), 1)
+                    ds_stats['std_duration_years'] = round(float(ds_dur.std()), 1)
+                    ds_stats['total_person_years'] = round(float(ds_dur.sum()), 1)
+
+            # Inter-visit interval per disease
+            if enc_dated is not None:
+                ds_enc_dated = enc_dated[enc_dated['FACPATID'].isin(
+                    ds_enc['FACPATID'].unique()
+                )]
+                ds_ivi = _compute_inter_visit_intervals(ds_enc_dated)
+                if ds_ivi:
+                    ds_stats['inter_visit_interval'] = ds_ivi
+
+            # Retention per disease
+            if duration_df is not None and 'dstype' in duration_df.columns:
+                ds_merged = duration_df[duration_df['dstype'] == ds].copy()
+                if len(ds_merged) > 0:
+                    ds_merged['years_since_enrollment'] = (
+                        (DATA_CUTOFF - ds_merged['enroldt']).dt.days / 365.25
+                    )
+                    ds_retention = {}
+                    for yr in [1, 2, 3]:
+                        eligible = ds_merged[ds_merged['years_since_enrollment'] >= yr]
+                        if len(eligible) > 0:
+                            retained = eligible[eligible['years'] >= yr]
+                            ds_retention[f"year_{yr}"] = {
+                                "eligible": int(len(eligible)),
+                                "retained": int(len(retained)),
+                                "rate_pct": round(100.0 * len(retained) / len(eligible), 1),
+                            }
+                    if ds_retention:
+                        ds_stats['retention'] = ds_retention
+
+            by_disease[ds] = ds_stats
         stats["by_disease"] = by_disease
 
     return stats
+
+
+def _compute_inter_visit_intervals(enc_dated) -> dict:
+    """Compute inter-visit interval statistics from dated encounters.
+
+    Statistical approach:
+    1. For each participant with ≥2 visits, sort encounters chronologically.
+    2. Compute all consecutive intervals (visit[i+1] - visit[i]) in months.
+    3. Take the per-participant median interval (robust to irregular spacing).
+    4. Report population-level statistics on those per-participant medians:
+       - Median (robust central tendency — not affected by extreme outliers)
+       - Mean ± SD (for parametric comparisons)
+       - IQR (Q1, Q3) for dispersion
+    5. Also report total number of intervals and participants included.
+
+    This two-level summarization (per-participant median → population median)
+    prevents participants with many visits from dominating the statistic and
+    handles irregular visit spacing correctly.
+    """
+    import numpy as np
+
+    if enc_dated is None or enc_dated.empty:
+        return {}
+
+    # Sort by patient then date
+    sorted_enc = enc_dated.sort_values(['FACPATID', 'encntdt'])
+
+    # Compute consecutive intervals per participant
+    sorted_enc = sorted_enc.copy()
+    sorted_enc['prev_date'] = sorted_enc.groupby('FACPATID')['encntdt'].shift(1)
+    sorted_enc['interval_days'] = (
+        sorted_enc['encntdt'] - sorted_enc['prev_date']
+    ).dt.days
+    intervals = sorted_enc.dropna(subset=['interval_days'])
+    intervals = intervals[intervals['interval_days'] > 0]
+
+    if intervals.empty:
+        return {}
+
+    # Per-participant median interval (in months)
+    pt_median_months = (
+        intervals.groupby('FACPATID')['interval_days']
+        .median() / 30.44  # average days per month
+    )
+
+    n_participants = len(pt_median_months)
+    n_intervals = len(intervals)
+
+    if n_participants == 0:
+        return {}
+
+    medians = pt_median_months.values
+    result = {
+        "n_participants": int(n_participants),
+        "n_intervals": int(n_intervals),
+        "median_months": round(float(np.median(medians)), 1),
+        "mean_months": round(float(np.mean(medians)), 1),
+        "std_months": round(float(np.std(medians, ddof=1)), 1) if n_participants > 1 else 0.0,
+        "q1_months": round(float(np.percentile(medians, 25)), 1),
+        "q3_months": round(float(np.percentile(medians, 75)), 1),
+    }
+
+    return result
+
+
+def _compute_enrollment_timeline(base_cohort: dict) -> dict:
+    """Compute monthly enrollment counts by disease and by state+disease.
+
+    Missing enrollment dates are defaulted to the study start (2018-11-01).
+    Dates before the study start are preserved but flagged.
+    """
+    demo = base_cohort.get('demographics', pd.DataFrame())
+    if demo.empty or 'FACPATID' not in demo.columns or 'enroldt' not in demo.columns:
+        return {}
+
+    STUDY_START_DATE = pd.Timestamp('2018-11-01')
+
+    df = demo[['FACPATID', 'enroldt', 'dstype', 'FACILITY_DISPLAY_ID']].copy()
+    df = df.drop_duplicates('FACPATID')
+
+    # Parse enrollment dates
+    df['enrol_date'] = pd.to_datetime(df['enroldt'], errors='coerce')
+
+    missing_count = int(df['enrol_date'].isna().sum())
+    pre_study_count = int((df['enrol_date'] < STUDY_START_DATE).sum())
+
+    # --- Clamp pre-study enrollment dates ---
+    # Use first encounter date if available and >= study start, else study start
+    enc = base_cohort.get('encounters', pd.DataFrame())
+    first_enc_map = {}
+    if not enc.empty and 'FACPATID' in enc.columns and 'encntdt' in enc.columns:
+        enc_dates = enc[['FACPATID', 'encntdt']].copy()
+        enc_dates['encntdt'] = pd.to_datetime(enc_dates['encntdt'], errors='coerce')
+        first_enc = enc_dates.dropna(subset=['encntdt']).groupby('FACPATID')['encntdt'].min()
+        first_enc_map = first_enc.to_dict()
+
+    pre_study_mask = df['enrol_date'] < STUDY_START_DATE
+    for idx in df.index[pre_study_mask]:
+        facpatid = df.at[idx, 'FACPATID']
+        first = first_enc_map.get(facpatid)
+        if first is not None and first >= STUDY_START_DATE:
+            df.at[idx, 'enrol_date'] = first
+        else:
+            df.at[idx, 'enrol_date'] = STUDY_START_DATE
+
+    clamped_count = int(pre_study_mask.sum())
+
+    # Default missing dates to first encounter or study start
+    missing_mask = df['enrol_date'].isna()
+    for idx in df.index[missing_mask]:
+        facpatid = df.at[idx, 'FACPATID']
+        first = first_enc_map.get(facpatid)
+        if first is not None and first >= STUDY_START_DATE:
+            df.at[idx, 'enrol_date'] = first
+        else:
+            df.at[idx, 'enrol_date'] = STUDY_START_DATE
+
+    # Build facility→state map from sites tracker Excel
+    fac_state = {}
+    try:
+        sites_path = Path(__file__).parent.parent / 'data' / 'MOVR Sites - Tracker Information - EK.xlsx'
+        if sites_path.exists():
+            sites_df = pd.read_excel(sites_path)
+            id_col = next((c for c in sites_df.columns if 'display' in c.lower() and 'id' in c.lower()), None)
+            st_col = next((c for c in sites_df.columns if c.lower() == 'state'), None)
+            if id_col and st_col:
+                fac_state = dict(zip(
+                    sites_df[id_col].astype(str),
+                    sites_df[st_col].astype(str)
+                ))
+    except Exception:
+        pass
+
+    # Map facility to state
+    df['state'] = df['FACILITY_DISPLAY_ID'].astype(str).map(fac_state)
+
+    # Monthly period
+    df['month'] = df['enrol_date'].dt.to_period('M').astype(str)
+
+    # --- By disease + month ---
+    by_dm = df.groupby(['month', 'dstype']).size().reset_index(name='count')
+    by_disease_month = []
+    for _, row in by_dm.iterrows():
+        by_disease_month.append({
+            "month": row['month'],
+            "disease": row['dstype'],
+            "count": int(row['count']),
+        })
+
+    # --- By state + disease + month ---
+    by_sdm = df.dropna(subset=['state']).groupby(['month', 'state', 'dstype']).size().reset_index(name='count')
+    by_state_disease_month = []
+    for _, row in by_sdm.iterrows():
+        by_state_disease_month.append({
+            "month": row['month'],
+            "state": row['state'],
+            "disease": row['dstype'],
+            "count": int(row['count']),
+        })
+
+    return {
+        "by_disease_month": by_disease_month,
+        "by_state_disease_month": by_state_disease_month,
+        "missing_date_count": missing_count,
+        "pre_study_clamped": clamped_count,
+        "total_patients": int(len(df)),
+    }
 
 
 def _build_site_geography(base_cohort: dict) -> list:

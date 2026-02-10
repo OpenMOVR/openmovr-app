@@ -1,9 +1,9 @@
 """
-ALS Clinical Summary — DUA-Gated Page
+ALS Clinical Analytics — DUA-Gated Page
 
 Standalone page requiring provisioned access.  Shows all ALS clinical
 summary figures (downloadable via Plotly modebar) plus summary and
-patient-level data tables with CSV export.
+participant-level data tables with CSV export.
 """
 
 import sys
@@ -14,8 +14,8 @@ sys.path.insert(0, str(app_dir))
 
 import streamlit as st
 import pandas as pd
-from config.settings import PAGE_ICON, APP_VERSION
-from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
+from config.settings import PAGE_ICON
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer, render_page_header
 from components.clinical_summary import render_als_clinical_summary
 from utils.access import require_access
 from api.als import ALSAPI
@@ -23,7 +23,7 @@ from api.als import ALSAPI
 _logo_path = app_dir / "assets" / "movr_logo_clean_nobackground.png"
 
 st.set_page_config(
-    page_title="ALS Clinical Summary - OpenMOVR App",
+    page_title="ALS Clinical Analytics - OpenMOVR App",
     page_icon=str(_logo_path) if _logo_path.exists() else PAGE_ICON,
     layout="wide",
 )
@@ -33,36 +33,19 @@ render_sidebar_footer()
 
 # ---- Access gate ----
 require_access(
-    page_title="ALS Clinical Summary",
+    page_title="ALS Clinical Analytics",
     description=(
         "Clinical summary analytics for the **Amyotrophic Lateral Sclerosis (ALS)** cohort.  "
         "Includes ALSFRS-R functional scores, disease progression milestones, respiratory function, "
         "medication utilization, and downloadable data tables.\n\n"
-        "Available to participating sites, researchers, PAGs, and patients "
+        "Available to participating sites, researchers, PAGs, and participants "
         "with an approved Data Use Agreement.\n\n"
         "**[Request Access](https://mdausa.tfaforms.net/389761)**"
     ),
 )
 
 # ---- Header ----
-header_left, header_right = st.columns([3, 1])
-
-with header_left:
-    st.title("ALS Clinical Summary")
-    st.markdown("### ALSFRS-R scores, disease progression, respiratory function & more")
-
-with header_right:
-    st.markdown(
-        f"""
-        <div style='text-align: right; padding-top: 10px;'>
-            <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
-            <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                Gen1 | v{APP_VERSION}
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+render_page_header("ALS Clinical Analytics")
 
 # ---- Clinical summary charts (all downloadable via Plotly modebar) ----
 render_als_clinical_summary()
@@ -71,7 +54,7 @@ render_als_clinical_summary()
 st.markdown("---")
 st.subheader("Data Tables")
 
-tab_summary, tab_patient = st.tabs(["Summary Tables", "Patient-Level Data"])
+tab_summary, tab_patient = st.tabs(["Summary Tables", "Participant-Level Data"])
 
 # ===== Tab 1: Summary tables from snapshot =====
 with tab_summary:
@@ -88,7 +71,7 @@ with tab_summary:
             if severity:
                 sev_rows = [{
                     "Severity Band": b["label"],
-                    "Patients": "<11" if b.get("suppressed") else b.get("count", 0),
+                    "Participants": "<11" if b.get("suppressed") else b.get("count", 0),
                     "% of Cohort": f"{b.get('percentage', 0):.1f}%",
                 } for b in severity]
                 sev_df = pd.DataFrame(sev_rows)
@@ -122,7 +105,7 @@ with tab_summary:
             st.markdown("#### El Escorial Classification")
             ee_dist = ee.get("distribution", {})
             if ee_dist:
-                ee_rows = [{"Classification": k, "Patients": v} for k, v in ee_dist.items()]
+                ee_rows = [{"Classification": k, "Participants": v} for k, v in ee_dist.items()]
                 ee_df = pd.DataFrame(ee_rows)
                 st.dataframe(ee_df, use_container_width=True, hide_index=True)
                 st.download_button(
@@ -141,7 +124,7 @@ with tab_summary:
             for drug_name, drug_data in meds.get("als_drugs", {}).items():
                 med_rows.append({
                     "Drug": drug_name,
-                    "Patients": "<11" if drug_data.get("suppressed") else drug_data.get("count", 0),
+                    "Participants": "<11" if drug_data.get("suppressed") else drug_data.get("count", 0),
                     "% of Cohort": f"{drug_data.get('percentage', 0):.1f}%",
                 })
             top_drugs = meds.get("top_drugs", [])
@@ -149,7 +132,7 @@ with tab_summary:
                 if d["drug"] not in [r["Drug"].split(" (")[0] for r in med_rows]:
                     med_rows.append({
                         "Drug": d["drug"],
-                        "Patients": d["patients"],
+                        "Participants": d["patients"],
                         "% of Cohort": f"{d.get('percentage', 0):.1f}%",
                     })
             if med_rows:
@@ -223,26 +206,26 @@ with tab_summary:
                 key="dl_als_sites",
             )
 
-# ===== Tab 2: Patient-level data (parquet only) =====
+# ===== Tab 2: Participant-level data (parquet only) =====
 with tab_patient:
     _DATA_DIR = app_dir / "data"
     _has_parquet = any(_DATA_DIR.glob("*.parquet")) if _DATA_DIR.exists() else False
 
     if not _has_parquet:
         st.info(
-            "Patient-level data requires a live parquet connection and is not "
+            "Participant-level data requires a live parquet connection and is not "
             "available in snapshot mode."
         )
     else:
         st.warning(
-            "Patient-level data contains individual records.  Handle per your "
+            "Participant-level data contains individual records.  Handle per your "
             "Data Use Agreement.  Do not share outside approved personnel."
         )
 
-        show_patient = st.checkbox("Show patient-level data tables", value=False, key="als_show_patient")
+        show_patient = st.checkbox("Show participant-level data tables", value=False, key="als_show_patient")
 
         if show_patient:
-            with st.spinner("Loading ALS patient data..."):
+            with st.spinner("Loading ALS participant data..."):
                 try:
                     demo_df = pd.read_parquet(_DATA_DIR / "combo_demographics.parquet")
                     diag_df = pd.read_parquet(_DATA_DIR / "combo_diagnosis.parquet")
@@ -269,7 +252,7 @@ with tab_patient:
                         enc_latest = enc_als.groupby("FACPATID").last().reset_index()
 
                     st.markdown("#### Demographics")
-                    st.caption(f"{len(demo_als)} ALS patients")
+                    st.caption(f"{len(demo_als)} ALS participants")
                     st.dataframe(demo_als, use_container_width=True, hide_index=True)
                     st.download_button(
                         "Download Demographics CSV",
@@ -290,7 +273,7 @@ with tab_patient:
                     )
 
                     st.markdown("#### Latest Encounters")
-                    st.caption(f"{len(enc_latest)} patients with encounter data")
+                    st.caption(f"{len(enc_latest)} participants with encounter data")
                     st.dataframe(enc_latest, use_container_width=True, hide_index=True)
                     st.download_button(
                         "Download Encounters CSV",
@@ -319,7 +302,7 @@ with tab_patient:
                         )
 
                 except Exception as e:
-                    st.error(f"Error loading patient data: {e}")
+                    st.error(f"Error loading participant data: {e}")
 
 # ---- Footer ----
 render_page_footer()

@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 import yaml
 
 from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES
-from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer, render_page_header
 from utils.access import require_access
 from components.charts import (
     create_age_distribution_chart,
@@ -42,22 +42,7 @@ inject_global_css()
 # ---------------------------------------------------------------------------
 # Header
 # ---------------------------------------------------------------------------
-header_left, header_right = st.columns([3, 1])
-with header_left:
-    st.title("Site Analytics")
-    st.markdown("### Site-level clinical data analytics")
-with header_right:
-    st.markdown(
-        """
-        <div style='text-align: right; padding-top: 10px;'>
-            <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
-            <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                Gen1 | v0.2.0
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+render_page_header("Site Analytics")
 
 # ---------------------------------------------------------------------------
 # Access gate
@@ -65,9 +50,9 @@ with header_right:
 require_access(
     page_title="Site Analytics",
     description=(
-        "Site-level analytics including facility identification, per-site patient "
+        "Site-level analytics including facility identification, per-site participant "
         "demographics, disease breakdowns, and benchmark comparisons.\n\n"
-        "Available to participating sites, researchers, PAGs, and patients "
+        "Available to participating sites, researchers, PAGs, and participants "
         "with an approved Data Use Agreement.  All other inquiries should be "
         "directed to the MOVR team.\n\n"
         "**[Request Access](https://mdausa.tfaforms.net/389761)**"
@@ -235,7 +220,7 @@ if site_location:
 
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.metric("Patients", f"{site_patients:,}")
+    st.metric("Participants", f"{site_patients:,}")
 with col2:
     st.metric("Encounters", f"{site_encounters:,}")
 with col3:
@@ -263,7 +248,7 @@ if site_diseases:
         if ds_pts > 0:
             ds_rows.append({
                 "Disease": ds_check,
-                "Patients": ds_pts,
+                "Participants": ds_pts,
                 "Encounters": ds_enc_count,
                 "% of Site": f"{ds_pts / site_patients * 100:.1f}%",
             })
@@ -282,7 +267,7 @@ if not site_demo.empty:
     col_age, col_gender = st.columns(2)
 
     with col_age:
-        fig = create_age_distribution_chart(site_demo, title="Patient Age Distribution")
+        fig = create_age_distribution_chart(site_demo, title="Participant Age Distribution")
         if fig:
             st.plotly_chart(fig, use_container_width=True)
         else:
@@ -350,7 +335,7 @@ if not all_meds.empty and "FACPATID" in all_meds.columns:
                 st.plotly_chart(fig, use_container_width=True)
             with col_med_table:
                 st.markdown("**Medication Summary**")
-                med_df["Patients"] = [
+                med_df["Participants"] = [
                     int(site_meds[site_meds["medname"] == m]["FACPATID"].nunique())
                     for m in med_df["Medication"]
                 ]
@@ -403,14 +388,14 @@ for ds in DISEASE_DISPLAY_ORDER:
     ds_mask_overall = enc["dstype"] == ds_check
     ds_overall_pts = enc.loc[ds_mask_overall, "FACPATID"].unique()
 
-    with st.expander(f"{ds_label} — {len(ds_site_pts):,} patients at this site  |  {len(ds_overall_pts):,} overall", expanded=False):
+    with st.expander(f"{ds_label} — {len(ds_site_pts):,} participants at this site  |  {len(ds_overall_pts):,} overall", expanded=False):
 
         # Site vs Overall metrics
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric("Site Patients", f"{len(ds_site_pts):,}")
+            st.metric("Site Participants", f"{len(ds_site_pts):,}")
         with m2:
-            st.metric("Overall Patients", f"{len(ds_overall_pts):,}")
+            st.metric("Overall Participants", f"{len(ds_overall_pts):,}")
         with m3:
             share = len(ds_site_pts) / len(ds_overall_pts) * 100 if len(ds_overall_pts) else 0
             st.metric("Site Share", f"{share:.1f}%")

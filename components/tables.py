@@ -39,7 +39,7 @@ def display_disease_table(disease_data: List[Dict[str, Any]],
     # Rename columns for display
     column_renames = {
         'disease': 'Disease',
-        'patient_count': 'Patient Count',
+        'patient_count': 'Participant Count',
         'percentage': 'Percentage',
         'columns_found': 'Fields Found'
     }
@@ -69,7 +69,7 @@ def display_facility_table(facility_data: List[Dict[str, Any]],
     df = df.rename(columns={
         'FACILITY_DISPLAY_ID': 'ID',
         'FACILITY_NAME': 'Facility Name',
-        'patient_count': 'Patient Count'
+        'patient_count': 'Participant Count'
     })
 
     static_table(df)

@@ -1,5 +1,5 @@
 """
-Shared clinical summary renderers for DMD, LGMD, and ALS.
+Shared clinical summary renderers for DMD, LGMD, ALS, and SMA.
 
 These functions are used by both the Disease Explorer (embedded tab) and
 the standalone DUA-gated clinical summary pages. Sections are organized
@@ -9,12 +9,53 @@ by the 19 canonical clinical domains from config/clinical_domains.yaml.
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 
+from api import StatsAPI
 from api.dmd import DMDAPI
 from api.lgmd import LGMDAPI
 from api.als import ALSAPI
+from api.sma import SMAAPI
 from utils.access import has_access
 from components.tables import static_table
+
+
+def _render_enrollment_charts(disease: str):
+    """Render cumulative + monthly enrollment charts for a single disease."""
+    try:
+        snapshot = StatsAPI.load_snapshot()
+    except Exception:
+        return
+    tl = snapshot.get('enrollment_timeline', {})
+    by_dm = tl.get('by_disease_month', [])
+    ds_data = [r for r in by_dm if r.get('disease') == disease]
+    if not ds_data:
+        return
+
+    df = pd.DataFrame(ds_data)
+    df['month'] = pd.to_datetime(df['month'])
+    df = df.sort_values('month')
+    df['cumulative'] = df['count'].cumsum()
+
+    c1, c2 = st.columns(2)
+    with c1:
+        fig = px.line(
+            df, x='month', y='cumulative',
+            title=f'Cumulative {disease} Enrollment',
+            labels={'month': '', 'cumulative': 'Participants'},
+            color_discrete_sequence=['#1E88E5'],
+        )
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
+    with c2:
+        fig = px.bar(
+            df, x='month', y='count',
+            title=f'Monthly New {disease} Enrollments',
+            labels={'month': '', 'count': 'New Participants'},
+            color_discrete_sequence=['#1E88E5'],
+        )
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
 
 
 # ======================================================================
@@ -60,7 +101,7 @@ def render_lgmd_clinical_summary():
         # Metric row
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric("Total LGMD Patients", f"{total_patients:,}")
+            st.metric("Total LGMD Participants", f"{total_patients:,}")
         with m2:
             st.metric("Unique Subtypes", subtypes.get("unique_subtypes", 0))
         with m3:
@@ -79,7 +120,7 @@ def render_lgmd_clinical_summary():
             fig = go.Figure(go.Bar(x=counts, y=labels, orientation="h", marker_color=colors))
             fig.update_layout(
                 title=f"Top {len(top)} LGMD Subtypes",
-                xaxis_title="Patients",
+                xaxis_title="Participants",
                 height=max(350, len(top) * 28 + 80),
                 margin=dict(t=40, b=40, l=250),
             )
@@ -100,7 +141,7 @@ def render_lgmd_clinical_summary():
         st.markdown("##### Disease Milestones & Progression")
         st.caption("_Diagnostic journey_")
         st.markdown(
-            "LGMD patients often experience a significant delay between symptom onset "
+            "LGMD participants often experience a significant delay between symptom onset "
             "and clinical diagnosis due to the heterogeneity of limb-girdle phenotypes."
         )
 
@@ -145,7 +186,7 @@ def render_lgmd_clinical_summary():
                 fig.update_layout(
                     title=f"Diagnostic Delay (median {med:.1f} yrs)",
                     xaxis_title="Years from Onset to Diagnosis",
-                    yaxis_title="Patients",
+                    yaxis_title="Participants",
                     showlegend=False, height=350,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -169,7 +210,7 @@ def render_lgmd_clinical_summary():
                 ))
                 fig.update_layout(
                     title="Onset Age vs Diagnosis Age",
-                    xaxis_title="Age (years)", yaxis_title="Patients",
+                    xaxis_title="Age (years)", yaxis_title="Participants",
                     barmode="overlay", height=350,
                     legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
                 )
@@ -193,18 +234,18 @@ def render_lgmd_clinical_summary():
         with m1:
             if fvc.get("count"):
                 st.metric("FVC % Predicted (median)", f"{fvc['median']:.0f}%",
-                          help=f"n={fvc['count']} patients")
+                          help=f"n={fvc['count']} participants")
         with m2:
             if tw.get("count"):
                 st.metric("Timed 10m Walk (median)", f"{tw['median']:.1f}s",
-                          help=f"n={tw['count']} patients")
+                          help=f"n={tw['count']} participants")
         with m3:
             amb_dist = amb_func.get("distribution", {})
             if amb_dist:
                 not_amb = amb_dist.get("Not ambulatory", 0)
                 total_amb = amb_func.get("total_reported", 1)
                 st.metric("Not Ambulatory", f"{not_amb / total_amb * 100:.0f}%",
-                          help=f"{not_amb} of {total_amb} patients reporting")
+                          help=f"{not_amb} of {total_amb} participants reporting")
 
         # Chart row
         charts_shown = []
@@ -242,7 +283,7 @@ def render_lgmd_clinical_summary():
                 ))
                 fig.update_layout(
                     title=f"FVC % Predicted (n={fvc['count']})",
-                    xaxis_title="FVC %", yaxis_title="Patients",
+                    xaxis_title="FVC %", yaxis_title="Participants",
                     showlegend=False, height=350,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -279,7 +320,7 @@ def render_lgmd_clinical_summary():
                     ))
                 fig.update_layout(
                     title="Ambulatory Status by Subtype (Top 5)",
-                    xaxis_title="Subtype", yaxis_title="Patients",
+                    xaxis_title="Subtype", yaxis_title="Participants",
                     barmode="group", height=350,
                     legend=dict(orientation="h", yanchor="bottom", y=-0.3),
                     margin=dict(b=80),
@@ -319,7 +360,7 @@ def render_lgmd_clinical_summary():
                 ))
                 fig.update_layout(
                     title="Drug Categories (% of LGMD cohort)",
-                    xaxis_title="Patients",
+                    xaxis_title="Participants",
                     height=350,
                     margin=dict(t=40, b=40, l=150),
                 )
@@ -335,8 +376,8 @@ def render_lgmd_clinical_summary():
                     marker_color="#AB63FA",
                 ))
                 fig.update_layout(
-                    title="Top Medications (by unique patients)",
-                    xaxis_title="Patients",
+                    title="Top Medications (by unique participants)",
+                    xaxis_title="Participants",
                     height=350,
                     margin=dict(t=40, b=40, l=200),
                 )
@@ -378,7 +419,7 @@ def render_lgmd_clinical_summary():
                 fig = go.Figure(go.Bar(x=counts, y=labels, orientation="h",
                                        marker_color="#AB63FA"))
                 fig.update_layout(title="First Symptoms (Top 8)",
-                                  xaxis_title="Patients",
+                                  xaxis_title="Participants",
                                   height=max(250, len(labels) * 28 + 80),
                                   margin=dict(t=40, b=40, l=200))
                 st.plotly_chart(fig, use_container_width=True)
@@ -405,13 +446,13 @@ def render_lgmd_clinical_summary():
                     y=labels, x=counts, orientation="h", marker_color="#00BCD4",
                 ))
                 fig.update_layout(
-                    title=f"Patient Distribution ({state_dist.get('total_states_mapped', 0)} states)",
-                    xaxis_title="Patients",
+                    title=f"Participant Distribution ({state_dist.get('total_states_mapped', 0)} states)",
+                    xaxis_title="Participants",
                     height=max(350, len(labels) * 28 + 80),
                     margin=dict(t=40, b=40, l=180),
                 )
                 st.plotly_chart(fig, use_container_width=True)
-                st.caption("States with <11 patients grouped as 'Other States'")
+                st.caption("States with <11 participants grouped as 'Other States'")
 
         with col_sites:
             if fac_list and has_access():
@@ -423,7 +464,7 @@ def render_lgmd_clinical_summary():
                 ))
                 fig.update_layout(
                     title="Top 10 Care Sites",
-                    xaxis_title="Patients",
+                    xaxis_title="Participants",
                     height=max(350, len(labels) * 28 + 80),
                     margin=dict(t=40, b=40, l=250),
                 )
@@ -432,6 +473,8 @@ def render_lgmd_clinical_summary():
                 st.markdown("**Top 10 Care Sites**")
                 st.info("Not available — requires DUA.  "
                         "[Request Access](https://mdausa.tfaforms.net/389761)")
+
+    _render_enrollment_charts("LGMD")
 
     # =================================================================
     # Other Clinical Domains
@@ -478,7 +521,7 @@ def render_dmd_clinical_summary():
         st.caption("_Exon-skipping therapeutics: amenability & utilization_")
         st.markdown(
             "Exon-skipping therapies target specific deletion mutations in the dystrophin gene. "
-            "Patients are classified as *amenable* based on mutation type and exon range."
+            "Participants are classified as *amenable* based on mutation type and exon range."
         )
 
         # Metric row
@@ -489,7 +532,7 @@ def render_dmd_clinical_summary():
 
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric("Total DMD Patients", f"{total_patients:,}")
+            st.metric("Total DMD Participants", f"{total_patients:,}")
         with m2:
             pct_amen = f"({amen_count / total_patients * 100:.1f}% of cohort)" if total_patients else ""
             st.metric("Amenable to Any Exon-Skipping", f"{amen_count:,}", delta=pct_amen)
@@ -525,7 +568,7 @@ def render_dmd_clinical_summary():
                 fig.update_layout(
                     barmode="group",
                     title="Exon-Skipping Drug Utilization vs. Amenability",
-                    xaxis_title="Patients",
+                    xaxis_title="Participants",
                     height=max(300, len(drugs) * 60 + 80),
                     margin=dict(t=40, b=40, l=220),
                     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
@@ -587,8 +630,8 @@ def render_dmd_clinical_summary():
                     marker_color=list(reversed(colors)),
                 ))
                 fig.update_layout(
-                    title="Steroid Drug Class (Unique Patients)",
-                    xaxis_title="Patients",
+                    title="Steroid Drug Class (Unique Participants)",
+                    xaxis_title="Participants",
                     height=320, margin=dict(t=40, b=40, l=200),
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -639,14 +682,14 @@ def render_dmd_clinical_summary():
                 st.metric(
                     "FVC % Predicted (median)",
                     f"{fvc_data['median']}%",
-                    delta=f"n = {fvc_data['count']} patients",
+                    delta=f"n = {fvc_data['count']} participants",
                 )
         with fm2:
             if tw_data.get("count"):
                 st.metric(
                     "Timed 10m Walk (median)",
                     f"{tw_data['median']}s",
-                    delta=f"n = {tw_data['count']} patients",
+                    delta=f"n = {tw_data['count']} participants",
                 )
         with fm3:
             if loa_data:
@@ -654,7 +697,7 @@ def render_dmd_clinical_summary():
                 st.metric(
                     "Age at Loss of Ambulation (median)",
                     f"{age_loss.get('median', 'N/A')} years",
-                    delta=f"n = {loa_data.get('total_with_data', 0)} patients",
+                    delta=f"n = {loa_data.get('total_with_data', 0)} participants",
                 )
 
         # Histogram row
@@ -681,7 +724,7 @@ def render_dmd_clinical_summary():
                 fig = go.Figure(go.Bar(x=bins, y=counts, marker_color=colors))
                 fig.update_layout(
                     title=f"FVC % Predicted (median {median_val}%)",
-                    xaxis_title="FVC %", yaxis_title="Patients",
+                    xaxis_title="FVC %", yaxis_title="Participants",
                     height=300, showlegend=False,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -695,7 +738,7 @@ def render_dmd_clinical_summary():
                 ))
                 fig.update_layout(
                     title=f"Timed 10m Walk (median {tw_data.get('median', '')}s)",
-                    xaxis_title="Seconds", yaxis_title="Patients",
+                    xaxis_title="Seconds", yaxis_title="Participants",
                     height=300, showlegend=False,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -712,7 +755,8 @@ def render_dmd_clinical_summary():
                 fig = go.Figure(go.Bar(x=bins, y=counts, marker_color=colors))
                 fig.update_layout(
                     title=f"Age at Loss of Ambulation (median {median_age} yr)",
-                    xaxis_title="Age (years)", yaxis_title="Patients",
+                    xaxis_title="Age (years)", yaxis_title="Participants",
+                    xaxis_type="category",
                     height=300, showlegend=False,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -786,7 +830,7 @@ def render_dmd_clinical_summary():
                     st.plotly_chart(fig, use_container_width=True)
 
         st.caption(
-            "*Functional outcomes reflect latest available encounter per patient. "
+            "*Functional outcomes reflect latest available encounter per participant. "
             "Longitudinal trends show median with interquartile range (IQR) by years since enrollment.*"
         )
 
@@ -829,7 +873,7 @@ def render_dmd_clinical_summary():
                     x=counts, y=labels, orientation="h", marker_color="#00897B",
                 ))
                 fig.update_layout(
-                    title="Mutation Type", xaxis_title="Patients",
+                    title="Mutation Type", xaxis_title="Participants",
                     height=max(300, len(items) * 28 + 80),
                     margin=dict(t=40, b=40, l=200),
                 )
@@ -846,7 +890,7 @@ def render_dmd_clinical_summary():
                     x=counts, y=labels, orientation="h", marker_color="#26A69A",
                 ))
                 fig.update_layout(
-                    title="Frame Type", xaxis_title="Patients",
+                    title="Frame Type", xaxis_title="Participants",
                     height=300, margin=dict(t=40, b=40, l=150),
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -879,12 +923,12 @@ def render_dmd_clinical_summary():
                 rest = [t - o for t, o in zip(totals, on_therapy)]
                 fig.add_trace(go.Bar(
                     y=state_names, x=rest, orientation="h",
-                    name="Other DMD Patients", marker_color="#BDBDBD",
+                    name="Other DMD Participants", marker_color="#BDBDBD",
                 ))
                 fig.update_layout(
                     barmode="stack",
-                    title="Top States by DMD Patient Count",
-                    xaxis_title="Patients",
+                    title="Top States by DMD Participant Count",
+                    xaxis_title="Participants",
                     height=max(350, len(top_states) * 28 + 80),
                     margin=dict(t=40, b=40, l=120),
                     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
@@ -902,9 +946,11 @@ def render_dmd_clinical_summary():
                     })
                 static_table(pd.DataFrame(rows))
                 st.caption(
-                    "*States with fewer than 11 DMD patients are grouped per "
+                    "*States with fewer than 11 DMD participants are grouped per "
                     "HIPAA small-cell suppression guidelines.*"
                 )
+
+    _render_enrollment_charts("DMD")
 
     # =================================================================
     # Mobility & Ambulation (+ Multidisciplinary Care)
@@ -942,7 +988,7 @@ def render_dmd_clinical_summary():
                 ))
                 fig.update_layout(
                     title="Top 10 Care Sites",
-                    xaxis_title="Patients",
+                    xaxis_title="Participants",
                     height=max(350, len(labels) * 28 + 80),
                     margin=dict(t=40, b=40, l=250),
                 )
@@ -1000,15 +1046,15 @@ def render_als_clinical_summary():
         # Metric row
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric("Total ALS Patients", f"{total_patients:,}")
+            st.metric("Total ALS Participants", f"{total_patients:,}")
         with m2:
             if ts.get("count"):
                 st.metric("ALSFRS-R Median", f"{ts['median']:.0f} / 48",
-                          delta=f"n = {ts['count']} patients")
+                          delta=f"n = {ts['count']} participants")
         with m3:
             long_n = alsfrs.get("patients_with_longitudinal", 0)
             if long_n:
-                st.metric("Longitudinal Patients", f"{long_n:,}",
+                st.metric("Longitudinal Participants", f"{long_n:,}",
                           delta="2+ ALSFRS-R measurements")
 
         # Chart row: histogram + longitudinal
@@ -1041,7 +1087,7 @@ def render_als_clinical_summary():
                 fig.update_layout(
                     title=f"ALSFRS-R Score Distribution (n={ts.get('count', 0)})",
                     xaxis_title="ALSFRS-R Total Score",
-                    yaxis_title="Patients",
+                    yaxis_title="Participants",
                     showlegend=False, height=350,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -1089,7 +1135,7 @@ def render_als_clinical_summary():
             for band in severity:
                 rows.append({
                     "Severity": band["label"],
-                    "Patients": "<11" if band.get("suppressed") else band.get("count", 0),
+                    "Participants": "<11" if band.get("suppressed") else band.get("count", 0),
                     "%": f"{band.get('percentage', 0):.1f}%",
                 })
             static_table(pd.DataFrame(rows))
@@ -1136,7 +1182,7 @@ def render_als_clinical_summary():
                     ))
                     fig.update_layout(
                         title=f"Body Region First Affected (n={br.get('total_reported', 0)})",
-                        xaxis_title="Patients",
+                        xaxis_title="Participants",
                         height=350,
                         margin=dict(t=40, b=40, l=200),
                     )
@@ -1192,7 +1238,7 @@ def render_als_clinical_summary():
                 fig.update_layout(
                     title=f"Diagnostic Delay (median {med:.1f} yrs)",
                     xaxis_title="Years from Onset to Diagnosis",
-                    yaxis_title="Patients",
+                    yaxis_title="Participants",
                     showlegend=False, height=350,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -1215,7 +1261,7 @@ def render_als_clinical_summary():
                 ))
                 fig.update_layout(
                     title="Onset Age vs Diagnosis Age",
-                    xaxis_title="Age (years)", yaxis_title="Patients",
+                    xaxis_title="Age (years)", yaxis_title="Participants",
                     barmode="overlay", height=350,
                     legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
                 )
@@ -1271,7 +1317,7 @@ def render_als_clinical_summary():
         with m1:
             if fvc.get("count"):
                 st.metric("FVC % Predicted (median)", f"{fvc['median']:.0f}%",
-                          help=f"n={fvc['count']} patients")
+                          help=f"n={fvc['count']} participants")
         with m2:
             niv_dist = niv_status.get("distribution", {})
             if niv_dist:
@@ -1322,7 +1368,7 @@ def render_als_clinical_summary():
                 ))
                 fig.update_layout(
                     title=f"FVC % Predicted (n={fvc['count']})",
-                    xaxis_title="FVC %", yaxis_title="Patients",
+                    xaxis_title="FVC %", yaxis_title="Participants",
                     showlegend=False, height=350,
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -1395,12 +1441,12 @@ def render_als_clinical_summary():
             for i, (drug_name, drug_data) in enumerate(drug_items[:4]):
                 with cols[i]:
                     if drug_data.get("suppressed"):
-                        st.metric(drug_name.split(" (")[0], "<11 patients")
+                        st.metric(drug_name.split(" (")[0], "<11 participants")
                     else:
                         st.metric(
                             drug_name.split(" (")[0],
                             f"{drug_data.get('percentage', 0):.1f}%",
-                            delta=f"{drug_data.get('count', 0)} patients",
+                            delta=f"{drug_data.get('count', 0)} participants",
                         )
 
         # Charts
@@ -1422,8 +1468,8 @@ def render_als_clinical_summary():
                     marker_color="#1E88E5",
                 ))
                 fig.update_layout(
-                    title="ALS Disease Therapies (Unique Patients)",
-                    xaxis_title="Patients",
+                    title="ALS Disease Therapies (Unique Participants)",
+                    xaxis_title="Participants",
                     height=max(300, len(drug_labels) * 50 + 80),
                     margin=dict(t=40, b=40, l=250),
                 )
@@ -1439,8 +1485,8 @@ def render_als_clinical_summary():
                     marker_color="#AB63FA",
                 ))
                 fig.update_layout(
-                    title="Top Medications (by unique patients)",
-                    xaxis_title="Patients",
+                    title="Top Medications (by unique participants)",
+                    xaxis_title="Participants",
                     height=350,
                     margin=dict(t=40, b=40, l=200),
                 )
@@ -1466,9 +1512,9 @@ def render_als_clinical_summary():
         with m2:
             if fh.get("familial_percentage"):
                 st.metric("Familial ALS", f"{fh['familial_percentage']:.1f}%",
-                          help=f"{fh.get('familial_count', 0)} patients")
+                          help=f"{fh.get('familial_count', 0)} participants")
         with m3:
-            st.metric("Total ALS Patients", f"{total_patients:,}")
+            st.metric("Total ALS Participants", f"{total_patients:,}")
 
         col_gm, col_fh = st.columns(2)
 
@@ -1522,13 +1568,13 @@ def render_als_clinical_summary():
                     y=labels, x=counts, orientation="h", marker_color="#00BCD4",
                 ))
                 fig.update_layout(
-                    title=f"Patient Distribution ({state_dist.get('total_states_mapped', 0)} states)",
-                    xaxis_title="Patients",
+                    title=f"Participant Distribution ({state_dist.get('total_states_mapped', 0)} states)",
+                    xaxis_title="Participants",
                     height=max(350, len(labels) * 28 + 80),
                     margin=dict(t=40, b=40, l=180),
                 )
                 st.plotly_chart(fig, use_container_width=True)
-                st.caption("States with <11 patients grouped as 'Other States'")
+                st.caption("States with <11 participants grouped as 'Other States'")
 
         with col_sites:
             if fac_list and has_access():
@@ -1540,7 +1586,7 @@ def render_als_clinical_summary():
                 ))
                 fig.update_layout(
                     title="Top 10 Care Sites",
-                    xaxis_title="Patients",
+                    xaxis_title="Participants",
                     height=max(350, len(labels) * 28 + 80),
                     margin=dict(t=40, b=40, l=250),
                 )
@@ -1549,6 +1595,8 @@ def render_als_clinical_summary():
                 st.markdown("**Top 10 Care Sites**")
                 st.info("Not available — requires DUA.  "
                         "[Request Access](https://mdausa.tfaforms.net/389761)")
+
+    _render_enrollment_charts("ALS")
 
     # =================================================================
     # Other Clinical Domains
@@ -1564,6 +1612,708 @@ def render_als_clinical_summary():
         "Multidisciplinary Care",
     }
     uncovered = [d for d in _ALL_DOMAINS if d not in _als_covered]
+    with st.expander(f"Other Clinical Domains ({len(uncovered)} not yet available)"):
+        for d in uncovered:
+            st.markdown(f"- **{d}**")
+        st.caption("Additional domains will be added as analytics are developed.")
+
+
+# ======================================================================
+# SMA Clinical Summary
+# ======================================================================
+
+def _short_sma_type(label: str) -> str:
+    """Shorten SMA type labels for chart display."""
+    if "Type 0" in label:
+        return "Type 0"
+    if "Type 1" in label:
+        return "Type 1"
+    if "Type 2" in label:
+        return "Type 2"
+    if "Type 3" in label:
+        return "Type 3"
+    if "Pre-symptomatic" in label:
+        return "Pre-sympt."
+    return label[:20]
+
+
+def render_sma_clinical_summary():
+    """Render SMA clinical summary sections organized by clinical domains."""
+    sma_snap = SMAAPI.get_snapshot()
+    if not sma_snap:
+        return
+
+    summary = sma_snap.get("summary", {})
+    total_patients = summary.get("total_patients", 0)
+
+    st.subheader("SMA Clinical Summary")
+
+    # =================================================================
+    # Motor Function Assessments — HFMSE + CHOP-INTEND (Hero Section)
+    # =================================================================
+    motor = sma_snap.get("motor_scores", {})
+    if motor.get("available"):
+        st.markdown("##### Motor Function Assessments")
+        st.caption(
+            "_HFMSE (0-66, Type 2/3), CHOP-INTEND (0-64, Type 1/pre-symptomatic), "
+            "RULM (0-37, upper limb) — higher = better function_"
+        )
+
+        hfmse = motor.get("hfmse", {})
+        chop = motor.get("chop_intend", {})
+        rulm = motor.get("rulm", {})
+
+        # Metric row
+        m1, m2, m3, m4 = st.columns(4)
+        with m1:
+            st.metric("Total SMA Participants", f"{total_patients:,}")
+        with m2:
+            ts = hfmse.get("total_score", {})
+            if ts.get("count"):
+                st.metric("HFMSE Median", f"{ts['median']:.0f} / 66",
+                          delta=f"n = {ts['count']} participants")
+        with m3:
+            ts = chop.get("total_score", {})
+            if ts.get("count"):
+                st.metric("CHOP-INTEND Median", f"{ts['median']:.0f} / 64",
+                          delta=f"n = {ts['count']} participants")
+        with m4:
+            ts = rulm.get("total_score", {})
+            if ts.get("count"):
+                st.metric("RULM Median", f"{ts['median']:.0f} / 37",
+                          delta=f"n = {ts['count']} participants")
+
+        # Histogram row: HFMSE + CHOP-INTEND
+        col_hfmse, col_chop = st.columns(2)
+
+        with col_hfmse:
+            ts = hfmse.get("total_score", {})
+            hist = ts.get("histogram", {})
+            if hist:
+                bins_list = hist["bins"]
+                counts = hist["counts"]
+                colors = []
+                for b in bins_list:
+                    parts = b.split("-")
+                    if len(parts) == 2:
+                        mid = (float(parts[0]) + float(parts[1])) / 2
+                        if mid < 15:
+                            colors.append("#E53935")
+                        elif mid < 30:
+                            colors.append("#FF9800")
+                        elif mid < 50:
+                            colors.append("#FFC107")
+                        else:
+                            colors.append("#4CAF50")
+                    else:
+                        colors.append("#1E88E5")
+                fig = go.Figure(go.Bar(
+                    x=bins_list, y=counts, marker_color=colors,
+                ))
+                fig.update_layout(
+                    title=f"HFMSE Score Distribution (n={ts.get('count', 0)})",
+                    xaxis_title="HFMSE Total Score (0-66)",
+                    yaxis_title="Participants",
+                    showlegend=False, height=350,
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        with col_chop:
+            ts = chop.get("total_score", {})
+            hist = ts.get("histogram", {})
+            if hist:
+                bins_list = hist["bins"]
+                counts = hist["counts"]
+                colors = []
+                for b in bins_list:
+                    parts = b.split("-")
+                    if len(parts) == 2:
+                        mid = (float(parts[0]) + float(parts[1])) / 2
+                        if mid < 16:
+                            colors.append("#E53935")
+                        elif mid < 32:
+                            colors.append("#FF9800")
+                        elif mid < 48:
+                            colors.append("#FFC107")
+                        else:
+                            colors.append("#4CAF50")
+                    else:
+                        colors.append("#1E88E5")
+                fig = go.Figure(go.Bar(
+                    x=bins_list, y=counts, marker_color=colors,
+                ))
+                fig.update_layout(
+                    title=f"CHOP-INTEND Score Distribution (n={ts.get('count', 0)})",
+                    xaxis_title="CHOP-INTEND Total Score (0-64)",
+                    yaxis_title="Participants",
+                    showlegend=False, height=350,
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        st.caption(
+            "Red = Severe | Orange = Moderate | Yellow = Mild | Green = Near-normal function. "
+            "HFMSE is used primarily for Type 2/3; CHOP-INTEND for Type 1 and pre-symptomatic."
+        )
+
+        # Longitudinal trend row: HFMSE + CHOP-INTEND
+        hfmse_long = hfmse.get("longitudinal", [])
+        chop_long = chop.get("longitudinal", [])
+        if hfmse_long or chop_long:
+            lc1, lc2 = st.columns(2)
+
+            with lc1:
+                if hfmse_long:
+                    years = [str(p["year"]) for p in hfmse_long]
+                    medians = [p["median"] for p in hfmse_long]
+                    q1s = [p["q1"] for p in hfmse_long]
+                    q3s = [p["q3"] for p in hfmse_long]
+                    ns = [p["n"] for p in hfmse_long]
+
+                    fig = go.Figure()
+                    fig.add_trace(go.Scatter(
+                        x=years + years[::-1],
+                        y=q3s + q1s[::-1],
+                        fill="toself", fillcolor="rgba(30,136,229,0.15)",
+                        line=dict(color="rgba(0,0,0,0)"),
+                        name="IQR (Q1-Q3)", showlegend=True,
+                    ))
+                    fig.add_trace(go.Scatter(
+                        x=years, y=medians,
+                        mode="lines+markers", line=dict(color="#1E88E5", width=3),
+                        name="Median",
+                        text=[f"n={n}" for n in ns], textposition="top center",
+                    ))
+                    fig.update_layout(
+                        title="HFMSE Score Over Time",
+                        xaxis_title="Years Since Enrollment",
+                        yaxis_title="HFMSE Total Score",
+                        height=350, yaxis=dict(range=[0, 70]),
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+
+            with lc2:
+                if chop_long:
+                    years = [str(p["year"]) for p in chop_long]
+                    medians = [p["median"] for p in chop_long]
+                    q1s = [p["q1"] for p in chop_long]
+                    q3s = [p["q3"] for p in chop_long]
+                    ns = [p["n"] for p in chop_long]
+
+                    fig = go.Figure()
+                    fig.add_trace(go.Scatter(
+                        x=years + years[::-1],
+                        y=q3s + q1s[::-1],
+                        fill="toself", fillcolor="rgba(255,112,67,0.15)",
+                        line=dict(color="rgba(0,0,0,0)"),
+                        name="IQR (Q1-Q3)", showlegend=True,
+                    ))
+                    fig.add_trace(go.Scatter(
+                        x=years, y=medians,
+                        mode="lines+markers", line=dict(color="#FF7043", width=3),
+                        name="Median",
+                        text=[f"n={n}" for n in ns], textposition="top center",
+                    ))
+                    fig.update_layout(
+                        title="CHOP-INTEND Score Over Time",
+                        xaxis_title="Years Since Enrollment",
+                        yaxis_title="CHOP-INTEND Total Score",
+                        height=350, yaxis=dict(range=[0, 68]),
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+
+        # By-SMA-type grouped bar
+        hfmse_by_type = hfmse.get("by_sma_type", {})
+        chop_by_type = chop.get("by_sma_type", {})
+        if hfmse_by_type or chop_by_type:
+            st.markdown("**Motor Scores by SMA Type**")
+            col_bt1, col_bt2 = st.columns(2)
+
+            with col_bt1:
+                if hfmse_by_type:
+                    types = list(hfmse_by_type.keys())
+                    short_labels = [_short_sma_type(t) for t in types]
+                    medians = [hfmse_by_type[t].get("median", 0) for t in types]
+                    ns = [hfmse_by_type[t].get("count", 0) for t in types]
+                    fig = go.Figure(go.Bar(
+                        x=short_labels, y=medians,
+                        marker_color="#1E88E5",
+                        text=[f"n={n}" for n in ns],
+                        textposition="outside",
+                    ))
+                    fig.update_layout(
+                        title="HFMSE Median by SMA Type",
+                        yaxis_title="Median Score",
+                        height=350, yaxis=dict(range=[0, 70]),
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+
+            with col_bt2:
+                if chop_by_type:
+                    types = list(chop_by_type.keys())
+                    short_labels = [_short_sma_type(t) for t in types]
+                    medians = [chop_by_type[t].get("median", 0) for t in types]
+                    ns = [chop_by_type[t].get("count", 0) for t in types]
+                    fig = go.Figure(go.Bar(
+                        x=short_labels, y=medians,
+                        marker_color="#FF7043",
+                        text=[f"n={n}" for n in ns],
+                        textposition="outside",
+                    ))
+                    fig.update_layout(
+                        title="CHOP-INTEND Median by SMA Type",
+                        yaxis_title="Median Score",
+                        height=350, yaxis=dict(range=[0, 68]),
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+
+        # RULM summary
+        rulm_ts = rulm.get("total_score", {})
+        if rulm_ts.get("count"):
+            with st.expander(f"RULM Upper Limb Function (n={rulm_ts['count']})"):
+                rm1, rm2, rm3 = st.columns(3)
+                with rm1:
+                    st.metric("RULM Median", f"{rulm_ts['median']:.0f} / 37")
+                with rm2:
+                    st.metric("RULM Mean", f"{rulm_ts['mean']:.1f}")
+                with rm3:
+                    long_n = rulm.get("patients_with_longitudinal", 0)
+                    st.metric("Longitudinal Participants", f"{long_n:,}")
+
+                rulm_hist = rulm_ts.get("histogram", {})
+                if rulm_hist:
+                    fig = go.Figure(go.Bar(
+                        x=rulm_hist["bins"], y=rulm_hist["counts"],
+                        marker_color="#AB63FA",
+                    ))
+                    fig.update_layout(
+                        title=f"RULM Score Distribution (n={rulm_ts['count']})",
+                        xaxis_title="RULM Total Score (0-37)",
+                        yaxis_title="Participants",
+                        showlegend=False, height=300,
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+
+        st.caption(
+            "*Motor scores reflect latest available encounter per participant. "
+            "Longitudinal trends show median with interquartile range (IQR) by years since enrollment.*"
+        )
+
+    # =================================================================
+    # Disease Classification & Diagnosis
+    # =================================================================
+    classification = sma_snap.get("classification", {})
+    if classification.get("available"):
+        st.markdown("---")
+        st.markdown("##### Disease Classification & Diagnosis")
+        st.caption("_SMA type classification, diagnosis method, and age at diagnosis_")
+
+        sma_type = classification.get("sma_type", {})
+        dx_method = classification.get("diagnosis_method", {})
+        gc = classification.get("genetic_confirmation", {})
+
+        # Metric row
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            st.metric("SMA Participants Classified",
+                      f"{sma_type.get('total_reported', 0):,}")
+        with m2:
+            pct = gc.get("confirmed_percentage", 0)
+            st.metric("Genetically Confirmed", f"{pct:.1f}%")
+        with m3:
+            dx_age = classification.get("diagnosis_age", {})
+            if dx_age.get("count"):
+                st.metric("Median Diagnosis Age", f"{dx_age['median']:.0f} yr",
+                          help=f"n={dx_age['count']}")
+
+        # Charts: SMA type distribution + diagnosis method
+        col_type, col_dx = st.columns(2)
+
+        with col_type:
+            dist = sma_type.get("distribution", {})
+            if dist:
+                items = [(k, v) for k, v in dist.items() if "Suppressed" not in k]
+                items.sort(key=lambda x: x[1], reverse=True)
+                labels = [_short_sma_type(k) for k, _ in reversed(items)]
+                counts = [v for _, v in reversed(items)]
+                fig = go.Figure(go.Bar(
+                    y=labels, x=counts, orientation="h",
+                    marker_color="#1E88E5",
+                ))
+                fig.update_layout(
+                    title="SMA Type Distribution",
+                    xaxis_title="Participants",
+                    height=max(300, len(items) * 40 + 80),
+                    margin=dict(t=40, b=40, l=120),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        with col_dx:
+            dx_dist = dx_method.get("distribution", {})
+            if dx_dist:
+                fig = go.Figure(go.Pie(
+                    labels=list(dx_dist.keys()),
+                    values=list(dx_dist.values()),
+                    hole=0.4,
+                ))
+                fig.update_layout(
+                    title=f"Diagnosis Method (n={dx_method.get('total_reported', 0)})",
+                    height=350, margin=dict(t=40, b=20), showlegend=True,
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        # Age at diagnosis histogram
+        dx_age = classification.get("diagnosis_age", {})
+        dx_hist = dx_age.get("histogram", {})
+        if dx_hist:
+            col_dx_hist, col_dx_table = st.columns([2, 1])
+            with col_dx_hist:
+                fig = go.Figure(go.Bar(
+                    x=dx_hist["bins"], y=dx_hist["counts"],
+                    marker_color="#00897B",
+                ))
+                fig.update_layout(
+                    title=f"Age at Diagnosis (median {dx_age.get('median', 0)} yr, n={dx_age.get('count', 0)})",
+                    xaxis_title="Age (years)",
+                    yaxis_title="Participants",
+                    xaxis_type="category",
+                    showlegend=False, height=300,
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            with col_dx_table:
+                rows = [{"Age Band": b, "N": c}
+                        for b, c in zip(dx_hist["bins"], dx_hist["counts"])]
+                static_table(pd.DataFrame(rows))
+
+    # =================================================================
+    # Genetics & Molecular Testing
+    # =================================================================
+    genetics = sma_snap.get("genetics", {})
+    if genetics.get("available"):
+        st.markdown("---")
+        st.markdown("##### Genetics & Molecular Testing")
+        st.caption("_SMN2 copy number, SMN1 status, and familial SMA_")
+
+        smn2 = genetics.get("smn2_copy_number", {})
+        fh = genetics.get("family_history", {})
+
+        # Metric row
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            st.metric("SMN2 Reported", f"{smn2.get('total_reported', 0):,}")
+        with m2:
+            fam_pct = fh.get("familial_percentage", 0)
+            st.metric("Familial SMA", f"{fam_pct:.1f}%",
+                      help=f"{fh.get('familial_count', 0)} participants")
+        with m3:
+            gc = classification.get("genetic_confirmation", {}) if classification.get("available") else {}
+            st.metric("Genetic Confirmation", f"{gc.get('confirmed_percentage', 0):.1f}%")
+
+        # Charts: SMN2 distribution + SMN2 by SMA type
+        col_smn2, col_cross = st.columns(2)
+
+        with col_smn2:
+            dist = smn2.get("distribution", {})
+            if dist:
+                items = [(k, v) for k, v in dist.items() if "Suppressed" not in k]
+                items.sort(key=lambda x: x[1], reverse=True)
+                labels = [k for k, _ in reversed(items)]
+                counts = [v for _, v in reversed(items)]
+                fig = go.Figure(go.Bar(
+                    y=labels, x=counts, orientation="h",
+                    marker_color="#00897B",
+                ))
+                fig.update_layout(
+                    title="SMN2 Copy Number Distribution",
+                    xaxis_title="Participants",
+                    height=max(250, len(items) * 35 + 80),
+                    margin=dict(t=40, b=40, l=100),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        with col_cross:
+            smn2_by_type = genetics.get("smn2_by_sma_type", {})
+            if smn2_by_type:
+                # Build grouped bar of SMN2 copies by SMA type
+                sma_types = [t for t in smn2_by_type.keys() if "Unknown" not in t]
+                smn2_values = ["2", "3", "4"]
+                colors = {"2": "#E53935", "3": "#1E88E5", "4": "#4CAF50"}
+
+                fig = go.Figure()
+                for smn2_val in smn2_values:
+                    vals = [smn2_by_type.get(t, {}).get(smn2_val, 0) for t in sma_types]
+                    fig.add_trace(go.Bar(
+                        name=f"SMN2 = {smn2_val}",
+                        x=[_short_sma_type(t) for t in sma_types],
+                        y=vals,
+                        marker_color=colors.get(smn2_val, "#999"),
+                    ))
+                fig.update_layout(
+                    title="SMN2 Copy Number by SMA Type",
+                    barmode="group",
+                    xaxis_title="SMA Type",
+                    yaxis_title="Participants",
+                    height=350,
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+    # =================================================================
+    # Medications & Treatments — SMA Therapeutics
+    # =================================================================
+    tx = sma_snap.get("therapeutics", {})
+    if tx.get("available"):
+        st.markdown("---")
+        st.markdown("##### Medications & Treatments")
+        st.markdown(
+            "Three disease-modifying therapies are available for SMA: "
+            "**Spinraza** (nusinersen, intrathecal), **Evrysdi** (risdiplam, oral), "
+            "and **Zolgensma** (onasemnogene, gene therapy)."
+        )
+
+        sma_drugs = tx.get("sma_drugs", {})
+        total_on = tx.get("total_on_therapy", {})
+
+        # Metric row
+        drug_items = list(sma_drugs.items())
+        cols = st.columns(min(len(drug_items) + 1, 4))
+        with cols[0]:
+            on_count = total_on.get("count", 0)
+            on_pct = total_on.get("percentage", 0)
+            st.metric("On Any SMA Therapy", f"{on_count:,}",
+                      delta=f"{on_pct:.1f}% of cohort")
+        for i, (drug_name, drug_data) in enumerate(drug_items[:3]):
+            with cols[i + 1]:
+                if drug_data.get("suppressed"):
+                    st.metric(drug_name.split(" (")[0], "<11 participants")
+                else:
+                    st.metric(
+                        drug_name.split(" (")[0],
+                        f"{drug_data.get('percentage', 0):.1f}%",
+                        delta=f"{drug_data.get('count', 0)} participants",
+                    )
+
+        # Charts: drug utilization + therapy by SMA type
+        col_drugs, col_by_type = st.columns(2)
+
+        with col_drugs:
+            drug_labels = []
+            drug_counts = []
+            for name, data in sma_drugs.items():
+                if not data.get("suppressed") and data.get("count", 0) > 0:
+                    drug_labels.append(name)
+                    drug_counts.append(data["count"])
+            if drug_labels:
+                fig = go.Figure(go.Bar(
+                    y=list(reversed(drug_labels)),
+                    x=list(reversed(drug_counts)),
+                    orientation="h",
+                    marker_color="#1E88E5",
+                ))
+                fig.update_layout(
+                    title="SMA Drug Utilization (Unique Participants)",
+                    xaxis_title="Participants",
+                    height=max(250, len(drug_labels) * 50 + 80),
+                    margin=dict(t=40, b=40, l=220),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        with col_by_type:
+            therapy_by_type = tx.get("therapy_by_sma_type", {})
+            if therapy_by_type:
+                sma_types = [t for t in therapy_by_type.keys()
+                             if "Unknown" not in t and therapy_by_type[t].get("total_patients", 0) >= 11]
+                drug_names = ["Spinraza (nusinersen)", "Evrysdi (risdiplam)", "Zolgensma (onasemnogene)"]
+                drug_colors = {"Spinraza (nusinersen)": "#1E88E5",
+                               "Evrysdi (risdiplam)": "#4CAF50",
+                               "Zolgensma (onasemnogene)": "#FF7043"}
+
+                fig = go.Figure()
+                for drug in drug_names:
+                    vals = [therapy_by_type.get(t, {}).get(drug, 0) for t in sma_types]
+                    fig.add_trace(go.Bar(
+                        name=drug.split(" (")[0],
+                        x=[_short_sma_type(t) for t in sma_types],
+                        y=vals,
+                        marker_color=drug_colors.get(drug, "#999"),
+                    ))
+                fig.update_layout(
+                    title="Therapy by SMA Type",
+                    barmode="group",
+                    xaxis_title="SMA Type",
+                    yaxis_title="Participants",
+                    height=350,
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        # Top drugs table
+        top_drugs = tx.get("top_drugs", [])
+        if top_drugs:
+            with st.expander(f"Top Medications (all drugs, {len(top_drugs)} shown)"):
+                rows = [{"Drug": d["drug"],
+                         "Participants": d["patients"],
+                         "% of Cohort": f"{d.get('percentage', 0):.1f}%"}
+                        for d in top_drugs]
+                static_table(pd.DataFrame(rows))
+
+    # =================================================================
+    # Pulmonary & Respiratory
+    # =================================================================
+    resp = sma_snap.get("respiratory", {})
+    if resp.get("available"):
+        st.markdown("---")
+        st.markdown("##### Pulmonary & Respiratory")
+        st.caption("_FVC % predicted & longitudinal trends_")
+
+        fvc = resp.get("fvc_pct", {})
+
+        # Metric row
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            if fvc.get("count"):
+                st.metric("FVC % Predicted (median)", f"{fvc['median']:.0f}%",
+                          help=f"n={fvc['count']} participants")
+        with m2:
+            if fvc.get("count"):
+                st.metric("FVC Mean", f"{fvc['mean']:.1f}%")
+        with m3:
+            amb = sma_snap.get("milestones", {}).get("ambulatory_status", {})
+            amb_dist = amb.get("distribution", {})
+            not_amb = amb_dist.get("Not ambulatory", 0)
+            total_amb = amb.get("total_reported", 1)
+            if amb_dist:
+                st.metric("Not Ambulatory", f"{not_amb / total_amb * 100:.0f}%",
+                          help=f"{not_amb} of {total_amb} reporting")
+
+        # Charts: FVC histogram + longitudinal
+        col_fvc_hist, col_fvc_long = st.columns(2)
+
+        with col_fvc_hist:
+            hist = fvc.get("histogram", {})
+            if hist:
+                fvc_colors = []
+                for b in hist["bins"]:
+                    parts = b.split("-")
+                    if len(parts) == 2:
+                        mid = (float(parts[0]) + float(parts[1])) / 2
+                        if mid < 40:
+                            fvc_colors.append("#E53935")
+                        elif mid < 60:
+                            fvc_colors.append("#FF9800")
+                        elif mid < 80:
+                            fvc_colors.append("#FFC107")
+                        else:
+                            fvc_colors.append("#4CAF50")
+                    else:
+                        fvc_colors.append("#1E88E5")
+                fig = go.Figure(go.Bar(
+                    x=hist["bins"], y=hist["counts"], marker_color=fvc_colors,
+                ))
+                fig.update_layout(
+                    title=f"FVC % Predicted (n={fvc['count']})",
+                    xaxis_title="FVC %", yaxis_title="Participants",
+                    showlegend=False, height=350,
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                st.caption("Red <40% | Orange 40-60% | Yellow 60-80% | Green >80%")
+
+        with col_fvc_long:
+            longitudinal = fvc.get("longitudinal", [])
+            if longitudinal:
+                years = [str(p["year"]) for p in longitudinal]
+                medians = [p["median"] for p in longitudinal]
+                q1s = [p["q1"] for p in longitudinal]
+                q3s = [p["q3"] for p in longitudinal]
+                ns = [p["n"] for p in longitudinal]
+
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(
+                    x=years + years[::-1],
+                    y=q3s + q1s[::-1],
+                    fill="toself", fillcolor="rgba(30,136,229,0.15)",
+                    line=dict(color="rgba(0,0,0,0)"),
+                    name="IQR (Q1-Q3)",
+                ))
+                fig.add_trace(go.Scatter(
+                    x=years, y=medians,
+                    mode="lines+markers", line=dict(color="#1E88E5", width=3),
+                    name="Median",
+                    text=[f"n={n}" for n in ns], textposition="top center",
+                ))
+                fig.update_layout(
+                    title="FVC % Predicted Over Time",
+                    xaxis_title="Years Since Enrollment",
+                    yaxis_title="FVC % Predicted",
+                    height=350, yaxis=dict(range=[0, 120]),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+    # =================================================================
+    # Demographics & Enrollment (+ Multidisciplinary Care)
+    # =================================================================
+    state_dist = sma_snap.get("state_distribution", {})
+    fac_list = sma_snap.get("facilities", {}).get("facilities", [])
+
+    if state_dist.get("available") or fac_list:
+        st.markdown("---")
+        st.markdown("##### Demographics & Enrollment")
+        st.caption("_Also includes: Multidisciplinary Care_")
+
+        col_state, col_sites = st.columns(2)
+
+        with col_state:
+            states = state_dist.get("states", [])
+            if states:
+                labels = [s["state"] for s in reversed(states[:15])]
+                counts = [s["total"] for s in reversed(states[:15])]
+                fig = go.Figure(go.Bar(
+                    y=labels, x=counts, orientation="h", marker_color="#00BCD4",
+                ))
+                fig.update_layout(
+                    title=f"Participant Distribution ({state_dist.get('total_states_mapped', 0)} states)",
+                    xaxis_title="Participants",
+                    height=max(350, len(labels) * 28 + 80),
+                    margin=dict(t=40, b=40, l=180),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                st.caption("States with <11 participants grouped as 'Other States'")
+
+        with col_sites:
+            if fac_list and has_access():
+                top_sites = fac_list[:10]
+                labels = [s.get("name", f"Site {s.get('id', '')}") for s in reversed(top_sites)]
+                counts = [s.get("patients", 0) for s in reversed(top_sites)]
+                fig = go.Figure(go.Bar(
+                    y=labels, x=counts, orientation="h", marker_color="#FF7043",
+                ))
+                fig.update_layout(
+                    title="Top 10 Care Sites",
+                    xaxis_title="Participants",
+                    height=max(350, len(labels) * 28 + 80),
+                    margin=dict(t=40, b=40, l=250),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.markdown("**Top 10 Care Sites**")
+                st.info("Not available — requires DUA.  "
+                        "[Request Access](https://mdausa.tfaforms.net/389761)")
+
+    _render_enrollment_charts("SMA")
+
+    # =================================================================
+    # Other Clinical Domains
+    # =================================================================
+    _sma_covered = {
+        "Motor Function Assessments",
+        "Disease Classification & Diagnosis",
+        "Genetics & Molecular Testing",
+        "Medications & Treatments",
+        "Pulmonary & Respiratory",
+        "Demographics & Enrollment",
+        "Multidisciplinary Care",
+        "Mobility & Ambulation",
+    }
+    uncovered = [d for d in _ALL_DOMAINS if d not in _sma_covered]
     with st.expander(f"Other Clinical Domains ({len(uncovered)} not yet available)"):
         for d in uncovered:
             st.markdown(f"- **{d}**")

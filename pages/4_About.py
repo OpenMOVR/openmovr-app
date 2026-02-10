@@ -33,24 +33,39 @@ st.title("About OpenMOVR App")
 
 st.markdown(
     f"""
-    **OpenMOVR App** is an open-source analytics dashboard for the
-    **{STUDY_NAME}** clinical registry ({STUDY_PROTOCOL} study protocol,
-    {STUDY_START} -- {STUDY_END}, {STUDY_STATUS}).
+    OpenMOVR App is an open-source analytics dashboard for the
+    {STUDY_NAME} clinical registry ({STUDY_PROTOCOL} study protocol,
+    {STUDY_START} to {STUDY_END}, {STUDY_STATUS}).
 
-    The registry captures longitudinal clinical data for **seven rare
-    neuromuscular diseases** -- ALS, DMD, BMD, SMA, LGMD, FSHD, and Pompe
-    disease -- across 60+ participating sites in the United States.
+    The registry captures longitudinal clinical data for seven rare
+    neuromuscular diseases (ALS, DMD, BMD, SMA, LGMD, FSHD, and Pompe
+    disease) across 60+ participating sites in the United States.
 
-    OpenMOVR App is built for the **research community first** -- clinical
-    researchers, academic institutions engaged in basic and translational
-    science, and patient advocacy groups working to advance disease
-    understanding and drug development.  It leverages modern data
-    visualization and cohort-browsing technology to make registry insights
+    The app is built for the research community: clinical researchers,
+    academic institutions, and participant advocacy groups working to
+    advance disease understanding and drug development.  It uses modern
+    data visualization and cohort-browsing tools to make registry insights
     accessible and actionable, with capabilities that will grow over time.
 
-    All data access is governed by the **MOVR Data Hub governance policy**
-    and is designed to support the registry's mission of driving progress
-    in neuromuscular disease research.
+    All data access is governed by the MOVR Data Hub governance policy
+    and supports the registry's mission of driving progress in
+    neuromuscular disease research.
+    """
+)
+
+# ---- Impact & Vision ----
+st.markdown("---")
+st.subheader("Why OpenMOVR")
+
+st.markdown(
+    """
+    We want participants to land here and see what their enrollment is
+    contributing to.  We want researchers and clinicians to see what
+    questions this data can answer.  That is the idea behind OpenMOVR.
+
+    The longer-term vision includes cohort-building tools, longitudinal
+    trend analysis, and purpose-built applications aligned with the
+    registry's mission.  More is being built.
     """
 )
 
@@ -64,7 +79,7 @@ st.markdown(
     |---|---|
     | **Registry** | {STUDY_NAME} |
     | **Protocol** | {STUDY_PROTOCOL} |
-    | **Study Period** | {STUDY_START} -- {STUDY_END} |
+    | **Study Period** | {STUDY_START} to {STUDY_END} |
     | **Status** | {STUDY_STATUS} |
     | **Diseases** | ALS, DMD, BMD, SMA, LGMD, FSHD, Pompe |
     | **Data Sponsor** | Muscular Dystrophy Association (MDA) |
@@ -94,7 +109,7 @@ with col_pub:
             <li>Aggregated enrollment &amp; disease distribution</li>
             <li>Anonymized site map</li>
             <li>Disease Explorer with demographic breakdowns</li>
-            <li>Disease-specific overview (prototype)</li>
+            <li>Clinical Summary Preview per disease (prototype)</li>
             <li>Curated Data Dictionary (1,024 clinical fields)</li>
             <li>Clinical data highlights (functional scores, medications,
                 trials, hospitalizations)</li>
@@ -124,14 +139,15 @@ with col_prov:
                 breakdowns</li>
             <li><strong>Download Center</strong> &mdash; export tables as CSV,
                 download snapshot data for custom analytics</li>
-            <li><strong>Clinical Summaries</strong> &mdash; disease-specific
-                clinical analytics organized by clinical domain</li>
+            <li><strong>Clinical Analytics</strong> &mdash; disease-specific
+                analytics (DMD, LGMD, ALS, SMA) with motor scores,
+                therapeutics, genetics, longitudinal trends, and data tables</li>
             <li><em>Coming soon:</em> Cohort Builder, custom longitudinal
                 analytics</li>
         </ul>
         <p style='font-size:0.85em; color:#666;'>
         Available to <strong>participating sites</strong>, <strong>PAGs</strong>,
-        <strong>researchers</strong>, and <strong>patients</strong> under the
+        <strong>researchers</strong>, and <strong>participants</strong> under the
         MOVR Data Hub governance policy.<br><br>
         All other inquiries &mdash; including those from organizations seeking
         data access &mdash; should be directed to the MOVR team to discuss
@@ -166,17 +182,20 @@ st.markdown(
     | Feature | Status |
     |---------|--------|
     | Public dashboard with aggregated statistics | Prototype |
-    | Anonymized site map with disease filters | Prototype |
-    | Disease Explorer & disease-specific overview | Prototype |
-    | Curated Data Dictionary (19 clinical domains) | Prototype |
-    | Gene therapy & advanced therapies tracking | Prototype |
-    | Site Analytics (provisioned) | Prototype |
-    | Download Center (provisioned) | Prototype |
+    | Anonymized site map with per-disease filters | Prototype |
+    | Disease Explorer with cascading filters | Prototype |
+    | Curated Data Dictionary (1,024 fields, 19 clinical domains) | Prototype |
+    | DMD Clinical Analytics (genetics, therapeutics, functional outcomes) | Prototype |
+    | LGMD Clinical Analytics (subtypes, diagnostic journey, medications) | Prototype |
+    | ALS Clinical Analytics (ALSFRS-R, milestones, respiratory) | Prototype |
+    | SMA Clinical Analytics (motor scores, SMN2 genetics, therapeutics) | Prototype |
+    | Disease-specific therapies tracking | Prototype |
+    | Site Analytics (DUA required) | Prototype |
+    | Download Center (DUA required) | Prototype |
+    | Additional clinical analytics (BMD, FSHD, Pompe) | Planned |
     | Cohort Builder with custom filters | Planned |
-    | Custom longitudinal analytics | Planned |
-    | ALS Clinical Summary (ALSFRS-R, milestones, respiratory) | Prototype |
-    | Additional clinical summaries (SMA, BMD) | Planned |
-    | Patient-facing data summaries | Planned |
+    | Longitudinal trend analysis | Planned |
+    | Participant-facing data summaries | Planned |
     """
 )
 
@@ -187,13 +206,16 @@ st.subheader("Version History")
 st.markdown(
     f"""
     **v{APP_VERSION}** (Gen1 Prototype)
-    - Public dashboard with aggregated statistics
-    - Disease Explorer, Facility View, Data Dictionary
-    - LGMD Overview with PAG presentation features
-    - Site map with data-driven patient counts
-    - Advanced therapies tracking from Combo Drugs table
-    - Site Analytics with provisioned access
-    - Download Center for data exports
+    - Public dashboard with aggregated enrollment, disease distribution, and longitudinal metrics
+    - Disease Explorer with demographic breakdowns, diagnosis profiles, and Clinical Summary Preview
+    - Clinical Analytics for DMD, LGMD, ALS, and SMA organized by clinical domains (DUA required)
+    - Curated Data Dictionary with 1,024 fields classified into 19 clinical domains
+    - Anonymized site map with per-disease filtering across 60+ participating sites
+    - Disease-specific therapies tracking (gene therapy, antisense, ERT, disease-modifying)
+    - Cumulative and monthly enrollment charts per disease and across registry
+    - Site Analytics with site-vs-overall comparisons (DUA required)
+    - Download Center for data exports (DUA required)
+    - Facility View with top-site rankings and geographic distribution
     """
 )
 

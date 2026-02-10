@@ -45,7 +45,7 @@ def require_access(
     else:
         st.info(
             "This page requires provisioned access.  "
-            "Available to participating sites, researchers, PAGs, and patients "
+            "Available to participating sites, researchers, PAGs, and participants "
             "with an approved Data Use Agreement.  All other inquiries should be "
             "directed to the MOVR team.\n\n"
             "**[Request Access](https://mdausa.tfaforms.net/389761)**"

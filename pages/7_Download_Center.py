@@ -35,7 +35,7 @@ require_access(
     description=(
         "Export aggregated statistics, gene therapy breakdowns, and clinical "
         "data summaries for your own analyses.  Available to participating sites, "
-        "researchers, PAGs, and patients with an approved Data Use Agreement.  "
+        "researchers, PAGs, and participants with an approved Data Use Agreement.  "
         "All other inquiries should be directed to the MOVR team.\n\n"
         "**[Request Access](https://mdausa.tfaforms.net/389761)**"
     ),
@@ -67,7 +67,7 @@ if diseases:
         disease_df["patient_count"] = disease_df["patient_count"].apply(lambda x: f"{x:,}")
     disease_df = disease_df.rename(columns={
         "disease": "Disease",
-        "patient_count": "Patients",
+        "patient_count": "Participants",
         "percentage": "%",
     })
     st.dataframe(disease_df, use_container_width=True, hide_index=True)
@@ -93,7 +93,7 @@ if gt:
                 "Disease": disease,
                 "Category": t["category"],
                 "Treatment": t["label"],
-                "Patients": t["patients"],
+                "Participants": t["patients"],
                 "Records": t["records"],
             })
     gt_df = pd.DataFrame(gt_rows)
@@ -116,7 +116,7 @@ top_meds = meds.get("top_medications", [])
 if top_meds:
     top_df = pd.DataFrame(top_meds).rename(columns={
         "name": "Medication",
-        "patients": "Patients",
+        "patients": "Participants",
         "records": "Records",
     })
     st.dataframe(top_df, use_container_width=True, hide_index=True)
@@ -231,9 +231,9 @@ if by_disease:
     for ds, info in by_disease.items():
         long_rows.append({
             "Disease": ds,
-            "Patients": info["patients"],
+            "Participants": info["patients"],
             "Encounters": info["encounters"],
-            "Mean / Patient": info["mean_per_patient"],
+            "Mean / Participant": info["mean_per_patient"],
             "With 3+ Visits": info["patients_3plus"],
         })
     long_df = pd.DataFrame(long_rows)
@@ -267,9 +267,9 @@ if all_facs:
 
     fac_df = fac_df.rename(columns={
         "FACILITY_DISPLAY_ID": "Site ID",
-        "patient_count": "Patients",
+        "patient_count": "Participants",
     })
-    display_cols = ["Site ID", "City", "State", "Patients"]
+    display_cols = ["Site ID", "City", "State", "Participants"]
     display_cols = [c for c in display_cols if c in fac_df.columns]
     fac_df = fac_df[display_cols]
 

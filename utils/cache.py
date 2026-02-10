@@ -9,8 +9,8 @@ from typing import Dict, Any, List
 from api import CohortAPI, StatsAPI
 
 
-@st.cache_data(ttl=3600)  # Cache for 1 hour
-def get_cached_snapshot() -> Dict[str, Any]:
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def get_cached_snapshot(_version: int = 2) -> Dict[str, Any]:
     """Get cached database snapshot."""
     return StatsAPI.load_snapshot()
 

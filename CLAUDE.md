@@ -4,7 +4,9 @@ This file helps Claude Code understand the OpenMOVR App codebase and continue pr
 
 ## Project Summary
 
-**OpenMOVR App** is a Streamlit dashboard for MOVR (Muscular Dystrophy Association registry) clinical data analytics. It displays patient statistics, disease distributions, and facility information for rare neuromuscular diseases (DMD, SMA, ALS, LGMD, etc.).
+**OpenMOVR App** is a Streamlit dashboard for MOVR (Muscular Dystrophy Association registry) clinical data analytics. It displays participant statistics, disease distributions, and facility information for rare neuromuscular diseases (DMD, SMA, ALS, LGMD, etc.).
+
+> **IRB Language**: All user-facing text uses "participants" (not "patients") per IRB requirements — these are enrolled participants, not a site's total patient volume. Internal variable names and data keys still use `patient_count`, `total_patients`, etc.
 
 ## Key Context
 
@@ -32,8 +34,8 @@ Pages (UI) → API Layer (facade) → Snapshots OR Core Library (src/)
 ```
 
 - `app.py` - Main dashboard
-- `pages/` - 9 pages: Disease Explorer, Facility View, Data Dictionary, About, Sign the DUA, Site Analytics, Download Center, DMD Clinical Summary, LGMD Clinical Summary
-- `api/` - Data access facade (StatsAPI, CohortAPI, DMDAPI, LGMDAPI, DataDictionaryAPI)
+- `pages/` - 11 pages: Disease Explorer, Facility View, Data Dictionary, About, Sign the DUA, Site Analytics, Download Center, DMD Clinical Analytics, LGMD Clinical Analytics, ALS Clinical Analytics, SMA Clinical Analytics
+- `api/` - Data access facade (StatsAPI, CohortAPI, DMDAPI, LGMDAPI, ALSAPI, SMAAPI, DataDictionaryAPI)
 - `components/` - Shared UI (sidebar, clinical_summary renderers, charts, tables, filters)
 - `src/` - Core analytics library (cohort management, data loading)
 - `stats/` - Pre-computed JSON snapshots (database, DMD, LGMD, curated dictionary)
@@ -56,6 +58,8 @@ Pages (UI) → API Layer (facade) → Snapshots OR Core Library (src/)
 python scripts/generate_stats_snapshot.py
 python scripts/generate_dmd_snapshot.py
 python scripts/generate_lgmd_snapshot.py
+python scripts/generate_als_snapshot.py
+python scripts/generate_sma_snapshot.py
 python scripts/generate_curated_dictionary.py
 ```
 
@@ -64,7 +68,7 @@ Edit `config/disease_filters.yaml`
 
 ### Test imports
 ```bash
-python -c "from api import StatsAPI, CohortAPI, LGMDAPI; print('OK')"
+python -c "from api import StatsAPI, CohortAPI, LGMDAPI, ALSAPI, SMAAPI; print('OK')"
 ```
 
 ## Previous Work (Context for Continuation)
@@ -116,12 +120,12 @@ streamlit run app.py
 | Purpose | Location |
 |---------|----------|
 | Main app | `app.py` |
-| Pages | `pages/*.py` (9 pages) |
-| API layer | `api/*.py` (stats, cohorts, dmd, lgmd, data_dictionary, reports) |
+| Pages | `pages/*.py` (11 pages) |
+| API layer | `api/*.py` (stats, cohorts, dmd, lgmd, als, sma, data_dictionary, reports) |
 | Clinical summary renderers | `components/clinical_summary.py` |
 | Access control | `utils/access.py` |
 | Core library | `src/` |
-| Snapshots | `stats/*.json` (database, dmd, lgmd, curated_dictionary) |
+| Snapshots | `stats/*.json` (database, dmd, lgmd, als, sma, curated_dictionary) |
 | Data (local) | `data/*.parquet` |
 | Config | `config/` |
 

@@ -15,12 +15,13 @@ sys.path.insert(0, str(app_dir))
 
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 from api import StatsAPI
 from components.charts import create_site_map
 from components.tables import static_table
-from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
-from utils.cache import get_cached_facility_stats
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer, render_page_header
+from utils.cache import get_cached_facility_stats, get_cached_snapshot
 from config.settings import PAGE_ICON, DEFAULT_TOP_N_FACILITIES
 
 _logo_path = Path(__file__).parent.parent / "assets" / "movr_logo_clean_nobackground.png"
@@ -35,25 +36,7 @@ st.set_page_config(
 inject_global_css()
 render_sidebar_footer()
 
-# Header with branding
-header_left, header_right = st.columns([3, 1])
-
-with header_left:
-    st.title("Facility View")
-    st.markdown("### Explore facility distribution and patient counts")
-
-with header_right:
-    st.markdown(
-        """
-        <div style='text-align: right; padding-top: 10px;'>
-            <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
-            <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                Gen1 | v0.2.0
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+render_page_header("Facility View", "Explore facility distribution and participant counts")
 
 # Load facility data
 with st.spinner("Loading facility data..."):
@@ -80,11 +63,11 @@ median_patients = facility_df['patient_count'].median()
 with col1:
     st.metric("Total Facilities", total_facilities, help="Number of participating facilities")
 with col2:
-    st.metric("Total Patients", f"{total_patients:,}", help="Total patients across all facilities")
+    st.metric("Total Participants", f"{total_patients:,}", help="Total participants across all facilities")
 with col3:
-    st.metric("Avg Patients/Site", f"{avg_patients:.0f}", help="Average number of patients per site")
+    st.metric("Avg Participants/Site", f"{avg_patients:.0f}", help="Average number of participants per site")
 with col4:
-    st.metric("Median Patients", f"{median_patients:.0f}", help="Median number of patients per site")
+    st.metric("Median Participants", f"{median_patients:.0f}", help="Median number of participants per site")
 
 # Site Map
 st.markdown("---")
@@ -121,7 +104,7 @@ if site_locations:
     fv_ds_filter = None if fv_disease == "All Diseases" else fv_disease
     fv_title = "MOVR Participating Sites"
     if fv_ds_filter:
-        fv_title = f"MOVR Sites — {fv_ds_filter} Patients"
+        fv_title = f"MOVR Sites — {fv_ds_filter} Participants"
 
     site_map = create_site_map(
         site_locations,
@@ -144,13 +127,13 @@ if site_locations:
             for _, s in filtered_df.iterrows():
                 st_name = s['state']
                 if st_name not in state_counts:
-                    state_counts[st_name] = {"Sites": 0, "Patients": 0}
+                    state_counts[st_name] = {"Sites": 0, "Participants": 0}
                 state_counts[st_name]["Sites"] += 1
-                state_counts[st_name]["Patients"] += s['patient_count']
+                state_counts[st_name]["Participants"] += s['patient_count']
             state_df = pd.DataFrame([
-                {"State": k, "Sites": v["Sites"], "Patients": v["Patients"]}
+                {"State": k, "Sites": v["Sites"], "Participants": v["Participants"]}
                 for k, v in state_counts.items()
-            ]).sort_values("Patients", ascending=False).reset_index(drop=True)
+            ]).sort_values("Participants", ascending=False).reset_index(drop=True)
             static_table(state_df)
 
         with col2:
@@ -159,13 +142,13 @@ if site_locations:
             for _, s in filtered_df.iterrows():
                 rgn = s.get('region', 'Unknown') or 'Unknown'
                 if rgn not in region_counts:
-                    region_counts[rgn] = {"Sites": 0, "Patients": 0}
+                    region_counts[rgn] = {"Sites": 0, "Participants": 0}
                 region_counts[rgn]["Sites"] += 1
-                region_counts[rgn]["Patients"] += s['patient_count']
+                region_counts[rgn]["Participants"] += s['patient_count']
             region_df = pd.DataFrame([
-                {"Region": k, "Sites": v["Sites"], "Patients": v["Patients"]}
+                {"Region": k, "Sites": v["Sites"], "Participants": v["Participants"]}
                 for k, v in region_counts.items()
-            ]).sort_values("Patients", ascending=False).reset_index(drop=True)
+            ]).sort_values("Participants", ascending=False).reset_index(drop=True)
             static_table(region_df)
 else:
     st.info("Site geographic data not available.")
@@ -201,7 +184,7 @@ if site_locations:
                 "State": r["state"],
                 "Region": r.get("region", ""),
                 "Type": r.get("site_type", ""),
-                "Patients": r["patient_count"],
+                "Participants": r["patient_count"],
             }
             by_ds = r.get("by_disease")
             if isinstance(by_ds, dict) and by_ds:
@@ -213,7 +196,7 @@ if site_locations:
 else:
     static_table(
         facility_df[['FACILITY_DISPLAY_ID', 'patient_count']].rename(
-            columns={'FACILITY_DISPLAY_ID': 'Site ID', 'patient_count': 'Patients'}
+            columns={'FACILITY_DISPLAY_ID': 'Site ID', 'patient_count': 'Participants'}
         )
     )
 
@@ -224,30 +207,108 @@ st.subheader("Site Distribution Analysis")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("#### Patient Count Ranges")
+    st.markdown("#### Participant Count Ranges")
     bins = [0, 10, 25, 50, 100, 200, 1000]
     labels = ['1-10', '11-25', '26-50', '51-100', '101-200', '200+']
     facility_df['patient_range'] = pd.cut(
         facility_df['patient_count'], bins=bins, labels=labels, include_lowest=True
     )
     range_counts = facility_df['patient_range'].value_counts().sort_index()
-    range_df = pd.DataFrame({'Patient Range': range_counts.index, 'Site Count': range_counts.values})
+    range_df = pd.DataFrame({'Participant Range': range_counts.index, 'Site Count': range_counts.values})
     static_table(range_df)
 
 with col2:
     st.markdown("#### Key Statistics")
     stats_data = {
-        'Metric': ['Smallest Site', 'Largest Site', 'Average Size', 'Median Size', 'Std Dev', 'Total Patients'],
+        'Metric': ['Smallest Site', 'Largest Site', 'Average Size', 'Median Size', 'Std Dev', 'Total Participants'],
         'Value': [
-            f"{facility_df['patient_count'].min()} patients",
-            f"{facility_df['patient_count'].max()} patients",
-            f"{facility_df['patient_count'].mean():.1f} patients",
-            f"{facility_df['patient_count'].median():.0f} patients",
+            f"{facility_df['patient_count'].min()} participants",
+            f"{facility_df['patient_count'].max()} participants",
+            f"{facility_df['patient_count'].mean():.1f} participants",
+            f"{facility_df['patient_count'].median():.0f} participants",
             f"{facility_df['patient_count'].std():.1f}",
-            f"{facility_df['patient_count'].sum():,} patients",
+            f"{facility_df['patient_count'].sum():,} participants",
         ]
     }
     static_table(pd.DataFrame(stats_data))
+
+# ===================================================================
+# RECRUITMENT OVER TIME BY STATE
+# ===================================================================
+st.markdown("---")
+st.subheader("Recruitment Over Time")
+
+try:
+    _snapshot = get_cached_snapshot()
+    timeline = _snapshot.get('enrollment_timeline', {})
+    by_sdm = timeline.get('by_state_disease_month', [])
+
+    if by_sdm:
+        recruit_df = pd.DataFrame(by_sdm)
+        recruit_df['month'] = pd.to_datetime(recruit_df['month'])
+
+        # State selector
+        all_states = sorted(recruit_df['state'].unique())
+        selected_states = st.multiselect(
+            "Filter by State",
+            options=all_states,
+            default=None,
+            key="recruit_state_filter",
+            help="Leave empty to show all states"
+        )
+
+        if selected_states:
+            plot_df = recruit_df[recruit_df['state'].isin(selected_states)]
+        else:
+            plot_df = recruit_df
+
+        # Aggregate by month + disease (across selected states)
+        agg_df = plot_df.groupby(['month', 'disease'], as_index=False)['count'].sum()
+        agg_df = agg_df.sort_values(['disease', 'month'])
+        agg_df['cumulative'] = agg_df.groupby('disease')['count'].cumsum()
+
+        title_suffix = f" ({', '.join(selected_states)})" if selected_states else " (All States)"
+
+        col_cumul, col_monthly = st.columns(2)
+        with col_cumul:
+            fig = px.line(
+                agg_df,
+                x='month',
+                y='cumulative',
+                color='disease',
+                title=f'Cumulative Recruitment{title_suffix}',
+                labels={'month': '', 'cumulative': 'Cumulative Participants', 'disease': 'Disease'},
+            )
+            fig.update_layout(height=450, legend=dict(orientation='h', y=-0.15))
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col_monthly:
+            monthly_df = plot_df.groupby('month', as_index=False)['count'].sum()
+            fig_m = px.bar(
+                monthly_df,
+                x='month',
+                y='count',
+                title=f'Monthly New Enrollments{title_suffix}',
+                labels={'month': '', 'count': 'New Participants'},
+                color_discrete_sequence=['#1E88E5'],
+            )
+            fig_m.update_layout(height=450)
+            st.plotly_chart(fig_m, use_container_width=True)
+
+        # Notes
+        notes = []
+        missing = timeline.get('missing_date_count', 0)
+        clamped = timeline.get('pre_study_clamped', 0)
+        if missing > 0:
+            notes.append(f"{missing} participants with missing enrollment dates defaulted to first encounter or study start (Nov 2018)")
+        if clamped > 0:
+            notes.append(f"{clamped} pre-study enrollment dates clamped to first encounter or study start")
+        notes.append("State is determined by facility location, not participant residence")
+        st.caption(" | ".join(notes))
+    else:
+        st.info("Enrollment timeline data not available in snapshot.")
+except Exception as e:
+    st.info(f"Recruitment timeline not available: {e}")
 
 # Footer
 render_page_footer()

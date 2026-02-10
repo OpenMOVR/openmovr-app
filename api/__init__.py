@@ -36,4 +36,9 @@ try:
 except Exception:
     ALSAPI = None
 
-__all__ = ['CohortAPI', 'StatsAPI', 'ReportsAPI', 'DataDictionaryAPI', 'LGMDAPI', 'DMDAPI', 'ALSAPI']
+try:
+    from .sma import SMAAPI
+except Exception:
+    SMAAPI = None
+
+__all__ = ['CohortAPI', 'StatsAPI', 'ReportsAPI', 'DataDictionaryAPI', 'LGMDAPI', 'DMDAPI', 'ALSAPI', 'SMAAPI']

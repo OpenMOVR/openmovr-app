@@ -73,7 +73,7 @@ def patient_count_slider(min_val: int = 0,
                         max_val: int = 1000,
                         default_range: Optional[tuple] = None,
                         key: str = "patient_count_slider",
-                        label: str = "Patient Count Range") -> tuple:
+                        label: str = "Participant Count Range") -> tuple:
     """
     Create a patient count range slider.
 
@@ -100,7 +100,7 @@ def patient_count_slider(min_val: int = 0,
 
 
 def include_usndr_toggle(key: str = "include_usndr",
-                        label: str = "Include USNDR Legacy Patients",
+                        label: str = "Include USNDR Legacy Participants",
                         default: bool = False) -> bool:
     """
     Create a toggle for including USNDR patients.

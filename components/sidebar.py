@@ -10,17 +10,43 @@ import base64
 
 import streamlit as st
 
-from config.settings import LOGO_JPG, LOGO_PNG, APP_VERSION, STUDY_NAME
+from config.settings import (
+    LOGO_JPG, LOGO_PNG, APP_VERSION, STUDY_NAME,
+)
+
+
+def _render_prototype_banner() -> None:
+    """Render a small prototype banner at the top of every page."""
+    st.markdown(
+        """
+        <div style='background-color: #FFF3E0; border: 1px solid #FFB74D;
+        padding: 10px 16px; border-radius: 4px; margin-bottom: 1rem;
+        font-size: 0.83em; color: #E65100; text-align: center; line-height: 1.6;'>
+        <strong>Proof-of-Concept Prototype</strong> &mdash;
+        No individual-level data is accessible. No database is connected.
+        All statistics are pre-computed and fully aggregated &mdash;
+        no participant information can be identified or re-identified.
+        <br>
+        <span style='font-size: 0.92em; color: #BF360C;'>
+        Analytics are derived by the development team and will be refined
+        with clinician and research community feedback.
+        </span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def inject_global_css() -> None:
-    """Inject the global CSS shared by every page.
+    """Inject the global CSS and prototype banner shared by every page.
 
     Includes:
+    - Prototype status banner
     - Sidebar nav branding (title, subtitle, PUBLIC / DUA REQUIRED labels)
     - White sidebar / light-grey page background
     - ``.clean-table`` styling for static tables
     """
+    _render_prototype_banner()
     st.markdown(
         """
         <style>
@@ -48,7 +74,7 @@ def inject_global_css() -> None:
             color: #1E88E5;
         }
         [data-testid="stSidebarNav"]::after {
-            content: "Open Source Project | MOVR Data Hub | 1.0\\A openmovr.github.io | GitHub\\A Gen1 | v0.2.0";
+            content: "Open Source Project\\A Data Source: MDA MOVR Data Hub\\A Gen1 | v0.2.0 (Prototype)";
             position: absolute;
             top: 2.5rem;
             left: 0; right: 0;
@@ -77,10 +103,10 @@ def inject_global_css() -> None:
         }
 
         /* --- DUA REQUIRED separator --- */
-        [data-testid="stSidebarNav"] li:nth-last-child(6) {
+        [data-testid="stSidebarNav"] li:nth-last-child(7) {
             margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #ddd;
         }
-        [data-testid="stSidebarNav"] li:nth-last-child(6)::before {
+        [data-testid="stSidebarNav"] li:nth-last-child(7)::before {
             content: "DUA REQUIRED"; display: block; font-size: 0.7em;
             color: #1E88E5; font-weight: bold; padding: 0 14px 4px;
             letter-spacing: 0.05em;
@@ -117,6 +143,36 @@ def render_sidebar_footer() -> None:
             f'<img src="data:{_mime};base64,{_b64}" width="140" '
             f'style="display: inline-block;">'
             f'</div>',
+            unsafe_allow_html=True,
+        )
+
+
+def render_page_header(title: str, subtitle: str = "") -> None:
+    """Render the shared page header with title (left) and branding (right).
+
+    Call this at the top of every page after ``inject_global_css()`` and
+    ``render_sidebar_footer()``.
+    """
+    header_left, header_right = st.columns([3, 1])
+
+    with header_left:
+        st.title(title)
+        if subtitle:
+            st.markdown(f"### {subtitle}")
+
+    with header_right:
+        st.markdown(
+            f"""
+            <div style='text-align: right; padding-top: 10px;'>
+                <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
+                <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
+                    Gen1 | v{APP_VERSION} (Prototype)
+                </span><br>
+                <span style='font-size: 0.75em; color: #999; margin-top: 4px; display: inline-block;'>
+                    Data Source: MDA {STUDY_NAME}
+                </span>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
 

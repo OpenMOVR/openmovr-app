@@ -63,8 +63,8 @@ def create_disease_distribution_chart(disease_data: List[Dict[str, Any]],
         fig.update_layout(showlegend=False)
 
     fig.update_layout(
-        xaxis_title="Disease" if chart_type != 'horizontal_bar' else "Patient Count",
-        yaxis_title="Patient Count" if chart_type != 'horizontal_bar' else "Disease",
+        xaxis_title="Disease" if chart_type != 'horizontal_bar' else "Participant Count",
+        yaxis_title="Participant Count" if chart_type != 'horizontal_bar' else "Disease",
         height=400
     )
 
@@ -93,7 +93,7 @@ def create_facility_chart(facility_data: List[Dict[str, Any]],
             x='patient_count',
             y='FACILITY_NAME',
             orientation='h',
-            title=f'Top {top_n} Facilities by Patient Count',
+            title=f'Top {top_n} Facilities by Participant Count',
             text='patient_count',
             color='patient_count',
             color_continuous_scale='Viridis'
@@ -109,7 +109,7 @@ def create_facility_chart(facility_data: List[Dict[str, Any]],
             df,
             x='FACILITY_NAME',
             y='patient_count',
-            title=f'Top {top_n} Facilities by Patient Count',
+            title=f'Top {top_n} Facilities by Participant Count',
             text='patient_count',
             color='patient_count',
             color_continuous_scale='Viridis'
@@ -204,7 +204,7 @@ def create_age_distribution_chart(
         nbins=20,
         title=title,
         color_discrete_sequence=[color],
-        labels={"value": "Age (years)", "count": "Patients"},
+        labels={"value": "Age (years)", "count": "Participants"},
     )
 
     fig.add_vline(
@@ -218,7 +218,7 @@ def create_age_distribution_chart(
     fig.update_layout(
         height=400,
         xaxis_title="Age (years)",
-        yaxis_title="Number of Patients",
+        yaxis_title="Number of Participants",
         showlegend=False,
         annotations=[
             dict(
@@ -273,7 +273,7 @@ def create_categorical_bar_chart(
         height=max(350, len(counts) * 35),
         showlegend=False,
         yaxis=dict(categoryorder="total ascending"),
-        xaxis_title="Patients",
+        xaxis_title="Participants",
         yaxis_title="",
         coloraxis_showscale=False,
     )
@@ -337,7 +337,7 @@ def create_numeric_histogram_chart(
         nbins=nbins,
         title=title,
         color_discrete_sequence=[color],
-        labels={"value": title.replace(" Distribution", ""), "count": "Patients"},
+        labels={"value": title.replace(" Distribution", ""), "count": "Participants"},
     )
 
     fig.add_vline(
@@ -351,7 +351,7 @@ def create_numeric_histogram_chart(
     fig.update_layout(
         height=400,
         xaxis_title=title.replace(" Distribution", ""),
-        yaxis_title="Number of Patients",
+        yaxis_title="Number of Participants",
         showlegend=False,
         annotations=[
             dict(
@@ -392,16 +392,16 @@ def create_facility_distribution_mini_chart(
     else:
         labels = [str(fid) for fid in counts.index]
 
-    chart_df = pd.DataFrame({"Site": labels, "Patients": counts.values})
+    chart_df = pd.DataFrame({"Site": labels, "Participants": counts.values})
 
     fig = px.bar(
         chart_df,
-        x="Patients",
+        x="Participants",
         y="Site",
         orientation="h",
         title=title,
-        text="Patients",
-        color="Patients",
+        text="Participants",
+        color="Participants",
         color_continuous_scale="Viridis",
     )
     fig.update_traces(texttemplate="%{text:,}", textposition="outside")
@@ -409,7 +409,7 @@ def create_facility_distribution_mini_chart(
         height=max(350, top_n * 35),
         showlegend=False,
         yaxis=dict(categoryorder="total ascending", type="category"),
-        xaxis_title="Patients",
+        xaxis_title="Participants",
         yaxis_title="",
         coloraxis_showscale=False,
     )
@@ -487,7 +487,7 @@ def create_site_map(
     def _hover(r):
         lines = [
             f"<b>{r['city']}, {r['state']}</b>",
-            f"Patients: {r['patient_count']:,}",
+            f"Participants: {r['patient_count']:,}",
         ]
         if r.get("region"):
             lines.append(f"Region: {r['region']}")
@@ -525,7 +525,7 @@ def create_site_map(
             colorscale="Blues",
             cmin=0,
             cmax=df["patient_count"].max(),
-            colorbar=dict(title="Patients"),
+            colorbar=dict(title="Participants"),
             line=dict(width=0.5, color="#333"),
             opacity=0.85,
         ),

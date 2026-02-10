@@ -26,7 +26,7 @@ from components.charts import (
     create_facility_distribution_mini_chart,
 )
 from components.tables import display_cohort_summary, static_table
-from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer
+from components.sidebar import inject_global_css, render_sidebar_footer, render_page_footer, render_page_header
 from utils.cache import get_cached_snapshot
 from config.settings import PAGE_ICON, DISEASE_DISPLAY_ORDER, COLOR_SCHEMES
 
@@ -55,7 +55,7 @@ def _unavailable_section(title, detail=None):
     )
 
 
-from components.clinical_summary import render_dmd_clinical_summary, render_lgmd_clinical_summary, render_als_clinical_summary
+from components.clinical_summary import render_dmd_clinical_summary, render_lgmd_clinical_summary, render_als_clinical_summary, render_sma_clinical_summary
 
 # ---------------------------------------------------------------------------
 # Clinical summary renderer registry
@@ -66,29 +66,11 @@ _CLINICAL_SUMMARY_RENDERERS = {
     'DMD': render_dmd_clinical_summary,
     'LGMD': render_lgmd_clinical_summary,
     'ALS': render_als_clinical_summary,
-    # 'SMA': render_sma_clinical_summary,   # planned
+    'SMA': render_sma_clinical_summary,
 }
 
 
-# Header with branding
-header_left, header_right = st.columns([3, 1])
-
-with header_left:
-    st.title("Disease Explorer")
-    st.markdown("### Explore disease-specific cohorts and patient data")
-
-with header_right:
-    st.markdown(
-        """
-        <div style='text-align: right; padding-top: 10px;'>
-            <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
-            <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                Gen1 | v0.2.0
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+render_page_header("Disease Explorer", "Explore disease-specific cohorts and participant data")
 
 
 # ---------------------------------------------------------------------------
@@ -119,7 +101,7 @@ if not _has_parquet:
     # Prototype banner
     st.warning(
         "**Snapshot Mode (Prototype)** — This page displays pre-computed summary statistics only. "
-        "Interactive filters, patient-level data tables, and dynamic charts require a live data connection. "
+        "Interactive filters, participant-level data tables, and dynamic charts require a live data connection. "
         "To request access to the full dataset, use the [MDA Data Request Form](https://mdausa.tfaforms.net/389761)."
     )
 
@@ -156,9 +138,9 @@ if not _has_parquet:
     with col1:
         count = disease_info['patient_count'] if disease_info else summary_entry.get('count', 0)
         st.metric(
-            "Total Patients",
+            "Total Participants",
             f"{count:,}",
-            help=f"Number of {selected_disease} patients in the registry",
+            help=f"Number of {selected_disease} participants in the registry",
         )
 
     with col2:
@@ -166,12 +148,12 @@ if not _has_parquet:
         st.metric(
             "% of Registry",
             f"{pct:.1f}%",
-            help="Percentage of total MOVR patients",
+            help="Percentage of total MOVR participants",
         )
 
     with col3:
         total = snapshot['enrollment']['total_patients']
-        st.metric("Total Registry", f"{total:,}", help="Total patients across all diseases")
+        st.metric("Total Registry", f"{total:,}", help="Total participants across all diseases")
 
     with col4:
         st.metric(
@@ -196,8 +178,8 @@ if not _has_parquet:
             x='patient_count',
             y='disease',
             orientation='h',
-            title='Patient Count by Disease',
-            labels={'patient_count': 'Patients', 'disease': 'Disease'},
+            title='Participant Count by Disease',
+            labels={'patient_count': 'Participants', 'disease': 'Disease'},
             color='patient_count',
             color_continuous_scale='Blues',
         )
@@ -205,18 +187,55 @@ if not _has_parquet:
         st.plotly_chart(fig, use_container_width=True)
 
     with col_table:
-        st.markdown("**Patient Counts**")
+        st.markdown("**Participant Counts**")
         table_df = diseases_df[['disease', 'patient_count', 'percentage']].copy()
-        table_df.columns = ['Disease', 'Patients', '%']
+        table_df.columns = ['Disease', 'Participants', '%']
         table_df['%'] = table_df['%'].apply(lambda x: f"{x:.1f}%")
         static_table(table_df)
 
     # ===================================================================
-    # TABS: Demographics | Diagnosis | Clinical Summary (alpha) | Data Summary
+    # ENROLLMENT OVER TIME
+    # ===================================================================
+    timeline = snapshot.get('enrollment_timeline', {})
+    by_dm = timeline.get('by_disease_month', [])
+    if by_dm:
+        st.markdown("---")
+        st.subheader("Enrollment Over Time")
+
+        tl_df = pd.DataFrame(by_dm)
+        tl_df['month'] = pd.to_datetime(tl_df['month'])
+        tl_df = tl_df.sort_values(['disease', 'month'])
+
+        # Cumulative per disease
+        tl_df['cumulative'] = tl_df.groupby('disease')['count'].cumsum()
+
+        fig = px.line(
+            tl_df,
+            x='month',
+            y='cumulative',
+            color='disease',
+            title='Cumulative Enrollment by Disease',
+            labels={'month': 'Date', 'cumulative': 'Cumulative Participants', 'disease': 'Disease'},
+        )
+        fig.update_layout(height=450, xaxis_title='', yaxis_title='Cumulative Participants')
+        st.plotly_chart(fig, use_container_width=True)
+
+        notes = []
+        missing = timeline.get('missing_date_count', 0)
+        clamped = timeline.get('pre_study_clamped', 0)
+        if missing > 0:
+            notes.append(f"{missing} participants with missing enrollment dates defaulted to first encounter or study start (Nov 2018)")
+        if clamped > 0:
+            notes.append(f"{clamped} pre-study enrollment dates clamped to first encounter or study start")
+        if notes:
+            st.caption(" | ".join(notes))
+
+    # ===================================================================
+    # TABS: Demographics | Diagnosis | Clinical Summary Preview | Data Summary
     # ===================================================================
     st.markdown("---")
     tab_demo, tab_diag, tab_deep, tab_data = st.tabs([
-        "Demographics", "Diagnosis", "Clinical Summary (Alpha)", "Data Summary"
+        "Demographics", "Diagnosis", "Clinical Summary Preview", "Data Summary"
     ])
 
     # --- Tab 1: Demographics ---
@@ -242,7 +261,7 @@ if not _has_parquet:
                     fig.update_layout(
                         title="Age at Enrollment",
                         xaxis_title="Age Range",
-                        yaxis_title="Patients",
+                        yaxis_title="Participants",
                         height=350,
                         margin=dict(t=40, b=40),
                     )
@@ -261,7 +280,7 @@ if not _has_parquet:
                     fig.update_layout(
                         title="Age at Diagnosis",
                         xaxis_title="Age Range",
-                        yaxis_title="Patients",
+                        yaxis_title="Participants",
                         height=350,
                         margin=dict(t=40, b=40),
                     )
@@ -391,7 +410,7 @@ if not _has_parquet:
                             ))
                             fig.update_layout(
                                 title=dx['label'],
-                                xaxis_title="Patients",
+                                xaxis_title="Participants",
                                 height=max(250, len(labels) * 25 + 80),
                                 margin=dict(t=40, b=40, l=200),
                             )
@@ -409,30 +428,49 @@ if not _has_parquet:
             st.subheader(f"{selected_disease} Diagnosis Profile")
             _unavailable_section("Diagnosis Profile", "Diagnosis data not available for this disease.")
 
-    # --- Tab 3: Clinical Summary (Alpha) ---
+    # --- Tab 3: Clinical Summary Preview ---
     with tab_deep:
+        # Enrollment over time for the selected disease
+        _tl = snapshot.get('enrollment_timeline', {})
+        _tl_dm = _tl.get('by_disease_month', [])
+        _ds_tl = [r for r in _tl_dm if r.get('disease') == selected_disease]
+        if _ds_tl:
+            st.markdown("#### Enrollment Over Time")
+            _ds_tl_df = pd.DataFrame(_ds_tl)
+            _ds_tl_df['month'] = pd.to_datetime(_ds_tl_df['month'])
+            _ds_tl_df = _ds_tl_df.sort_values('month')
+            _ds_tl_df['cumulative'] = _ds_tl_df['count'].cumsum()
+
+            _c1, _c2 = st.columns(2)
+            with _c1:
+                _fig_c = px.line(
+                    _ds_tl_df, x='month', y='cumulative',
+                    title=f'Cumulative {selected_disease} Enrollment',
+                    labels={'month': '', 'cumulative': 'Participants'},
+                    color_discrete_sequence=['#1E88E5'],
+                )
+                _fig_c.update_layout(height=350)
+                st.plotly_chart(_fig_c, use_container_width=True)
+            with _c2:
+                _fig_m = px.bar(
+                    _ds_tl_df, x='month', y='count',
+                    title=f'Monthly New {selected_disease} Enrollments',
+                    labels={'month': '', 'count': 'New Participants'},
+                    color_discrete_sequence=['#1E88E5'],
+                )
+                _fig_m.update_layout(height=350)
+                st.plotly_chart(_fig_m, use_container_width=True)
+
         renderer = _CLINICAL_SUMMARY_RENDERERS.get(selected_disease)
         if renderer:
             st.info(
                 "**Alpha Preview** — Clinical summary analytics rendered from pre-computed snapshots. "
                 "Full clinical summaries with data tables are available in the "
-                "DUA-gated pages (DMD Clinical Summary, LGMD Clinical Summary)."
+                "DUA-gated Clinical Analytics pages."
             )
             renderer()
         else:
             _disease_placeholders = {
-                "ALS": (
-                    "A clinical summary for ALS is in development. "
-                    "Upcoming features include ALSFRS-R longitudinal tracking, "
-                    "respiratory function (FVC) trends, loss of ambulation analysis, "
-                    "and therapeutic utilization."
-                ),
-                "SMA": (
-                    "A clinical summary for SMA is in development. "
-                    "Upcoming features include HFMSE/CHOP-INTEND longitudinal tracking, "
-                    "respiratory function trends, and therapeutic utilization "
-                    "(Spinraza, Zolgensma, Evrysdi)."
-                ),
                 "BMD": (
                     "A clinical summary for BMD is in development. "
                     "Upcoming features include functional outcome tracking, "
@@ -470,7 +508,7 @@ if not _has_parquet:
 
         with col_s1:
             count = disease_info['patient_count'] if disease_info else 0
-            st.metric("Patients", f"{count:,}")
+            st.metric("Participants", f"{count:,}")
         with col_s2:
             n_demo_fields = len(demo_snap) if isinstance(demo_snap, dict) else 0
             n_diag_fields = len(diag_snap) if isinstance(diag_snap, list) else 0
@@ -507,7 +545,7 @@ if not _has_parquet:
 
         st.caption(
             "Full data tables and CSV downloads are available in the "
-            "**Download Center** and **Clinical Summary** pages (provisioned access required)."
+            "**Download Center** and **Clinical Analytics** pages (DUA required)."
         )
 
 
@@ -538,7 +576,7 @@ else:
         st.markdown("---")
 
         include_usndr = include_usndr_toggle(
-            label="Include USNDR Legacy Patients",
+            label="Include USNDR Legacy Participants",
             default=False,
             key="usndr_toggle_explorer"
         )
@@ -591,10 +629,10 @@ else:
             diff = total_filtered - total_unfiltered
             delta = f"{diff:,}" if diff != 0 else None
         st.metric(
-            "Total Patients",
+            "Total Participants",
             f"{total_filtered:,}",
             delta=delta,
-            help=f"Number of {selected_disease} patients" + (" (filtered)" if active_filters else ""),
+            help=f"Number of {selected_disease} participants" + (" (filtered)" if active_filters else ""),
         )
 
     with col2:
@@ -612,15 +650,15 @@ else:
     if active_filters:
         st.info(
             f"Showing **{total_filtered:,}** of **{total_unfiltered:,}** "
-            f"{selected_disease} patients ({len(active_filters)} filter(s) active)"
+            f"{selected_disease} participants ({len(active_filters)} filter(s) active)"
         )
 
     # ===================================================================
-    # TABS: Demographics | Diagnosis | Clinical Summary | Data Summary
+    # TABS: Demographics | Diagnosis | Clinical Summary Preview | Data Summary
     # ===================================================================
     st.markdown("---")
     tab_demo, tab_diag, tab_deep, tab_data = st.tabs([
-        "Demographics", "Diagnosis", "Clinical Summary", "Data Summary"
+        "Demographics", "Diagnosis", "Clinical Summary Preview", "Data Summary"
     ])
 
     # --- Tab 1: Demographics ---
@@ -664,7 +702,7 @@ else:
                             fig.update_layout(
                                 title=f"Age at Enrollment (median {enrl_age.median():.0f})",
                                 xaxis_title="Age Range",
-                                yaxis_title="Patients",
+                                yaxis_title="Participants",
                                 height=350,
                                 margin=dict(t=40, b=40),
                             )
@@ -696,7 +734,7 @@ else:
                         fig.update_layout(
                             title=f"Age at Diagnosis (median {ages.median():.0f})",
                             xaxis_title="Age Range",
-                            yaxis_title="Patients",
+                            yaxis_title="Participants",
                             height=350,
                             margin=dict(t=40, b=40),
                         )
@@ -960,31 +998,16 @@ else:
             st.subheader(f"{selected_disease} Diagnosis Profile")
             _unavailable_section("Diagnosis Profile", "No diagnosis profile configured for this disease.")
 
-    # --- Tab 3: Clinical Summary ---
+    # --- Tab 3: Clinical Summary Preview ---
     with tab_deep:
         renderer = _CLINICAL_SUMMARY_RENDERERS.get(selected_disease)
         if renderer:
             renderer()
         else:
-            _disease_placeholders = {
-                "ALS": (
-                    "A clinical summary for ALS is in development. "
-                    "Upcoming features include ALSFRS-R longitudinal tracking, "
-                    "respiratory function (FVC) trends, loss of ambulation analysis, "
-                    "and therapeutic utilization."
-                ),
-                "SMA": (
-                    "A clinical summary for SMA is in development. "
-                    "Upcoming features include HFMSE/CHOP-INTEND longitudinal tracking, "
-                    "respiratory function trends, and therapeutic utilization "
-                    "(Spinraza, Zolgensma, Evrysdi)."
-                ),
-            }
-            placeholder_msg = _disease_placeholders.get(
-                selected_disease,
+            placeholder_msg = (
                 f"A clinical summary for {selected_disease} is in development. "
                 "Upcoming features include longitudinal functional outcome tracking, "
-                "therapeutic utilization, and detailed cohort characterization.",
+                "therapeutic utilization, and detailed cohort characterization."
             )
             _unavailable_section(f"{selected_disease} Clinical Summary", placeholder_msg)
 
@@ -1017,7 +1040,7 @@ else:
             if not demographics_df.empty:
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.metric("Patients", f"{len(demographics_df):,}")
+                    st.metric("Participants", f"{len(demographics_df):,}")
                 with col2:
                     st.metric("Fields", f"{len(demographics_df.columns):,}")
                 with col3:
@@ -1035,10 +1058,10 @@ else:
                     st.metric("Records", f"{len(encounters_df):,}")
                 with col2:
                     n_pts = encounters_df['FACPATID'].nunique() if 'FACPATID' in encounters_df.columns else 0
-                    st.metric("Patients", f"{n_pts:,}")
+                    st.metric("Participants", f"{n_pts:,}")
                 with col3:
                     mean_enc = len(encounters_df) / max(n_pts, 1)
-                    st.metric("Mean Visits / Patient", f"{mean_enc:.1f}")
+                    st.metric("Mean Visits / Participant", f"{mean_enc:.1f}")
             else:
                 st.caption("No encounter data available.")
 
@@ -1051,7 +1074,7 @@ else:
                     st.metric("Records", f"{len(medications_df):,}")
                 with col2:
                     n_pts = medications_df['FACPATID'].nunique() if 'FACPATID' in medications_df.columns else 0
-                    st.metric("Patients", f"{n_pts:,}")
+                    st.metric("Participants", f"{n_pts:,}")
             else:
                 st.caption("No medication data available.")
 
