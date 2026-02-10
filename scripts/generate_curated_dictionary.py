@@ -123,17 +123,24 @@ def classify_all_fields(df: pd.DataFrame, config: dict) -> pd.Series:
 
 
 def build_domain_summary(df: pd.DataFrame) -> list:
-    """Build domain × disease matrix for overview."""
+    """Build domain × disease matrix for overview.
+
+    field_count uses unique Field Name values (not rows) so that fields
+    appearing in multiple forms (Demographics, Encounter, Log, etc.) are
+    only counted once.
+    """
     summary = []
     for domain in df["Clinical Domain"].unique():
         domain_df = df[df["Clinical Domain"] == domain]
         entry = {
             "domain": domain,
-            "field_count": len(domain_df),
+            "field_count": int(domain_df["Field Name"].nunique()),
         }
         for col in DISEASE_COLUMNS:
             if col in df.columns:
-                entry[col] = int(domain_df[col].sum())
+                # Count unique field names where disease flag is True
+                ds_fields = domain_df.loc[domain_df[col] == True, "Field Name"]
+                entry[col] = int(ds_fields.nunique())
         summary.append(entry)
 
     # Sort by canonical order if available

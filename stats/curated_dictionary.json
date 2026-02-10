@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-02-07T17:32:51.232767",
+    "generated_at": "2026-02-09T21:29:07.873400",
     "source": "data/datadictionary.parquet",
     "config": "config/clinical_domains.yaml",
     "total_fields": 1024,
@@ -34,14 +34,14 @@
   "domain_summary": [
     {
       "domain": "Demographics & Enrollment",
-      "field_count": 50,
-      "ALS": 50,
-      "BMD": 50,
-      "DMD": 50,
-      "SMA": 50,
-      "LGMD": 50,
-      "FSHD": 50,
-      "Pompe": 50
+      "field_count": 35,
+      "ALS": 35,
+      "BMD": 35,
+      "DMD": 35,
+      "SMA": 35,
+      "LGMD": 35,
+      "FSHD": 35,
+      "Pompe": 35
     },
     {
       "domain": "Disease Classification & Diagnosis",
@@ -78,11 +78,11 @@
     },
     {
       "domain": "Mobility & Ambulation",
-      "field_count": 41,
-      "ALS": 21,
-      "BMD": 24,
-      "DMD": 24,
-      "SMA": 17,
+      "field_count": 38,
+      "ALS": 18,
+      "BMD": 21,
+      "DMD": 21,
+      "SMA": 14,
       "LGMD": 15,
       "FSHD": 16,
       "Pompe": 16
@@ -111,7 +111,7 @@
     },
     {
       "domain": "Disease Milestones & Progression",
-      "field_count": 158,
+      "field_count": 138,
       "ALS": 7,
       "BMD": 1,
       "DMD": 1,
@@ -122,11 +122,11 @@
     },
     {
       "domain": "Pulmonary & Respiratory",
-      "field_count": 146,
-      "ALS": 46,
-      "BMD": 46,
-      "DMD": 46,
-      "SMA": 126,
+      "field_count": 144,
+      "ALS": 44,
+      "BMD": 44,
+      "DMD": 44,
+      "SMA": 124,
       "LGMD": 37,
       "FSHD": 39,
       "Pompe": 39
@@ -155,33 +155,33 @@
     },
     {
       "domain": "Medications & Treatments",
-      "field_count": 141,
-      "ALS": 16,
-      "BMD": 55,
-      "DMD": 55,
-      "SMA": 60,
+      "field_count": 136,
+      "ALS": 11,
+      "BMD": 50,
+      "DMD": 50,
+      "SMA": 55,
       "LGMD": 9,
       "FSHD": 10,
       "Pompe": 41
     },
     {
       "domain": "Orthopedic & Surgical",
-      "field_count": 60,
+      "field_count": 58,
       "ALS": 9,
-      "BMD": 32,
-      "DMD": 32,
-      "SMA": 40,
+      "BMD": 30,
+      "DMD": 30,
+      "SMA": 38,
       "LGMD": 25,
       "FSHD": 19,
       "Pompe": 19
     },
     {
       "domain": "Hospitalizations",
-      "field_count": 19,
-      "ALS": 13,
-      "BMD": 13,
-      "DMD": 13,
-      "SMA": 13,
+      "field_count": 18,
+      "ALS": 12,
+      "BMD": 12,
+      "DMD": 12,
+      "SMA": 12,
       "LGMD": 7,
       "FSHD": 7,
       "Pompe": 7

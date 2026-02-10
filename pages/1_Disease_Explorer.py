@@ -98,11 +98,10 @@ if not _has_parquet:
         st.error(f"Error loading snapshot: {e}")
         st.stop()
 
-    # Prototype banner
-    st.warning(
-        "**Snapshot Mode (Prototype)** — This page displays pre-computed summary statistics only. "
-        "Interactive filters, participant-level data tables, and dynamic charts require a live data connection. "
-        "To request access to the full dataset, use the [MDA Data Request Form](https://mdausa.tfaforms.net/389761)."
+    # Snapshot mode banner
+    st.info(
+        "**Snapshot Mode** — This is a preview with pre-computed summary statistics. "
+        "Interactive filters and participant-level data require a live data connection."
     )
 
     # Sidebar — disease selector only (no filters in snapshot mode)
@@ -433,9 +432,8 @@ if not _has_parquet:
         renderer = _CLINICAL_SUMMARY_RENDERERS.get(selected_disease)
         if renderer:
             st.info(
-                "**Alpha Preview** — Clinical summary analytics rendered from pre-computed snapshots. "
-                "Full clinical summaries with data tables are available in the "
-                "DUA-gated Clinical Analytics pages."
+                "**Preview** — Full analytics with data tables are available in the "
+                "Clinical Analytics pages (DUA required)."
             )
             renderer()
         else:
@@ -517,32 +515,18 @@ if not _has_parquet:
         with sub_demo:
             st.markdown(f"#### Demographics ({selected_disease})")
             if demo_snap:
-                # Count non-empty sections and total records
-                n_sections = 0
-                total_records = 0
-                demo_rows = []
-                for key, data in demo_snap.items():
-                    if isinstance(data, list) and data:
-                        n = sum(d.get('count', 0) for d in data)
-                        if n > 0:
-                            n_sections += 1
-                            total_records += n
-                            demo_rows.append({
-                                "Field": key.replace("_", " ").title(),
-                                "Records": f"{n:,}",
-                                "Categories": len(data),
-                            })
+                n_sections = sum(1 for data in demo_snap.values()
+                                 if isinstance(data, list) and data)
 
                 col_d1, col_d2, col_d3 = st.columns(3)
                 with col_d1:
                     st.metric("Participants", f"{count:,}")
                 with col_d2:
-                    st.metric("Demographic Fields", n_sections)
+                    st.metric("Demographic Sections", n_sections)
                 with col_d3:
-                    st.metric("Total Records", f"{total_records:,}")
-
-                if demo_rows:
-                    static_table(pd.DataFrame(demo_rows))
+                    completeness = f"{n_sections}/7"
+                    st.metric("Coverage", completeness,
+                              help="Sections with data out of 7 (gender, age, ethnicity, insurance, education, employment, diagnosis age)")
             else:
                 st.caption("No demographics data available for this disease.")
 
@@ -587,22 +571,6 @@ if not _has_parquet:
                            "are available in the Clinical Analytics pages (DUA required).")
             else:
                 st.caption("No medication data available in the snapshot.")
-
-            # Diagnosis fields for completeness
-            if diag_snap:
-                st.markdown("#### Diagnosis Fields")
-                diag_rows = []
-                for dx in diag_snap:
-                    label = dx.get('label', 'Unknown')
-                    if dx.get('type') == 'categorical':
-                        n = sum(d.get('count', 0) for d in dx.get('values', []))
-                    elif dx.get('type') == 'numeric':
-                        n = dx.get('n', 0)
-                    else:
-                        n = 0
-                    diag_rows.append({"Field": label, "Records": f"{n:,}", "Type": dx.get('type', '—').title()})
-                if diag_rows:
-                    static_table(pd.DataFrame(diag_rows))
 
         st.caption(
             "Full data tables and CSV downloads are available in the "
