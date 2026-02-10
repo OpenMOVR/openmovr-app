@@ -468,109 +468,43 @@ if not _has_parquet:
         disease_profiles = snapshot.get('disease_profiles', {})
         profile = disease_profiles.get(selected_disease, {})
         demo_snap = profile.get('demographics', {})
-        diag_snap = profile.get('diagnosis', [])
         longitudinal = snapshot.get('longitudinal', {})
         ds_long = longitudinal.get('by_disease', {}).get(selected_disease, {})
+        clinical = snapshot.get('clinical_availability', {})
+        meds = clinical.get('medications', {})
+        count = disease_info['patient_count'] if disease_info else 0
 
-        sub_cohort, sub_demo, sub_enc, sub_meds = st.tabs([
-            "Cohort", "Demographics", "Encounters", "Medications"
-        ])
+        # --- Cohort ---
+        st.markdown(f"**Cohort** — {count:,} participants")
 
-        with sub_cohort:
-            st.markdown("#### Cohort Statistics")
-            count = disease_info['patient_count'] if disease_info else 0
-            pct = disease_info['percentage'] if disease_info else 0
-            total = snapshot['enrollment']['total_patients']
+        # --- Demographics ---
+        demo_fields = profile.get('demographics_field_count', '—')
+        demo_compl = profile.get('demographics_completeness_pct', '—')
+        st.markdown(
+            f"**Demographics** — {count:,} participants · "
+            f"{demo_fields} fields · {demo_compl}% completeness"
+        )
 
-            col_c1, col_c2, col_c3, col_c4 = st.columns(4)
-            with col_c1:
-                st.metric("Participants", f"{count:,}")
-            with col_c2:
-                st.metric("% of Registry", f"{pct:.1f}%")
-            with col_c3:
-                py = ds_long.get('total_person_years')
-                st.metric("Person-Years", f"{py:,.0f}" if py else "—")
-            with col_c4:
-                has_cs = selected_disease in _CLINICAL_SUMMARY_RENDERERS
-                st.metric("Clinical Analytics", "Available" if has_cs else "Planned")
+        # --- Encounters ---
+        if ds_long:
+            enc_count = ds_long.get('encounters', 0)
+            enc_pts = ds_long.get('patients', 0)
+            enc_median = ds_long.get('median_per_patient', '—')
+            st.markdown(
+                f"**Encounters** — {enc_count:,} records · "
+                f"{enc_pts:,} participants · {enc_median} median visits"
+            )
+        else:
+            st.markdown("**Encounters** — not available")
 
-            # Longitudinal summary
-            if ds_long:
-                st.markdown("#### Longitudinal Profile")
-                col_l1, col_l2, col_l3, col_l4 = st.columns(4)
-                with col_l1:
-                    st.metric("Encounters", f"{ds_long.get('encounters', 0):,}")
-                with col_l2:
-                    md = ds_long.get('mean_duration_years')
-                    sd = ds_long.get('std_duration_years')
-                    dur = f"{md} \u00b1 {sd} yr" if md is not None and sd is not None else "—"
-                    st.metric("Registry Duration", dur)
-                with col_l3:
-                    ivi = ds_long.get('inter_visit_interval', {})
-                    st.metric("Visit Interval", f"{ivi['median_months']} mo" if ivi.get('median_months') else "—")
-                with col_l4:
-                    ret = ds_long.get('retention', {}).get('year_1', {})
-                    st.metric("1-Yr Retention", f"{ret['rate_pct']}%" if ret.get('rate_pct') else "—")
-
-        with sub_demo:
-            st.markdown(f"#### Demographics ({selected_disease})")
-            if demo_snap:
-                n_sections = sum(1 for data in demo_snap.values()
-                                 if isinstance(data, list) and data)
-
-                col_d1, col_d2, col_d3 = st.columns(3)
-                with col_d1:
-                    st.metric("Participants", f"{count:,}")
-                with col_d2:
-                    st.metric("Demographic Sections", n_sections)
-                with col_d3:
-                    completeness = f"{n_sections}/7"
-                    st.metric("Coverage", completeness,
-                              help="Sections with data out of 7 (gender, age, ethnicity, insurance, education, employment, diagnosis age)")
-            else:
-                st.caption("No demographics data available for this disease.")
-
-        with sub_enc:
-            st.markdown(f"#### Encounters ({selected_disease})")
-            if ds_long:
-                col_e1, col_e2, col_e3 = st.columns(3)
-                with col_e1:
-                    st.metric("Records", f"{ds_long.get('encounters', 0):,}")
-                with col_e2:
-                    st.metric("Participants", f"{ds_long.get('patients', 0):,}")
-                with col_e3:
-                    st.metric("Mean Visits / Participant", f"{ds_long.get('mean_per_patient', 0)}")
-
-                # Encounter depth table
-                enc_rows = [
-                    {"Metric": "Mean visits per participant", "Value": f"{ds_long.get('mean_per_patient', 0)}"},
-                    {"Metric": "Median visits per participant", "Value": f"{ds_long.get('median_per_patient', 0)}"},
-                    {"Metric": "Participants with 3+ visits", "Value": f"{ds_long.get('patients_3plus', 0):,}"},
-                ]
-                ivi = ds_long.get('inter_visit_interval', {})
-                if ivi.get('median_months'):
-                    enc_rows.append({
-                        "Metric": "Median inter-visit interval",
-                        "Value": f"{ivi['median_months']} months (IQR: {ivi.get('q1_months', '—')}–{ivi.get('q3_months', '—')})",
-                    })
-                static_table(pd.DataFrame(enc_rows))
-            else:
-                st.caption("No encounter data available for this disease.")
-
-        with sub_meds:
-            st.markdown(f"#### Medications ({selected_disease})")
-            clinical = snapshot.get('clinical_availability', {})
-            meds = clinical.get('medications', {})
-            if meds:
-                col_m1, col_m2 = st.columns(2)
-                with col_m1:
-                    st.metric("Total Medication Records", f"{meds.get('total_records', 0):,}")
-                with col_m2:
-                    st.metric("Participants on Medication", f"{meds.get('total_patients', 0):,}")
-                st.caption("Registry-wide medication totals. Disease-specific medication breakdowns "
-                           "are available in the Clinical Analytics pages (DUA required).")
-            else:
-                st.caption("No medication data available in the snapshot.")
+        # --- Medications ---
+        if meds:
+            st.markdown(
+                f"**Medications** — {meds.get('total_records', 0):,} records · "
+                f"{meds.get('total_patients', 0):,} participants"
+            )
+        else:
+            st.markdown("**Medications** — not available")
 
         st.caption(
             "Full data tables and CSV downloads are available in the "
@@ -1044,68 +978,54 @@ else:
     with tab_data:
         st.subheader("Data Summary")
 
-        sub1, sub2, sub3, sub4 = st.tabs([
-            "Cohort",
-            "Demographics",
-            "Encounters",
-            "Medications"
-        ])
+        demographics_df = filtered_cohort['demographics']
+        encounters_df = filtered_cohort['encounters']
+        medications_df = filtered_cohort['medications']
 
-        with sub1:
-            st.markdown("#### Cohort Statistics")
-            display_cohort_summary(cohort_summary)
+        # --- Cohort ---
+        st.markdown(f"**Cohort** — {total_filtered:,} participants")
 
-            if cohort_summary.get('dstype_distribution'):
-                st.markdown("#### Disease Type Distribution")
-                dstype_data = [
-                    {'Type': k, 'Count': v}
-                    for k, v in cohort_summary['dstype_distribution'].items()
-                ]
-                static_table(dstype_data)
+        # --- Demographics ---
+        if not demographics_df.empty:
+            _SYS_COLS = {
+                'CASE_ID', 'PATIENT_DISPLAY_ID', 'MASTER_PATIENT_ID',
+                'FACILITY_DISPLAY_ID', 'FACILITY_NAME', 'FACPATID',
+                'SCHEDULED_FORM_NAME', 'FORM_VERSION', 'FORM_STATUS',
+                'CREATED_DT', 'MODIFIED_DT', 'CREATED_BY', 'UPDATED_BY',
+                'UPLOADED_BY', 'Access Case', 'usndr',
+            }
+            clin_cols = [c for c in demographics_df.columns
+                         if c not in _SYS_COLS and not c.endswith('.P')]
+            fields_with_data = sum(1 for c in clin_cols if demographics_df[c].notna().any())
+            compl = demographics_df[clin_cols].notna().mean().mean() if clin_cols else 0
+            st.markdown(
+                f"**Demographics** — {len(demographics_df):,} participants · "
+                f"{fields_with_data} fields · {compl:.0%} completeness"
+            )
+        else:
+            st.markdown("**Demographics** — not available")
 
-        with sub2:
-            st.markdown(f"#### Demographics ({selected_disease})")
-            demographics_df = filtered_cohort['demographics']
-            if not demographics_df.empty:
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.metric("Participants", f"{len(demographics_df):,}")
-                with col2:
-                    st.metric("Fields", f"{len(demographics_df.columns):,}")
-                with col3:
-                    completeness = demographics_df.notna().mean().mean()
-                    st.metric("Completeness", f"{completeness:.0%}")
-            else:
-                st.caption("No demographics data available.")
+        # --- Encounters ---
+        if not encounters_df.empty:
+            n_enc_pts = encounters_df['FACPATID'].nunique() if 'FACPATID' in encounters_df.columns else 0
+            enc_per_pt = encounters_df.groupby('FACPATID').size() if 'FACPATID' in encounters_df.columns else pd.Series()
+            median_visits = int(enc_per_pt.median()) if not enc_per_pt.empty else 0
+            st.markdown(
+                f"**Encounters** — {len(encounters_df):,} records · "
+                f"{n_enc_pts:,} participants · {median_visits} median visits"
+            )
+        else:
+            st.markdown("**Encounters** — not available")
 
-        with sub3:
-            st.markdown(f"#### Encounters ({selected_disease})")
-            encounters_df = filtered_cohort['encounters']
-            if not encounters_df.empty:
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.metric("Records", f"{len(encounters_df):,}")
-                with col2:
-                    n_pts = encounters_df['FACPATID'].nunique() if 'FACPATID' in encounters_df.columns else 0
-                    st.metric("Participants", f"{n_pts:,}")
-                with col3:
-                    mean_enc = len(encounters_df) / max(n_pts, 1)
-                    st.metric("Mean Visits / Participant", f"{mean_enc:.1f}")
-            else:
-                st.caption("No encounter data available.")
-
-        with sub4:
-            st.markdown(f"#### Medications ({selected_disease})")
-            medications_df = filtered_cohort['medications']
-            if not medications_df.empty:
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.metric("Records", f"{len(medications_df):,}")
-                with col2:
-                    n_pts = medications_df['FACPATID'].nunique() if 'FACPATID' in medications_df.columns else 0
-                    st.metric("Participants", f"{n_pts:,}")
-            else:
-                st.caption("No medication data available.")
+        # --- Medications ---
+        if not medications_df.empty:
+            n_med_pts = medications_df['FACPATID'].nunique() if 'FACPATID' in medications_df.columns else 0
+            st.markdown(
+                f"**Medications** — {len(medications_df):,} records · "
+                f"{n_med_pts:,} participants"
+            )
+        else:
+            st.markdown("**Medications** — not available")
 
     st.caption(
         "Full data tables and CSV downloads are available in the "

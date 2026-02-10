@@ -24,13 +24,8 @@ def _render_prototype_banner() -> None:
         font-size: 0.83em; color: #E65100; text-align: center; line-height: 1.6;'>
         <strong>Proof-of-Concept Prototype</strong> &mdash;
         No individual-level data is accessible. No database is connected.
-        All statistics are pre-computed and fully aggregated &mdash;
-        no participant information can be identified or re-identified.
-        <br>
-        <span style='font-size: 0.92em; color: #BF360C;'>
-        Analytics are derived by the development team and will be refined
-        with clinician and research community feedback.
-        </span>
+        All statistics are pre-computed and fully aggregated.
+        Analytics are a preview and under active development.
         </div>
         """,
         unsafe_allow_html=True,

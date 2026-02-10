@@ -35,10 +35,7 @@ inject_global_css()
 render_page_header("Data Dictionary", "Explore 1,024 clinical fields across 19 domains")
 
 _source = DataDictionaryAPI.get_data_source()
-if _source == "curated_snapshot":
-    st.caption("Source: Curated dictionary with clinical domain classification")
-else:
-    st.caption("Source: Raw data dictionary (parquet)")
+st.caption("Proof-of-concept — field classifications are under review.")
 
 
 # ---------------------------------------------------------------------------
@@ -150,20 +147,6 @@ if domain_summary:
     )
 
     static_table(overview_df)
-
-    curated_meta = DataDictionaryAPI.get_curated_metadata()
-    if curated_meta:
-        corrections = curated_meta.get("mislabel_corrections_applied", 0)
-        rate = curated_meta.get("classification_rate", 0)
-        st.markdown(
-            f"<div style='background-color: #E8F5E9; border-left: 4px solid #4CAF50; padding: 10px 14px; "
-            f"border-radius: 0 4px 4px 0; margin: 0.5rem 0 0.5rem 0; font-size: 0.9em;'>"
-            f"<strong>Curated Dictionary:</strong> {rate}% of fields classified into clinical domains. "
-            f"{corrections} mislabeled field corrections applied (FSHD fields incorrectly marked for LGMD). "
-            f"Discontinuation data exists but was <strong>poorly captured</strong> across sites."
-            f"</div>",
-            unsafe_allow_html=True,
-        )
 
 st.markdown(
     """

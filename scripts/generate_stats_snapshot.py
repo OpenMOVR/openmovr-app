@@ -389,6 +389,24 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
                     "values": counts,
                 })
 
+        # --- Demographics field count & completeness (excluding system columns) ---
+        _SYSTEM_COLS = {
+            'CASE_ID', 'PATIENT_DISPLAY_ID', 'MASTER_PATIENT_ID',
+            'FACILITY_DISPLAY_ID', 'FACILITY_NAME', 'FACPATID',
+            'SCHEDULED_FORM_NAME', 'FORM_VERSION', 'FORM_STATUS',
+            'CREATED_DT', 'MODIFIED_DT', 'CREATED_BY', 'UPDATED_BY',
+            'UPLOADED_BY', 'Access Case', 'usndr',
+        }
+        clinical_cols = [c for c in ds_demo.columns
+                         if c not in _SYSTEM_COLS and not c.endswith('.P')]
+        fields_with_data = [c for c in clinical_cols if ds_demo[c].notna().any()]
+        completeness = (
+            round(float(ds_demo[clinical_cols].notna().mean().mean()) * 100, 1)
+            if clinical_cols else 0
+        )
+        profile["demographics_field_count"] = len(fields_with_data)
+        profile["demographics_completeness_pct"] = completeness
+
         profiles[disease] = profile
 
     print(f"   Disease profiles: {len(profiles)} diseases computed")

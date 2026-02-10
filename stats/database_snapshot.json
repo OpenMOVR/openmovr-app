@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-09T20:55:43.806007",
-    "generated_timestamp": "2026-02-09 20:55:43",
+    "generated_at": "2026-02-09T21:41:27.108564",
+    "generated_timestamp": "2026-02-09 21:41:27",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -13503,7 +13503,9 @@
           "min": 20.9,
           "max": 92.9
         }
-      ]
+      ],
+      "demographics_field_count": 19,
+      "demographics_completeness_pct": 55.9
     },
     "BMD": {
       "patient_count": 150,
@@ -13902,7 +13904,9 @@
           "min": -1.0,
           "max": 57.5
         }
-      ]
+      ],
+      "demographics_field_count": 19,
+      "demographics_completeness_pct": 55.9
     },
     "DMD": {
       "patient_count": 687,
@@ -14403,7 +14407,9 @@
             }
           ]
         }
-      ]
+      ],
+      "demographics_field_count": 19,
+      "demographics_completeness_pct": 55.9
     },
     "FSHD": {
       "patient_count": 184,
@@ -14643,7 +14649,9 @@
             }
           ]
         }
-      ]
+      ],
+      "demographics_field_count": 19,
+      "demographics_completeness_pct": 55.9
     },
     "LGMD": {
       "patient_count": 210,
@@ -15123,7 +15131,9 @@
           "min": 0.0,
           "max": 76.9
         }
-      ]
+      ],
+      "demographics_field_count": 19,
+      "demographics_completeness_pct": 55.9
     },
     "Pompe": {
       "patient_count": 37,
@@ -15266,7 +15276,9 @@
           }
         ]
       },
-      "diagnosis": []
+      "diagnosis": [],
+      "demographics_field_count": 19,
+      "demographics_completeness_pct": 55.9
     },
     "SMA": {
       "patient_count": 524,
@@ -15710,7 +15722,9 @@
           "min": -1.3,
           "max": 61.0
         }
-      ]
+      ],
+      "demographics_field_count": 19,
+      "demographics_completeness_pct": 55.9
     }
   }
 }
