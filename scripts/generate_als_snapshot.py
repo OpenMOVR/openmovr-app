@@ -693,6 +693,45 @@ def _compute_demographics(demo_df: pd.DataFrame, diag_df: pd.DataFrame) -> dict:
 # Ambulatory
 # ---------------------------------------------------------------------------
 
+def _compute_data_quality_flags(diag_df: pd.DataFrame) -> dict:
+    """Flag data quality issues for QA review.
+
+    Checks numeric age fields for out-of-range values that are excluded
+    from analytics (values < 0 or > 110).
+    """
+    flags = []
+
+    _AGE_FIELDS = {
+        "alsonsag": "Symptom Onset Age",
+        "alsdgnag": "Diagnosis Age",
+    }
+    for field, label in _AGE_FIELDS.items():
+        if field not in diag_df.columns:
+            continue
+        vals = pd.to_numeric(diag_df[field], errors="coerce").dropna()
+        neg = vals[vals < 0]
+        over = vals[vals > 110]
+        if not neg.empty or not over.empty:
+            flags.append({
+                "field": field,
+                "label": label,
+                "issue": "out_of_range",
+                "negative_values": int(len(neg)),
+                "over_110_values": int(len(over)),
+                "excluded_total": int(len(neg) + len(over)),
+                "note": (
+                    f"{int(len(neg) + len(over))} record(s) excluded from "
+                    f"analytics: {int(len(neg))} negative, "
+                    f"{int(len(over))} over 110."
+                ),
+            })
+
+    return {
+        "flags": flags,
+        "total_flags": len(flags),
+    }
+
+
 def _compute_ambulatory(enc_df: pd.DataFrame, patient_ids: list) -> dict:
     """Compute ambulatory status from most recent encounter."""
     if "curramb" not in enc_df.columns:
@@ -774,6 +813,9 @@ def generate_als_snapshot() -> dict:
         site_locations = db_snap.get("facilities", {}).get("site_locations", [])
         print(f"  {len(site_locations)} facility locations loaded for state mapping")
 
+    # --- Data quality flags ---
+    dq_flags = _compute_data_quality_flags(diag_df)
+
     snapshot = {
         "metadata": {
             "generated_at": datetime.now().isoformat(),
@@ -796,6 +838,7 @@ def generate_als_snapshot() -> dict:
         "demographics": _compute_demographics(demo_df, diag_df),
         "ambulatory": _compute_ambulatory(enc_df, patient_ids),
         "facilities": _compute_facility_stats(facility_info),
+        "data_quality": dq_flags,
     }
 
     return snapshot

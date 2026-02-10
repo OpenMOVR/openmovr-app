@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-09T21:57:21.307572",
-    "generated_timestamp": "2026-02-09 21:57:21",
+    "generated_at": "2026-02-09T22:03:01.290604",
+    "generated_timestamp": "2026-02-09 22:03:01",
     "disease": "ALS",
     "description": "Amyotrophic Lateral Sclerosis Clinical Summary Statistics"
   },
@@ -1019,5 +1019,19 @@
         "patients": 2
       }
     ]
+  },
+  "data_quality": {
+    "flags": [
+      {
+        "field": "alsonsag",
+        "label": "Symptom Onset Age",
+        "issue": "out_of_range",
+        "negative_values": 1,
+        "over_110_values": 0,
+        "excluded_total": 1,
+        "note": "1 record(s) excluded from analytics: 1 negative, 0 over 110."
+      }
+    ],
+    "total_flags": 1
   }
 }

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-09T21:41:27.108564",
-    "generated_timestamp": "2026-02-09 21:41:27",
+    "generated_at": "2026-02-09T22:02:53.688336",
+    "generated_timestamp": "2026-02-09 22:02:53",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -13487,11 +13487,12 @@
           "field": "alsonsag",
           "label": "Age at Symptom Onset",
           "type": "numeric",
-          "n": 1527,
-          "mean": 61.1,
+          "n": 1526,
+          "mean": 61.2,
           "median": 61.8,
-          "min": -13.1,
-          "max": 92.4
+          "min": 9.6,
+          "max": 92.4,
+          "excluded_out_of_range": 1
         },
         {
           "field": "alsdgnag",
@@ -13898,11 +13899,12 @@
           "field": "bmddgnag",
           "label": "Age at Diagnosis",
           "type": "numeric",
-          "n": 142,
-          "mean": 11.4,
+          "n": 141,
+          "mean": 11.5,
           "median": 8.1,
-          "min": -1.0,
-          "max": 57.5
+          "min": 0.0,
+          "max": 57.5,
+          "excluded_out_of_range": 1
         }
       ],
       "demographics_field_count": 19,
@@ -14331,11 +14333,12 @@
           "field": "dmddgnag",
           "label": "Age at Diagnosis",
           "type": "numeric",
-          "n": 651,
+          "n": 648,
           "mean": 5.4,
           "median": 5.0,
-          "min": -1.0,
-          "max": 57.1
+          "min": 0.0,
+          "max": 57.1,
+          "excluded_out_of_range": 3
         },
         {
           "field": "glcouse",
@@ -15716,11 +15719,12 @@
           "field": "smadgnag",
           "label": "Age at Diagnosis",
           "type": "numeric",
-          "n": 477,
-          "mean": 4.1,
-          "median": 0.9,
-          "min": -1.3,
-          "max": 61.0
+          "n": 461,
+          "mean": 4.2,
+          "median": 1.0,
+          "min": 0.0,
+          "max": 61.0,
+          "excluded_out_of_range": 16
         }
       ],
       "demographics_field_count": 19,

@@ -336,10 +336,14 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
                 continue
             top_n = fdef.get('top_n', 15)
             if fdef.get('numeric'):
-                # For numeric fields, compute summary stats
+                # For numeric fields, compute summary stats.
+                # Filter to plausible age range (0-110) to exclude data
+                # entry errors (e.g. negative onset ages).
                 vals = pd.to_numeric(ds_diag[field], errors='coerce').dropna()
+                excluded = int(((vals < 0) | (vals > 110)).sum())
+                vals = vals[(vals >= 0) & (vals <= 110)]
                 if not vals.empty:
-                    profile["diagnosis"].append({
+                    entry = {
                         "field": field,
                         "label": fdef['label'],
                         "type": "numeric",
@@ -348,7 +352,10 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
                         "median": round(float(vals.median()), 1),
                         "min": round(float(vals.min()), 1),
                         "max": round(float(vals.max()), 1),
-                    })
+                    }
+                    if excluded > 0:
+                        entry["excluded_out_of_range"] = excluded
+                    profile["diagnosis"].append(entry)
             else:
                 counts = _value_counts(ds_diag[field], top_n=top_n)
                 if counts:
