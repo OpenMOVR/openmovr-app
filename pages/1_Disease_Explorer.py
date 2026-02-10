@@ -430,37 +430,6 @@ if not _has_parquet:
 
     # --- Tab 3: Clinical Summary Preview ---
     with tab_deep:
-        # Enrollment over time for the selected disease
-        _tl = snapshot.get('enrollment_timeline', {})
-        _tl_dm = _tl.get('by_disease_month', [])
-        _ds_tl = [r for r in _tl_dm if r.get('disease') == selected_disease]
-        if _ds_tl:
-            st.markdown("#### Enrollment Over Time")
-            _ds_tl_df = pd.DataFrame(_ds_tl)
-            _ds_tl_df['month'] = pd.to_datetime(_ds_tl_df['month'])
-            _ds_tl_df = _ds_tl_df.sort_values('month')
-            _ds_tl_df['cumulative'] = _ds_tl_df['count'].cumsum()
-
-            _c1, _c2 = st.columns(2)
-            with _c1:
-                _fig_c = px.line(
-                    _ds_tl_df, x='month', y='cumulative',
-                    title=f'Cumulative {selected_disease} Enrollment',
-                    labels={'month': '', 'cumulative': 'Participants'},
-                    color_discrete_sequence=['#1E88E5'],
-                )
-                _fig_c.update_layout(height=350)
-                st.plotly_chart(_fig_c, use_container_width=True)
-            with _c2:
-                _fig_m = px.bar(
-                    _ds_tl_df, x='month', y='count',
-                    title=f'Monthly New {selected_disease} Enrollments',
-                    labels={'month': '', 'count': 'New Participants'},
-                    color_discrete_sequence=['#1E88E5'],
-                )
-                _fig_m.update_layout(height=350)
-                st.plotly_chart(_fig_m, use_container_width=True)
-
         renderer = _CLINICAL_SUMMARY_RENDERERS.get(selected_disease)
         if renderer:
             st.info(
@@ -498,50 +467,142 @@ if not _has_parquet:
     with tab_data:
         st.subheader("Data Summary")
 
-        # Show what's available from the snapshot for this disease
         disease_profiles = snapshot.get('disease_profiles', {})
         profile = disease_profiles.get(selected_disease, {})
         demo_snap = profile.get('demographics', {})
         diag_snap = profile.get('diagnosis', [])
+        longitudinal = snapshot.get('longitudinal', {})
+        ds_long = longitudinal.get('by_disease', {}).get(selected_disease, {})
 
-        col_s1, col_s2, col_s3 = st.columns(3)
+        sub_cohort, sub_demo, sub_enc, sub_meds = st.tabs([
+            "Cohort", "Demographics", "Encounters", "Medications"
+        ])
 
-        with col_s1:
+        with sub_cohort:
+            st.markdown("#### Cohort Statistics")
             count = disease_info['patient_count'] if disease_info else 0
-            st.metric("Participants", f"{count:,}")
-        with col_s2:
-            n_demo_fields = len(demo_snap) if isinstance(demo_snap, dict) else 0
-            n_diag_fields = len(diag_snap) if isinstance(diag_snap, list) else 0
-            st.metric("Profile Sections", n_demo_fields + n_diag_fields)
-        with col_s3:
-            has_clinical_summary = selected_disease in _CLINICAL_SUMMARY_RENDERERS
-            st.metric("Clinical Summary", "Available" if has_clinical_summary else "Planned")
+            pct = disease_info['percentage'] if disease_info else 0
+            total = snapshot['enrollment']['total_patients']
 
-        st.markdown("---")
-        st.markdown("#### Available Data")
+            col_c1, col_c2, col_c3, col_c4 = st.columns(4)
+            with col_c1:
+                st.metric("Participants", f"{count:,}")
+            with col_c2:
+                st.metric("% of Registry", f"{pct:.1f}%")
+            with col_c3:
+                py = ds_long.get('total_person_years')
+                st.metric("Person-Years", f"{py:,.0f}" if py else "—")
+            with col_c4:
+                has_cs = selected_disease in _CLINICAL_SUMMARY_RENDERERS
+                st.metric("Clinical Analytics", "Available" if has_cs else "Planned")
 
-        avail_rows = []
-        if demo_snap:
-            for key in demo_snap:
-                data = demo_snap[key]
-                if isinstance(data, list) and data:
-                    n = sum(d.get('count', 0) for d in data)
-                    avail_rows.append({"Domain": "Demographics", "Section": key.replace("_", " ").title(), "Records": n})
-        if diag_snap:
-            for dx in diag_snap:
-                label = dx.get('label', 'Unknown')
-                if dx.get('type') == 'categorical':
-                    n = sum(d.get('count', 0) for d in dx.get('values', []))
-                elif dx.get('type') == 'numeric':
-                    n = dx.get('n', 0)
-                else:
-                    n = 0
-                avail_rows.append({"Domain": "Diagnosis", "Section": label, "Records": n})
+            # Longitudinal summary
+            if ds_long:
+                st.markdown("#### Longitudinal Profile")
+                col_l1, col_l2, col_l3, col_l4 = st.columns(4)
+                with col_l1:
+                    st.metric("Encounters", f"{ds_long.get('encounters', 0):,}")
+                with col_l2:
+                    md = ds_long.get('mean_duration_years')
+                    sd = ds_long.get('std_duration_years')
+                    dur = f"{md} \u00b1 {sd} yr" if md is not None and sd is not None else "—"
+                    st.metric("Registry Duration", dur)
+                with col_l3:
+                    ivi = ds_long.get('inter_visit_interval', {})
+                    st.metric("Visit Interval", f"{ivi['median_months']} mo" if ivi.get('median_months') else "—")
+                with col_l4:
+                    ret = ds_long.get('retention', {}).get('year_1', {})
+                    st.metric("1-Yr Retention", f"{ret['rate_pct']}%" if ret.get('rate_pct') else "—")
 
-        if avail_rows:
-            static_table(pd.DataFrame(avail_rows))
-        else:
-            st.caption("No profile data available for this disease in the snapshot.")
+        with sub_demo:
+            st.markdown(f"#### Demographics ({selected_disease})")
+            if demo_snap:
+                # Count non-empty sections and total records
+                n_sections = 0
+                total_records = 0
+                demo_rows = []
+                for key, data in demo_snap.items():
+                    if isinstance(data, list) and data:
+                        n = sum(d.get('count', 0) for d in data)
+                        if n > 0:
+                            n_sections += 1
+                            total_records += n
+                            demo_rows.append({
+                                "Field": key.replace("_", " ").title(),
+                                "Records": f"{n:,}",
+                                "Categories": len(data),
+                            })
+
+                col_d1, col_d2, col_d3 = st.columns(3)
+                with col_d1:
+                    st.metric("Participants", f"{count:,}")
+                with col_d2:
+                    st.metric("Demographic Fields", n_sections)
+                with col_d3:
+                    st.metric("Total Records", f"{total_records:,}")
+
+                if demo_rows:
+                    static_table(pd.DataFrame(demo_rows))
+            else:
+                st.caption("No demographics data available for this disease.")
+
+        with sub_enc:
+            st.markdown(f"#### Encounters ({selected_disease})")
+            if ds_long:
+                col_e1, col_e2, col_e3 = st.columns(3)
+                with col_e1:
+                    st.metric("Records", f"{ds_long.get('encounters', 0):,}")
+                with col_e2:
+                    st.metric("Participants", f"{ds_long.get('patients', 0):,}")
+                with col_e3:
+                    st.metric("Mean Visits / Participant", f"{ds_long.get('mean_per_patient', 0)}")
+
+                # Encounter depth table
+                enc_rows = [
+                    {"Metric": "Mean visits per participant", "Value": f"{ds_long.get('mean_per_patient', 0)}"},
+                    {"Metric": "Median visits per participant", "Value": f"{ds_long.get('median_per_patient', 0)}"},
+                    {"Metric": "Participants with 3+ visits", "Value": f"{ds_long.get('patients_3plus', 0):,}"},
+                ]
+                ivi = ds_long.get('inter_visit_interval', {})
+                if ivi.get('median_months'):
+                    enc_rows.append({
+                        "Metric": "Median inter-visit interval",
+                        "Value": f"{ivi['median_months']} months (IQR: {ivi.get('q1_months', '—')}–{ivi.get('q3_months', '—')})",
+                    })
+                static_table(pd.DataFrame(enc_rows))
+            else:
+                st.caption("No encounter data available for this disease.")
+
+        with sub_meds:
+            st.markdown(f"#### Medications ({selected_disease})")
+            clinical = snapshot.get('clinical_availability', {})
+            meds = clinical.get('medications', {})
+            if meds:
+                col_m1, col_m2 = st.columns(2)
+                with col_m1:
+                    st.metric("Total Medication Records", f"{meds.get('total_records', 0):,}")
+                with col_m2:
+                    st.metric("Participants on Medication", f"{meds.get('total_patients', 0):,}")
+                st.caption("Registry-wide medication totals. Disease-specific medication breakdowns "
+                           "are available in the Clinical Analytics pages (DUA required).")
+            else:
+                st.caption("No medication data available in the snapshot.")
+
+            # Diagnosis fields for completeness
+            if diag_snap:
+                st.markdown("#### Diagnosis Fields")
+                diag_rows = []
+                for dx in diag_snap:
+                    label = dx.get('label', 'Unknown')
+                    if dx.get('type') == 'categorical':
+                        n = sum(d.get('count', 0) for d in dx.get('values', []))
+                    elif dx.get('type') == 'numeric':
+                        n = dx.get('n', 0)
+                    else:
+                        n = 0
+                    diag_rows.append({"Field": label, "Records": f"{n:,}", "Type": dx.get('type', '—').title()})
+                if diag_rows:
+                    static_table(pd.DataFrame(diag_rows))
 
         st.caption(
             "Full data tables and CSV downloads are available in the "
