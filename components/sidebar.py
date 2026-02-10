@@ -13,6 +13,11 @@ import streamlit as st
 from config.settings import (
     LOGO_JPG, LOGO_PNG, APP_VERSION, STUDY_NAME,
 )
+from config.contact import (
+    ADMIN_NAME, ADMIN_EMAIL, DEVELOPER_NAME, DEVELOPER_EMAIL,
+    SHOW_DEVELOPER_CONTACT, SHOW_FEEDBACK_BUTTON, FEEDBACK_FORM_URL,
+    FEEDBACK_FORM_ENABLED
+)
 
 
 def _render_prototype_banner() -> None:
