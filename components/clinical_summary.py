@@ -38,6 +38,7 @@ def _render_enrollment_charts(disease: str):
     df['cumulative'] = df['count'].cumsum()
 
     c1, c2 = st.columns(2)
+    ds_key = disease.lower().replace(" ", "_")
     with c1:
         fig = px.line(
             df, x='month', y='cumulative',
@@ -46,7 +47,7 @@ def _render_enrollment_charts(disease: str):
             color_discrete_sequence=['#1E88E5'],
         )
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key=f"enroll_cumul_{ds_key}")
     with c2:
         fig = px.bar(
             df, x='month', y='count',
@@ -55,7 +56,7 @@ def _render_enrollment_charts(disease: str):
             color_discrete_sequence=['#1E88E5'],
         )
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key=f"enroll_monthly_{ds_key}")
 
 
 # ======================================================================
