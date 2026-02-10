@@ -20,8 +20,8 @@ Plus any additional tables you need (medications, surgeries, etc.)
 
 ## Obtaining Data
 
-Contact the MDA MOVR team for data access:
-- Email: aparedes@mdausa.org
+Contact the MDA MOVR Data Hub team for data access:
+- Email: mdamovr@mdausa.org
 
 ## Snapshot Mode
 

@@ -141,5 +141,5 @@ export OPENMOVR_SITE_KEY="your-access-key"
 
 ## Contact
 
-Andre D Paredes
-aparedes@mdausa.org
+MDA MOVR Data Hub Team: mdamovr@mdausa.org  
+Developer: Andre D Paredes (andre.paredes@ymail.com)

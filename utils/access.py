@@ -55,7 +55,7 @@ def require_access(
     if not access_key:
         st.warning(
             "Access keys have not been configured for this deployment.  "
-            "Contact the administrator."
+            f"Contact the administrator at {st.secrets.get('ADMIN_EMAIL', 'mdamovr@mdausa.org')}."
         )
         st.stop()
         return False

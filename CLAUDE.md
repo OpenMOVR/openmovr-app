@@ -131,4 +131,5 @@ streamlit run app.py
 
 ## Contact
 
-Owner: Andre D Paredes (andre.paredes@ymail.com)
+MDA MOVR Data Hub Team: mdamovr@mdausa.org
+Developer: Andre D Paredes (andre.paredes@ymail.com)
