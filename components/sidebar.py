@@ -22,8 +22,22 @@ from config.contact import (
 
 def _render_prototype_banner() -> None:
     """Render a small prototype banner at the top of every page."""
+    feedback_button = ""
+    if SHOW_FEEDBACK_BUTTON and FEEDBACK_FORM_ENABLED:
+        feedback_button = f'''
+        <div style="text-align: center; margin-top: 8px;">
+            <a href="{FEEDBACK_FORM_URL}" target="_blank" 
+               style="display: inline-block; padding: 0.3rem 0.8rem; 
+                      background-color: #1E88E5; color: white; 
+                      text-decoration: none; border-radius: 4px;
+                      font-size: 0.8em;">
+                Report Issue or Feedback
+            </a>
+        </div>
+        '''
+    
     st.markdown(
-        """
+        f"""
         <div style='background-color: #FFF3E0; border: 1px solid #FFB74D;
         padding: 10px 16px; border-radius: 4px; margin-bottom: 1rem;
         font-size: 0.83em; color: #E65100; text-align: center; line-height: 1.6;'>
@@ -31,6 +45,7 @@ def _render_prototype_banner() -> None:
         No individual-level data is accessible. No database is connected.
         All statistics are pre-computed and fully aggregated.
         Analytics are a preview and under active development.
+        {feedback_button}
         </div>
         """,
         unsafe_allow_html=True,
@@ -136,7 +151,7 @@ def render_sidebar_footer() -> None:
                               background-color: #1E88E5; color: white; 
                               text-decoration: none; border-radius: 4px;
                               font-size: 0.85em;">
-                        📝 Report Issue or Feedback
+                        Report Issue or Feedback
                     </a>
                 </div>
                 """,
@@ -152,7 +167,7 @@ def render_sidebar_footer() -> None:
                               background-color: #1E88E5; color: white; 
                               text-decoration: none; border-radius: 4px;
                               font-size: 0.85em;">
-                        📧 Send Feedback
+                        Send Feedback
                     </a>
                 </div>
                 """,

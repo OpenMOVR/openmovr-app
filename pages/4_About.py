@@ -235,18 +235,18 @@ with col_users:
         f"""
         **Clinicians • Researchers • Data Managers**
         
-        - 📝 **Report issues or suggest features**:  
+        - **Report issues or suggest features**:  
           [Click here to submit feedback]({FEEDBACK_FORM_URL})
           
-        - 📧 **Data access or study questions**:  
+        - **Data access or study questions**:  
           [{ADMIN_EMAIL}](mailto:{ADMIN_EMAIL})
           
-        - 🩺 **Study participation**:  
-          [MDA MOVR Contact Form](https://mdausa.tfaforms.net/389761)
+        - **Study participants in MOVR**:  
+          [Visit the Pilot Page](https://openmovr.github.io/pilot/)
         
         <div style='background: #FFF3E0; padding: 12px; border-radius: 4px; 
                     margin-top: 12px; border-left: 3px solid #FF9800;'>
-        <strong>⚠️ Privacy Note:</strong> Do not include patient names, medical 
+        <strong>Privacy Note:</strong> Do not include patient names, medical 
         record numbers, or other PHI in feedback submissions.
         </div>
         """,
@@ -259,16 +259,16 @@ with col_devs:
         f"""
         **Open Source Contributors & OpenMOVR Initiative**
         
-        - 💬 **OpenMOVR Initiative inquiries**:  
+        - **OpenMOVR Initiative inquiries**:  
           [andre.paredes@ymail.com](mailto:andre.paredes@ymail.com)
         
-        - 🐛 **Report technical issues**:  
+        - **Report technical issues**:  
           [GitHub Issues]({GITHUB_ISSUES_URL})
           
-        - 🔧 **Submit code contributions**:  
+        - **Submit code contributions**:  
           [GitHub Repository](https://github.com/OpenMOVR/openmovr-app)
           
-        - 📚 **View documentation**:  
+        - **View documentation**:  
           See `docs/` folder in repository
         
         Contributions welcome! See CONTRIBUTING.md for guidelines.
@@ -276,8 +276,8 @@ with col_devs:
     )
 
 st.info(
-    "💡 **Tip**: Use the **'📝 Report Issue or Feedback'** button in the sidebar "
-    "for quick access to the feedback form from any page."
+    "**Tip**: Use the **'Report Issue or Feedback'** button at the top of each page or in the sidebar "
+    "for quick access to the feedback form."
 )
 
 # ---- Footer ----
