@@ -20,31 +20,97 @@ from config.contact import (
 )
 
 
-def _render_prototype_banner() -> None:
-    """Render a small prototype banner at the top of every page."""
+def _banner_provenance() -> dict:
+    """Read data-provenance dates out of the statistics snapshot.
+
+    Returns ``{}`` if the snapshot is unavailable so the banner degrades to
+    its generic form rather than failing the page.
+    """
+    try:
+        from utils.cache import get_cached_snapshot
+        snapshot = get_cached_snapshot()
+        meta = snapshot.get("metadata", {})
+        cohort = snapshot.get("community_profile", {}).get("cohort", {})
+    except Exception:
+        return {}
+
+    generated = str(meta.get("generated_timestamp", ""))[:10]
+    return {
+        "generated": generated,
+        "enrollment_last": cohort.get("enrollment_last"),
+        "participants": cohort.get("participants"),
+        "facilities": cohort.get("facilities"),
+    }
+
+
+def _render_provenance_banner() -> None:
+    """Render the data-provenance banner at the top of every page.
+
+    This banner is what a reader citing a figure from this app relies on, so
+    it states three separate dates and never conflates them:
+
+    * the data extract -- what the numbers describe
+    * the generation date -- when the aggregates were computed
+    * the access date -- supplied by the reader, not by us
+
+    The app being a prototype is a statement about the interface, not about
+    the underlying registry data, and is worded so it cannot be read as
+    casting doubt on the figures themselves.
+    """
+    p = _banner_provenance()
+
+    if p.get("enrollment_last") and p.get("generated"):
+        scope = (
+            f"Aggregated statistics from the MDA {STUDY_NAME} Study"
+        )
+        if p.get("participants"):
+            scope += (
+                f" &mdash; {p['participants']:,} participants"
+            )
+            if p.get("facilities"):
+                scope += f" at {p['facilities']} clinical sites"
+        provenance = (
+            f"<strong>Data extract:</strong> participants enrolled through "
+            f"{p['enrollment_last']}. "
+            f"<strong>Statistics generated:</strong> {p['generated']}."
+        )
+    else:
+        scope = f"Aggregated statistics from the MDA {STUDY_NAME} Study"
+        provenance = (
+            "<strong>Data extract and generation dates:</strong> see the "
+            "Community Snapshot page."
+        )
+
     feedback_button = ""
     if SHOW_FEEDBACK_BUTTON and FEEDBACK_FORM_ENABLED:
         feedback_button = f'''
         <div style="text-align: center; margin-top: 8px;">
-            <a href="{FEEDBACK_FORM_URL}" target="_blank" 
-               style="display: inline-block; padding: 0.3rem 0.8rem; 
-                      background-color: #1E88E5; color: white; 
+            <a href="{FEEDBACK_FORM_URL}" target="_blank"
+               style="display: inline-block; padding: 0.3rem 0.8rem;
+                      background-color: #1E88E5; color: white;
                       text-decoration: none; border-radius: 4px;
                       font-size: 0.8em;">
                 Report Issue or Feedback
             </a>
         </div>
         '''
-    
+
     st.markdown(
         f"""
-        <div style='background-color: #FFF3E0; border: 1px solid #FFB74D;
+        <div style='background-color: #F1F8FF; border: 1px solid #BBDEFB;
+        border-left: 4px solid #1E88E5;
         padding: 10px 16px; border-radius: 4px; margin-bottom: 1rem;
-        font-size: 0.83em; color: #E65100; text-align: center; line-height: 1.6;'>
-        <strong>Proof-of-Concept Prototype</strong> &mdash;
-        No individual-level data is accessible. No database is connected.
-        All statistics are pre-computed and fully aggregated.
-        Analytics are a preview and under active development.
+        font-size: 0.83em; color: #1A3C5A; text-align: center;
+        line-height: 1.7;'>
+        {scope}.<br>
+        {provenance}<br>
+        <span style='color: #4A6580;'>
+        Figures are pre-computed aggregates; no individual-level data is
+        connected or displayed. Counts below 11 are suppressed. Denominators
+        and field definitions are stated on each page.
+        Interface features are under active development; the statistics
+        themselves are final for the data extract above.
+        </span>
         {feedback_button}
         </div>
         """,
@@ -56,12 +122,12 @@ def inject_global_css() -> None:
     """Inject the global CSS and prototype banner shared by every page.
 
     Includes:
-    - Prototype status banner
+    - Data provenance banner
     - Sidebar nav branding (title, subtitle, PUBLIC / DUA REQUIRED labels)
     - White sidebar / light-grey page background
     - ``.clean-table`` styling for static tables
     """
-    _render_prototype_banner()
+    _render_provenance_banner()
     st.markdown(
         """
         <style>
@@ -89,7 +155,7 @@ def inject_global_css() -> None:
             color: #1E88E5;
         }
         [data-testid="stSidebarNav"]::after {
-            content: "Open Source Project\\A Data Source: MDA MOVR Data Hub\\A Gen1 | v0.2.0 (Prototype)";
+            content: "Open Source Project\\A Data Source: MDA MOVR Data Hub\\A Gen1 | v0.2.0";
             position: absolute;
             top: 2.5rem;
             left: 0; right: 0;
@@ -218,7 +284,7 @@ def render_page_header(title: str, subtitle: str = "") -> None:
             <div style='text-align: right; padding-top: 10px;'>
                 <span style='font-size: 1.5em; font-weight: bold; color: #1E88E5;'>OpenMOVR App</span><br>
                 <span style='font-size: 0.9em; color: #666; background-color: #E3F2FD; padding: 4px 8px; border-radius: 4px;'>
-                    Gen1 | v{APP_VERSION} (Prototype)
+                    Gen1 | v{APP_VERSION}
                 </span><br>
                 <span style='font-size: 0.75em; color: #999; margin-top: 4px; display: inline-block;'>
                     Data Source: MDA {STUDY_NAME}
@@ -243,7 +309,7 @@ def render_page_footer() -> None:
         f"Independently built via the "
         f"<a href='https://openmovr.github.io' target='_blank' "
         f"style='color: #1E88E5;'>OpenMOVR Initiative</a><br>"
-        f"Gen1 | v{APP_VERSION} (Prototype)<br>"
+        f"Gen1 | v{APP_VERSION}<br>"
         f"Data/Support: <a href='mailto:{ADMIN_EMAIL}' style='color: #999;'>{ADMIN_EMAIL}</a>"
     )
     
