@@ -5,7 +5,7 @@
 ### Step 1: Push to GitHub
 
 ```bash
-cd /home/aparedes/MDA/openmovr-app
+cd /home/andre/MDA/openmovr-app
 
 # Commit
 git add .
@@ -107,19 +107,25 @@ export OPENMOVR_SITE_KEY="your-access-key"
 1. Make changes locally
 2. Regenerate snapshots if data changed:
    ```bash
-   python scripts/generate_stats_snapshot.py
-   python scripts/generate_dmd_snapshot.py
-   python scripts/generate_lgmd_snapshot.py
-   python scripts/generate_curated_dictionary.py
+   .venv/bin/python scripts/generate_stats_snapshot.py
+   .venv/bin/python scripts/generate_dmd_snapshot.py
+   .venv/bin/python scripts/generate_lgmd_snapshot.py
+   .venv/bin/python scripts/generate_als_snapshot.py
+   .venv/bin/python scripts/generate_sma_snapshot.py
+   .venv/bin/python scripts/generate_curated_dictionary.py
    ```
-3. Commit and push:
+   Use `.venv/bin/python`; system python has no pandas.
+3. Smoke-test every page before pushing (see "Smoke-test every page" in
+   `CLAUDE.md`).
+4. Commit and push **to `main`**:
    ```bash
-   cd /home/aparedes/MDA/openmovr-app
+   cd /home/andre/MDA/openmovr-app
+   git branch --show-current   # must be main; Cloud only deploys main
    git add .
    git commit -m "Update description"
-   git push
+   git push origin main
    ```
-4. Streamlit Cloud auto-deploys on push
+5. Streamlit Cloud auto-deploys on push to `main`
 
 ---
 
