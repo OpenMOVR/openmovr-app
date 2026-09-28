@@ -759,6 +759,28 @@ def _compute_enrollment_timeline(base_cohort: dict) -> dict:
     }
 
 
+def _previous_site_coords() -> dict:
+    """Read facility coordinates out of the currently committed snapshot.
+
+    Returns ``{facility_id: (lat, lon)}`` for every site that already has
+    both values, or an empty dict if there is no usable snapshot.
+    """
+    snapshot_path = Path(__file__).parent.parent / 'stats' / 'database_snapshot.json'
+    if not snapshot_path.exists():
+        return {}
+    try:
+        with open(snapshot_path) as f:
+            previous = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+    coords = {}
+    for loc in previous.get('facilities', {}).get('site_locations', []) or []:
+        lat, lon = loc.get('lat'), loc.get('lon')
+        if lat is not None and lon is not None:
+            coords[str(loc.get('facility_id'))] = (lat, lon)
+    return coords
+
+
 def _build_site_geography(base_cohort: dict) -> list:
     """Build site locations from actual encounter data + metadata for geography.
 
@@ -807,7 +829,19 @@ def _build_site_geography(base_cohort: dict) -> list:
             nomi = pgeocode.Nominatim('us')
         except ImportError:
             nomi = None
-            print("⚠️  pgeocode not installed – coordinates unavailable")
+
+        # pgeocode is an optional dependency and needs network access on first
+        # use. Without it, fall back to the coordinates already in the
+        # committed snapshot so re-running this script never silently
+        # un-maps the sites.
+        previous_coords = _previous_site_coords()
+        if nomi is None:
+            if previous_coords:
+                print(f"   pgeocode unavailable - reusing {len(previous_coords)} "
+                      f"coordinates from the existing snapshot")
+            else:
+                print("⚠️  pgeocode not installed and no previous snapshot "
+                      "coordinates - site map will be empty")
 
         for _, mrow in sites_meta.iterrows():
             mid = str(int(mrow['FACILITY_DISPLAY_ID']))
@@ -818,6 +852,8 @@ def _build_site_geography(base_cohort: dict) -> list:
                 geo = nomi.query_postal_code(zipcode)
                 lat = float(geo.latitude) if pd.notna(geo.latitude) else None
                 lon = float(geo.longitude) if pd.notna(geo.longitude) else None
+            if lat is None or lon is None:
+                lat, lon = previous_coords.get(mid, (lat, lon))
 
             state = str(mrow['State']).strip()
             meta_lookup[mid] = {

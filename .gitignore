@@ -42,3 +42,6 @@ output/
 # Temporary files
 *.tmp
 *.temp
+
+# Timestamped snapshot backups written by scripts/generate_*_snapshot.py
+stats/*_snapshot_[0-9]*.json
