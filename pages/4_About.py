@@ -185,6 +185,7 @@ st.markdown(
     """
     | Feature | Status |
     |---------|--------|
+    | Community Snapshot (study-wide demographics, insurance, diagnosis) | Prototype |
     | Public dashboard with aggregated statistics | Prototype |
     | Anonymized site map with per-disease filters | Prototype |
     | Disease Explorer with cascading filters | Prototype |
@@ -207,9 +208,26 @@ st.markdown(
 st.markdown("---")
 st.subheader("Version History")
 
+st.caption(
+    "Figures cited from this app should name the version they were read "
+    "from. Each release below states what changed."
+)
+
 st.markdown(
     f"""
-    **v{APP_VERSION}** (Gen1 Prototype)
+    **v{APP_VERSION}** — released 2026-09-28 (current)
+    - **Community Snapshot** page: study-wide demographics, health insurance
+      and minimum diagnosis elements across all seven disease types
+    - Health insurance reported four ways — overall, by disease, by disease
+      group, and by age band at enrollment — with denominators, multi-select
+      handling and small-cell suppression stated on the page
+    - Methods tab and suggested citation added for external reference
+    - Data provenance banner replaces the prototype banner: states the data
+      extract date, the statistics generation date and the app version
+    - Snapshot generator preserves site coordinates when the optional
+      geocoder is unavailable
+
+    **v0.2.0** — released 2026-02-10
     - Public dashboard with aggregated enrollment, disease distribution, and longitudinal metrics
     - Disease Explorer with demographic breakdowns, diagnosis profiles, and Clinical Summary Preview
     - Clinical Analytics for DMD, LGMD, ALS, and SMA organized by clinical domains (DUA required)

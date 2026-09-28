@@ -72,7 +72,8 @@ def _render_provenance_banner() -> None:
         provenance = (
             f"<strong>Data extract:</strong> participants enrolled through "
             f"{p['enrollment_last']}. "
-            f"<strong>Statistics generated:</strong> {p['generated']}."
+            f"<strong>Statistics generated:</strong> {p['generated']}. "
+            f"<strong>App version:</strong> Gen1 v{APP_VERSION}."
         )
     else:
         scope = f"Aggregated statistics from the MDA {STUDY_NAME} Study"
@@ -155,7 +156,7 @@ def inject_global_css() -> None:
             color: #1E88E5;
         }
         [data-testid="stSidebarNav"]::after {
-            content: "Open Source Project\\A Data Source: MDA MOVR Data Hub\\A Gen1 | v0.2.0";
+            content: "Open Source Project\\A Data Source: MDA MOVR Data Hub\\A Gen1 | v__APP_VERSION__";
             position: absolute;
             top: 2.5rem;
             left: 0; right: 0;
@@ -193,7 +194,7 @@ def inject_global_css() -> None:
             letter-spacing: 0.05em;
         }
         </style>
-        """,
+        """.replace("__APP_VERSION__", APP_VERSION),
         unsafe_allow_html=True,
     )
 
