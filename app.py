@@ -127,6 +127,63 @@ def main():
             help="Total clinic visit records across all participants"
         )
 
+    # Community & Coverage Section
+    # Surfaced on the dashboard because external citations land here first.
+    # The grouped figures are shown together deliberately: ALS is roughly
+    # half the registry and is predominantly Medicare-covered, so a lone
+    # study-wide Medicaid percentage invites being quoted out of context.
+    community = snapshot.get('community_profile', {})
+    insurance = community.get('health_insurance', {})
+    groups = insurance.get('by_group', [])
+
+    if groups:
+        st.markdown("---")
+        st.subheader("Community and Coverage")
+
+        def _group(name):
+            for g in groups:
+                if g.get('group') == name:
+                    return g
+            return {}
+
+        headline = [
+            ("All participants", "All seven disease types"),
+            ("Muscular dystrophies, SMA and Pompe disease", "Excluding ALS"),
+            ("Duchenne, Becker and SMA", "Pediatric-onset conditions"),
+        ]
+
+        cols = st.columns(len(headline))
+        for col, (name, caption) in zip(cols, headline):
+            entry = _group(name)
+            measure = entry.get('measures', {}).get('medicaid', {})
+            if not measure:
+                continue
+            value = ("suppressed" if measure.get('suppressed')
+                     else f"{measure['pct_of_responders']}%")
+            with col:
+                st.metric(
+                    f"Medicaid — {caption}",
+                    value,
+                    help=f"{name}. Percentage of participants in this group "
+                         f"who reported an identifiable insurance type at "
+                         f"enrollment.",
+                )
+                st.caption(f"n = {entry.get('responders', 0):,} reporting")
+
+        st.caption(
+            "Health insurance is self-reported at enrollment and is a "
+            "multi-select, so categories overlap. ALS is roughly half the "
+            "registry and is predominantly Medicare-covered, which is why "
+            "the study-wide figure differs from the other conditions. "
+            "Always cite a figure together with the population it describes."
+        )
+
+        st.page_link(
+            "pages/0_Community_Snapshot.py",
+            label="Full breakdown by disease, disease group and age band",
+            icon=":material/arrow_forward:",
+        )
+
     # Disease Distribution Section
     st.markdown("---")
     st.subheader("Disease Distribution")
