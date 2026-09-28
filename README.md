@@ -8,6 +8,7 @@ Independently built via the [OpenMOVR Initiative](https://openmovr.github.io).
 
 ### Public Access (no login required)
 
+- **Community Snapshot** — Study-wide demographics, health insurance coverage (overall, by disease, and by age at enrollment), and minimum diagnosis elements across all seven disease types, with source-field methods, denominators, small-cell suppression notes and a suggested citation
 - **Dashboard** — Aggregated enrollment statistics, disease distribution charts, participating sites map, longitudinal summaries, clinical data highlights (functional scores, medications, trials, hospitalizations), and cumulative/monthly enrollment charts
 - **Disease Explorer** — Per-disease cohort views with demographics, diagnosis profiles, and Clinical Summary Preview (DMD exon-skipping therapeutics, LGMD subtype distribution, ALS ALSFRS-R scores, SMA motor function, and more)
 - **Facility View** — Anonymized site map with disease filters, participant count ranges, recruitment over time by state, and site distribution analysis
@@ -79,6 +80,7 @@ openmovr-app/
 │   └── filters.py             # Filter widgets
 ├── config/                    # Settings, disease filters, clinical domains, export profiles
 ├── pages/                     # Streamlit multi-page app
+│   ├── 0_Community_Snapshot.py # Study-wide demographics, insurance, diagnosis
 │   ├── 1_Disease_Explorer.py  # Disease cohort filtering + Clinical Summary Preview tabs
 │   ├── 2_Facility_View.py     # Facility distribution + site map
 │   ├── 3_Data_Dictionary.py   # Curated field browser
@@ -107,7 +109,7 @@ openmovr-app/
 
 Pre-computed JSON files with aggregate statistics. No PHI — safe to commit:
 
-- `database_snapshot.json` — Overall enrollment, disease distribution, facilities, longitudinal data, clinical availability, medications, gene therapy breakdowns
+- `database_snapshot.json` — Overall enrollment, disease distribution, facilities, longitudinal data, clinical availability, medications, gene therapy breakdowns, and the study-wide `community_profile` (demographics, health insurance by disease and age band, minimum diagnosis elements)
 - `dmd_snapshot.json` — DMD therapeutics (exon-skipping amenability/utilization), steroids, functional scores, genetics, state distribution, ambulatory status, facilities
 - `lgmd_snapshot.json` — LGMD subtypes, diagnosis, clinical characteristics, ambulatory status, functional scores, medications, diagnostic journey, state distribution
 - `als_snapshot.json` — ALS ALSFRS-R scores, El Escorial classification, disease milestones, respiratory function, medications, genetics, state distribution

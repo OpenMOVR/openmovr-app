@@ -111,9 +111,22 @@ def generate_snapshot(include_usndr: bool = False) -> dict:
         "clinical_availability": _compute_clinical_availability(base_cohort),
 
         "disease_profiles": _compute_disease_profiles(base_cohort),
+
+        "community_profile": _compute_community_profile(base_cohort),
     }
 
     return snapshot
+
+
+# Disease → diagnosis-age field (in the diagnosis table)
+_DIAG_AGE_FIELDS = {
+    'ALS': 'alsdgnag',
+    'DMD': 'dmddgnag',
+    'BMD': 'bmddgnag',
+    'SMA': 'smadgnag',
+    'LGMD': 'lgdgag',
+    'FSHD': 'fshdgnag',
+}
 
 
 def _compute_disease_profiles(base_cohort: dict) -> dict:
@@ -203,16 +216,6 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
             return [{"label": str(k), "count": int(v)} for k, v in vc.items() if v > 0]
         except Exception:
             return []
-
-    # Disease → diagnosis-age field (in diagnosis table)
-    _DIAG_AGE_FIELDS = {
-        'ALS': 'alsdgnag',
-        'DMD': 'dmddgnag',
-        'BMD': 'bmddgnag',
-        'SMA': 'smadgnag',
-        'LGMD': 'lgdgag',
-        'FSHD': 'fshdgnag',
-    }
 
     def _numeric_age_histogram(series, bins=None, labels=None):
         """Compute a histogram from a numeric age column (already in years)."""
@@ -419,6 +422,441 @@ def _compute_disease_profiles(base_cohort: dict) -> dict:
     print(f"   Disease profiles: {len(profiles)} diseases computed")
     return profiles
 
+
+# ---------------------------------------------------------------------------
+# Community profile (study-wide demographics, insurance, minimum diagnosis)
+# ---------------------------------------------------------------------------
+
+# Values in the health-insurance multi-select that carry no coverage
+# information. A participant whose only selections are these is counted as
+# a non-responder rather than as "uninsured".
+_INSURANCE_NON_INFORMATIVE = {'unknown', 'not reported'}
+
+# Canonical insurance labels, in display order.
+_INSURANCE_ORDER = [
+    'Medicaid',
+    'Medicare',
+    'Private or group health insurance',
+    'Employer-Sponsored Disability Insurance',
+    "Veteran's Administration Benefits / Military Insurance",
+    'No Insurance/Self-pay',
+    'Other',
+]
+
+_PUBLIC_INSURANCE = {
+    'Medicaid',
+    'Medicare',
+    "Veteran's Administration Benefits / Military Insurance",
+}
+
+# Per-disease genetic-confirmation field. ALS and FSHD collect confirmation
+# differently (genemut / fshdel) and are reported separately, not here.
+_GENETIC_CONFIRMATION_FIELDS = {
+    'DMD': 'dmdgntcf',
+    'BMD': 'bmdgntcf',
+    'SMA': 'smadgcnf',
+    'LGMD': 'lggntcf',
+    'Pompe': 'pomgntcf',
+}
+
+_MIN_CELL = 11
+
+
+def _insurance_tokens(value) -> list:
+    """Split one hltin cell into canonical insurance labels.
+
+    ``hltin`` is a comma-joined multi-select. Free-text "Other, specify:"
+    entries split into two fragments on the comma, so both are folded back
+    into a single 'Other'.
+    """
+    if value is None:
+        return []
+    parts = [p.strip() for p in str(value).split(',')]
+    tokens = []
+    for p in parts:
+        if not p or p.lower() in {'nan', 'none', 'null'}:
+            continue
+        if p.lower().startswith('other') or p.lower() == 'specify:':
+            tokens.append('Other')
+        else:
+            tokens.append(p)
+    # De-duplicate while preserving order
+    seen = set()
+    out = []
+    for t in tokens:
+        if t not in seen:
+            seen.add(t)
+            out.append(t)
+    return out
+
+
+def _insurance_frame(demo):
+    """Return a per-participant frame with insurance tokens and age band."""
+    d = demo.drop_duplicates('FACPATID').copy()
+
+    d['_tokens'] = d['hltin'].map(_insurance_tokens) if 'hltin' in d.columns \
+        else [[] for _ in range(len(d))]
+
+    def _informative(tokens):
+        return bool(tokens) and not all(
+            t.lower() in _INSURANCE_NON_INFORMATIVE for t in tokens
+        )
+
+    d['_responded'] = d['_tokens'].map(_informative)
+
+    # Age at enrollment, used for the age-band cut
+    try:
+        dob = pd.to_datetime(d.get('dob'), format='mixed', errors='coerce')
+        enrol = pd.to_datetime(d.get('enroldt'), format='mixed', errors='coerce')
+        age = (enrol - dob).dt.days / 365.25
+        age = age.where((age >= 0) & (age <= 110))
+    except Exception:
+        age = pd.Series([None] * len(d), index=d.index)
+    d['_age'] = age
+
+    return d
+
+
+_AGE_BANDS = [
+    ('Under 19', 0, 19),
+    ('19-64', 19, 65),
+    ('65 and over', 65, 111),
+]
+
+# Named disease groupings reported alongside the per-disease breakdown.
+# ALS is separated out because it is roughly half the registry, is
+# adult-onset, and is predominantly Medicare-covered -- so a study-wide
+# percentage is driven by ALS and describes the other six conditions poorly.
+# Each grouping carries its own definition so a cited figure is unambiguous.
+_DISEASE_GROUPS = [
+    ('All participants',
+     'Every participant in the cohort, all seven disease types',
+     None),
+    ('Muscular dystrophies, SMA and Pompe disease',
+     'All disease types except ALS (DMD, BMD, LGMD, FSHD, SMA, Pompe)',
+     lambda ds: ds != 'ALS'),
+    ('Duchenne, Becker and SMA',
+     'The predominantly pediatric-onset conditions (DMD, BMD, SMA)',
+     lambda ds: ds in ('DMD', 'BMD', 'SMA')),
+    ('ALS only',
+     'Amyotrophic lateral sclerosis',
+     lambda ds: ds == 'ALS'),
+]
+
+
+def _insurance_breakdown(frame, min_cell=_MIN_CELL) -> dict:
+    """Summarise insurance for one group of participants.
+
+    Percentages use the number of participants who gave an informative
+    answer as the denominator, not the group size. Categories below
+    ``min_cell`` are suppressed per HIPAA small-cell policy.
+    """
+    participants = int(len(frame))
+    responders_frame = frame[frame['_responded']]
+    responders = int(len(responders_frame))
+
+    result = {
+        "participants": participants,
+        "responders": responders,
+        "no_informative_response": participants - responders,
+        "categories": [],
+        "measures": {},
+    }
+    if responders == 0:
+        return result
+
+    token_sets = list(responders_frame['_tokens'])
+
+    counts = {}
+    for tokens in token_sets:
+        for t in tokens:
+            if t.lower() in _INSURANCE_NON_INFORMATIVE:
+                continue
+            counts[t] = counts.get(t, 0) + 1
+
+    ordered = [lbl for lbl in _INSURANCE_ORDER if lbl in counts]
+    ordered += sorted(k for k in counts if k not in _INSURANCE_ORDER)
+
+    suppressed = 0
+    for lbl in ordered:
+        n = counts[lbl]
+        if n < min_cell:
+            suppressed += n
+            continue
+        result["categories"].append({
+            "label": lbl,
+            "count": int(n),
+            "pct_of_responders": round(n / responders * 100, 1),
+        })
+    if suppressed:
+        result["categories"].append({
+            "label": f"Suppressed (n<{min_cell})",
+            "count": int(suppressed),
+            "pct_of_responders": round(suppressed / responders * 100, 1),
+            "suppressed": True,
+        })
+
+    def _measure(pred):
+        n = sum(1 for tokens in token_sets if pred(tokens))
+        return {
+            "count": int(n),
+            "pct_of_responders": round(n / responders * 100, 1),
+            "suppressed": bool(n < min_cell),
+        }
+
+    result["measures"] = {
+        "medicaid": _measure(lambda t: 'Medicaid' in t),
+        "medicare": _measure(lambda t: 'Medicare' in t),
+        "any_public": _measure(lambda t: any(x in _PUBLIC_INSURANCE for x in t)),
+        "private_or_group": _measure(
+            lambda t: 'Private or group health insurance' in t),
+        "medicaid_and_medicare": _measure(
+            lambda t: 'Medicaid' in t and 'Medicare' in t),
+        "uninsured_self_pay": _measure(lambda t: 'No Insurance/Self-pay' in t),
+    }
+    return result
+
+
+def _compute_community_profile(base_cohort: dict) -> dict:
+    """Compute study-wide demographics, insurance and minimum diagnosis.
+
+    Everything here is aggregated across all disease types, which is what
+    the per-disease ``disease_profiles`` section cannot answer. Health
+    insurance is broken out three ways -- overall, by disease and by age
+    band at enrollment -- because the mix differs sharply between them.
+    """
+    demo = base_cohort['demographics']
+    diag = base_cohort['diagnosis']
+    if demo.empty:
+        return {}
+
+    frame = _insurance_frame(demo)
+
+    # --- Cohort description -------------------------------------------------
+    enrol = pd.to_datetime(frame.get('enroldt'), format='mixed', errors='coerce')
+    facility_info = base_cohort.get('facility_info') or {}
+    cohort = {
+        "label": "MDA MOVR Data Hub Study (MOVR 1.0)",
+        "cohort_definition": (
+            "Participants with validated enrollment (a record in "
+            "Demographics, Diagnosis and Encounters), excluding USNDR "
+            "legacy participants"
+        ),
+        "participants": int(frame['FACPATID'].nunique()),
+        "diseases": sorted(frame['dstype'].dropna().unique().tolist())
+        if 'dstype' in frame.columns else [],
+        "facilities": int(facility_info.get('total_facilities', 0)),
+        "enrollment_first": enrol.min().strftime('%Y-%m-%d')
+        if enrol.notna().any() else None,
+        "enrollment_last": enrol.max().strftime('%Y-%m-%d')
+        if enrol.notna().any() else None,
+    }
+
+    # --- Study-wide demographics -------------------------------------------
+    def _vc(series, top_n=15):
+        vals = series.dropna()
+        vals = vals[~vals.astype(str).str.strip().str.lower().isin(
+            {'', '0', 'nan', 'none', 'null', 'n/a', 'na'})]
+        if vals.empty:
+            return []
+        vc = vals.value_counts().head(top_n)
+        total = int(vc.sum())
+        out = []
+        suppressed = 0
+        for k, v in vc.items():
+            if int(v) < _MIN_CELL:
+                suppressed += int(v)
+                continue
+            out.append({"label": str(k), "count": int(v),
+                        "pct": round(int(v) / total * 100, 1)})
+        if suppressed:
+            out.append({"label": f"Suppressed (n<{_MIN_CELL})",
+                        "count": suppressed,
+                        "pct": round(suppressed / total * 100, 1),
+                        "suppressed": True})
+        return out
+
+    def _race(series):
+        vals = series.dropna()
+        vals = vals[vals.astype(str).str.strip() != '']
+        if vals.empty:
+            return []
+
+        def _clean(v):
+            parts = [p.strip() for p in str(v).split(',')]
+            parts = [p for p in parts
+                     if p and not p.lower().startswith('specify:')]
+            if not parts:
+                return None
+            return parts[0] if len(parts) == 1 else 'Multiracial'
+
+        cleaned = vals.map(_clean).dropna()
+        if cleaned.empty:
+            return []
+        vc = cleaned.value_counts()
+        total = int(vc.sum())
+        out = []
+        suppressed = int(vc[vc < _MIN_CELL].sum())
+        for k, v in vc[vc >= _MIN_CELL].items():
+            out.append({"label": str(k), "count": int(v),
+                        "pct": round(int(v) / total * 100, 1)})
+        if suppressed:
+            out.append({"label": f"Suppressed (n<{_MIN_CELL})",
+                        "count": suppressed,
+                        "pct": round(suppressed / total * 100, 1),
+                        "suppressed": True})
+        return out
+
+    ages = frame['_age'].dropna()
+    age_bins = [0, 5, 10, 18, 30, 40, 50, 60, 70, 80, 110]
+    age_labels = ['0-4', '5-9', '10-17', '18-29', '30-39', '40-49',
+                  '50-59', '60-69', '70-79', '80+']
+    age_hist = []
+    if not ages.empty:
+        cut = pd.cut(ages, bins=age_bins, labels=age_labels,
+                     include_lowest=True)
+        vc = cut.value_counts().sort_index()
+        age_hist = [{"label": str(k), "count": int(v)}
+                    for k, v in vc.items() if int(v) > 0]
+
+    _edu = None
+    if 'edulvl' in frame.columns:
+        _edu = frame['edulvl']
+    for _alt in ('edulvl1', 'edulvl2'):
+        if _alt in frame.columns:
+            _edu = frame[_alt] if _edu is None else _edu.fillna(frame[_alt])
+
+    demographics = {
+        "gender": _vc(frame['gender']) if 'gender' in frame.columns else [],
+        "race_ethnicity": _race(frame['ethnic'])
+        if 'ethnic' in frame.columns else [],
+        "age_at_enrollment": age_hist,
+        "age_at_enrollment_summary": {
+            "n": int(len(ages)),
+            "mean": round(float(ages.mean()), 1) if not ages.empty else None,
+            "median": round(float(ages.median()), 1) if not ages.empty else None,
+            "min": round(float(ages.min()), 1) if not ages.empty else None,
+            "max": round(float(ages.max()), 1) if not ages.empty else None,
+        },
+        "education_level": _vc(_edu) if _edu is not None else [],
+        "employment_status": _vc(frame['employ'])
+        if 'employ' in frame.columns else [],
+    }
+
+    # --- Health insurance ---------------------------------------------------
+    insurance = {
+        "field": "hltin",
+        "question_label": "Health insurance type",
+        "collected": "Self-reported at enrollment",
+        "multi_select": True,
+        "denominator_note": (
+            "Percentages use participants who gave an informative answer as "
+            "the denominator. Participants answering only 'Unknown' or 'Not "
+            "Reported' are excluded. Participants may report more than one "
+            "insurance type, so categories sum to more than 100%."
+        ),
+        "small_cell_policy": f"Counts below {_MIN_CELL} are suppressed.",
+        "overall": _insurance_breakdown(frame),
+        "by_disease": [],
+        "by_age_band": [],
+        "by_group": [],
+    }
+
+    if 'dstype' in frame.columns:
+        for ds in sorted(frame['dstype'].dropna().unique()):
+            sub = frame[frame['dstype'] == ds]
+            entry = _insurance_breakdown(sub)
+            entry["disease"] = str(ds)
+            insurance["by_disease"].append(entry)
+
+    for label, lo, hi in _AGE_BANDS:
+        sub = frame[(frame['_age'] >= lo) & (frame['_age'] < hi)]
+        if sub.empty:
+            continue
+        entry = _insurance_breakdown(sub)
+        entry["band"] = label
+        insurance["by_age_band"].append(entry)
+
+    if 'dstype' in frame.columns:
+        for label, definition, predicate in _DISEASE_GROUPS:
+            sub = frame if predicate is None else \
+                frame[frame['dstype'].map(
+                    lambda ds: bool(pd.notna(ds)) and predicate(ds))]
+            if sub.empty:
+                continue
+            entry = _insurance_breakdown(sub)
+            entry["group"] = label
+            entry["definition"] = definition
+            insurance["by_group"].append(entry)
+
+    unknown_age = frame[frame['_age'].isna()]
+    if not unknown_age.empty:
+        entry = _insurance_breakdown(unknown_age)
+        entry["band"] = "Age not available"
+        insurance["by_age_band"].append(entry)
+
+    # --- Minimum diagnosis elements ----------------------------------------
+    diagnosis = {
+        "note": (
+            "Diagnosis elements collected comparably across disease types. "
+            "Age at diagnosis is restricted to plausible values (0-110 years)."
+        ),
+        "age_at_diagnosis": [],
+        "genetic_confirmation": [],
+    }
+
+    if not diag.empty and 'dstype' in diag.columns:
+        for ds in sorted(diag['dstype'].dropna().unique()):
+            field = _DIAG_AGE_FIELDS.get(ds)
+            if not field or field not in diag.columns:
+                continue
+            vals = pd.to_numeric(
+                diag.loc[diag['dstype'] == ds, field], errors='coerce').dropna()
+            vals = vals[(vals >= 0) & (vals <= 110)]
+            if len(vals) < _MIN_CELL:
+                continue
+            diagnosis["age_at_diagnosis"].append({
+                "disease": str(ds),
+                "n": int(len(vals)),
+                "mean": round(float(vals.mean()), 1),
+                "median": round(float(vals.median()), 1),
+                "min": round(float(vals.min()), 1),
+                "max": round(float(vals.max()), 1),
+            })
+
+        for ds, field in _GENETIC_CONFIRMATION_FIELDS.items():
+            if field not in diag.columns:
+                continue
+            s = diag.loc[diag['dstype'] == ds, field].astype(str).str.strip()
+            s = s[(s != '') & (~s.str.lower().isin({'nan', 'none', 'null'}))]
+            if s.empty:
+                continue
+            answered = s[~s.str.lower().isin({'unknown'})]
+            if len(answered) < _MIN_CELL:
+                continue
+            # 'Yes - Laboratory confirmation' / 'Yes – In a family member' /
+            # 'Yes' -- the dash character varies between disease forms.
+            confirmed = int(answered.str.lower().str.startswith('yes').sum())
+            diagnosis["genetic_confirmation"].append({
+                "disease": str(ds),
+                "field": field,
+                "answered": int(len(answered)),
+                "confirmed": confirmed,
+                "pct": round(confirmed / len(answered) * 100, 1),
+            })
+
+    profile = {
+        "cohort": cohort,
+        "demographics": demographics,
+        "health_insurance": insurance,
+        "diagnosis_minimum": diagnosis,
+    }
+
+    ov = insurance["overall"]
+    print(f"   Community profile: {cohort['participants']} participants, "
+          f"{ov['responders']} insurance responders, "
+          f"Medicaid {ov['measures']['medicaid']['pct_of_responders']}%")
+    return profile
 
 def _compute_longitudinal_stats(base_cohort: dict) -> dict:
     """Compute encounter longitudinality statistics.

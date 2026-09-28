@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-02-09T22:02:53.688336",
-    "generated_timestamp": "2026-02-09 22:02:53",
+    "generated_at": "2026-09-28T12:15:32.423008",
+    "generated_timestamp": "2026-09-28 12:15:32",
     "includes_usndr": false,
     "cohort_type": "MOVR only"
   },
@@ -15729,6 +15729,1476 @@
       ],
       "demographics_field_count": 19,
       "demographics_completeness_pct": 55.9
+    }
+  },
+  "community_profile": {
+    "cohort": {
+      "label": "MDA MOVR Data Hub Study (MOVR 1.0)",
+      "cohort_definition": "Participants with validated enrollment (a record in Demographics, Diagnosis and Encounters), excluding USNDR legacy participants",
+      "participants": 3444,
+      "diseases": [
+        "ALS",
+        "BMD",
+        "DMD",
+        "FSHD",
+        "LGMD",
+        "Pompe",
+        "SMA"
+      ],
+      "facilities": 60,
+      "enrollment_first": "1995-12-11",
+      "enrollment_last": "2025-03-25"
+    },
+    "demographics": {
+      "gender": [
+        {
+          "label": "Male",
+          "count": 2254,
+          "pct": 65.4
+        },
+        {
+          "label": "Female",
+          "count": 1184,
+          "pct": 34.4
+        },
+        {
+          "label": "Suppressed (n<11)",
+          "count": 6,
+          "pct": 0.2,
+          "suppressed": true
+        }
+      ],
+      "race_ethnicity": [
+        {
+          "label": "White",
+          "count": 2675,
+          "pct": 77.7
+        },
+        {
+          "label": "Black or African American",
+          "count": 214,
+          "pct": 6.2
+        },
+        {
+          "label": "Unknown",
+          "count": 200,
+          "pct": 5.8
+        },
+        {
+          "label": "Other",
+          "count": 122,
+          "pct": 3.5
+        },
+        {
+          "label": "Not Reported",
+          "count": 118,
+          "pct": 3.4
+        },
+        {
+          "label": "Asian",
+          "count": 80,
+          "pct": 2.3
+        },
+        {
+          "label": "Multiracial",
+          "count": 19,
+          "pct": 0.6
+        },
+        {
+          "label": "Suppressed (n<11)",
+          "count": 16,
+          "pct": 0.5,
+          "suppressed": true
+        }
+      ],
+      "age_at_enrollment": [
+        {
+          "label": "0-4",
+          "count": 236
+        },
+        {
+          "label": "5-9",
+          "count": 311
+        },
+        {
+          "label": "10-17",
+          "count": 508
+        },
+        {
+          "label": "18-29",
+          "count": 272
+        },
+        {
+          "label": "30-39",
+          "count": 156
+        },
+        {
+          "label": "40-49",
+          "count": 221
+        },
+        {
+          "label": "50-59",
+          "count": 479
+        },
+        {
+          "label": "60-69",
+          "count": 690
+        },
+        {
+          "label": "70-79",
+          "count": 453
+        },
+        {
+          "label": "80+",
+          "count": 100
+        }
+      ],
+      "age_at_enrollment_summary": {
+        "n": 3426,
+        "mean": 42.3,
+        "median": 50.5,
+        "min": 0.0,
+        "max": 92.9
+      },
+      "education_level": [
+        {
+          "label": "Unknown",
+          "count": 768,
+          "pct": 38.7
+        },
+        {
+          "label": "Bachelor's Degree (e.g., BA, AB, BS, BBA)",
+          "count": 289,
+          "pct": 14.6
+        },
+        {
+          "label": "High School Graduate, received diploma",
+          "count": 232,
+          "pct": 11.7
+        },
+        {
+          "label": "Never attended / Kindergarten only",
+          "count": 182,
+          "pct": 9.2
+        },
+        {
+          "label": "Some College, no degree",
+          "count": 145,
+          "pct": 7.3
+        },
+        {
+          "label": "Master's Degree (e.g., MA, MS, MEng, MEd, MBA)",
+          "count": 121,
+          "pct": 6.1
+        },
+        {
+          "label": "Associate degree:  academic program",
+          "count": 55,
+          "pct": 2.8
+        },
+        {
+          "label": "Associate degree:  occupational, technical or vocational program",
+          "count": 48,
+          "pct": 2.4
+        },
+        {
+          "label": "12th Grade",
+          "count": 38,
+          "pct": 1.9
+        },
+        {
+          "label": "Professional Degree (e.g., MD, DDS, DVM, JD)",
+          "count": 34,
+          "pct": 1.7
+        },
+        {
+          "label": "GED or equivalent",
+          "count": 21,
+          "pct": 1.1
+        },
+        {
+          "label": "Doctoral Degree (e.g., PhD, EdD)",
+          "count": 19,
+          "pct": 1.0
+        },
+        {
+          "label": "7th Grade",
+          "count": 12,
+          "pct": 0.6
+        },
+        {
+          "label": "10th Grade",
+          "count": 11,
+          "pct": 0.6
+        },
+        {
+          "label": "Suppressed (n<11)",
+          "count": 9,
+          "pct": 0.5,
+          "suppressed": true
+        }
+      ],
+      "employment_status": [
+        {
+          "label": "Retired",
+          "count": 706,
+          "pct": 31.9
+        },
+        {
+          "label": "Not employed",
+          "count": 563,
+          "pct": 25.4
+        },
+        {
+          "label": "Full-time",
+          "count": 442,
+          "pct": 20.0
+        },
+        {
+          "label": "Unknown",
+          "count": 372,
+          "pct": 16.8
+        },
+        {
+          "label": "Part-time",
+          "count": 80,
+          "pct": 3.6
+        },
+        {
+          "label": "Self-Employed",
+          "count": 46,
+          "pct": 2.1
+        },
+        {
+          "label": "Suppressed (n<11)",
+          "count": 6,
+          "pct": 0.3,
+          "suppressed": true
+        }
+      ]
+    },
+    "health_insurance": {
+      "field": "hltin",
+      "question_label": "Health insurance type",
+      "collected": "Self-reported at enrollment",
+      "multi_select": true,
+      "denominator_note": "Percentages use participants who gave an informative answer as the denominator. Participants answering only 'Unknown' or 'Not Reported' are excluded. Participants may report more than one insurance type, so categories sum to more than 100%.",
+      "small_cell_policy": "Counts below 11 are suppressed.",
+      "overall": {
+        "participants": 3444,
+        "responders": 3300,
+        "no_informative_response": 144,
+        "categories": [
+          {
+            "label": "Medicaid",
+            "count": 735,
+            "pct_of_responders": 22.3
+          },
+          {
+            "label": "Medicare",
+            "count": 1167,
+            "pct_of_responders": 35.4
+          },
+          {
+            "label": "Private or group health insurance",
+            "count": 1420,
+            "pct_of_responders": 43.0
+          },
+          {
+            "label": "Employer-Sponsored Disability Insurance",
+            "count": 69,
+            "pct_of_responders": 2.1
+          },
+          {
+            "label": "Veteran's Administration Benefits / Military Insurance",
+            "count": 50,
+            "pct_of_responders": 1.5
+          },
+          {
+            "label": "No Insurance/Self-pay",
+            "count": 24,
+            "pct_of_responders": 0.7
+          },
+          {
+            "label": "Other",
+            "count": 256,
+            "pct_of_responders": 7.8
+          }
+        ],
+        "measures": {
+          "medicaid": {
+            "count": 735,
+            "pct_of_responders": 22.3,
+            "suppressed": false
+          },
+          "medicare": {
+            "count": 1167,
+            "pct_of_responders": 35.4,
+            "suppressed": false
+          },
+          "any_public": {
+            "count": 1855,
+            "pct_of_responders": 56.2,
+            "suppressed": false
+          },
+          "private_or_group": {
+            "count": 1420,
+            "pct_of_responders": 43.0,
+            "suppressed": false
+          },
+          "medicaid_and_medicare": {
+            "count": 83,
+            "pct_of_responders": 2.5,
+            "suppressed": false
+          },
+          "uninsured_self_pay": {
+            "count": 24,
+            "pct_of_responders": 0.7,
+            "suppressed": false
+          }
+        }
+      },
+      "by_disease": [
+        {
+          "participants": 1652,
+          "responders": 1589,
+          "no_informative_response": 63,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 83,
+              "pct_of_responders": 5.2
+            },
+            {
+              "label": "Medicare",
+              "count": 919,
+              "pct_of_responders": 57.8
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 625,
+              "pct_of_responders": 39.3
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 22,
+              "pct_of_responders": 1.4
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 28,
+              "pct_of_responders": 1.8
+            },
+            {
+              "label": "No Insurance/Self-pay",
+              "count": 16,
+              "pct_of_responders": 1.0
+            },
+            {
+              "label": "Other",
+              "count": 121,
+              "pct_of_responders": 7.6
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 83,
+              "pct_of_responders": 5.2,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 919,
+              "pct_of_responders": 57.8,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 984,
+              "pct_of_responders": 61.9,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 625,
+              "pct_of_responders": 39.3,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 34,
+              "pct_of_responders": 2.1,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 16,
+              "pct_of_responders": 1.0,
+              "suppressed": false
+            }
+          },
+          "disease": "ALS"
+        },
+        {
+          "participants": 150,
+          "responders": 144,
+          "no_informative_response": 6,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 46,
+              "pct_of_responders": 31.9
+            },
+            {
+              "label": "Medicare",
+              "count": 25,
+              "pct_of_responders": 17.4
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 75,
+              "pct_of_responders": 52.1
+            },
+            {
+              "label": "Other",
+              "count": 13,
+              "pct_of_responders": 9.0
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 7,
+              "pct_of_responders": 4.9,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 46,
+              "pct_of_responders": 31.9,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 25,
+              "pct_of_responders": 17.4,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 65,
+              "pct_of_responders": 45.1,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 75,
+              "pct_of_responders": 52.1,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 7,
+              "pct_of_responders": 4.9,
+              "suppressed": true
+            },
+            "uninsured_self_pay": {
+              "count": 1,
+              "pct_of_responders": 0.7,
+              "suppressed": true
+            }
+          },
+          "disease": "BMD"
+        },
+        {
+          "participants": 687,
+          "responders": 662,
+          "no_informative_response": 25,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 305,
+              "pct_of_responders": 46.1
+            },
+            {
+              "label": "Medicare",
+              "count": 25,
+              "pct_of_responders": 3.8
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 287,
+              "pct_of_responders": 43.4
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 18,
+              "pct_of_responders": 2.7
+            },
+            {
+              "label": "Other",
+              "count": 64,
+              "pct_of_responders": 9.7
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 11,
+              "pct_of_responders": 1.7,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 305,
+              "pct_of_responders": 46.1,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 25,
+              "pct_of_responders": 3.8,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 331,
+              "pct_of_responders": 50.0,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 287,
+              "pct_of_responders": 43.4,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 5,
+              "pct_of_responders": 0.8,
+              "suppressed": true
+            },
+            "uninsured_self_pay": {
+              "count": 5,
+              "pct_of_responders": 0.8,
+              "suppressed": true
+            }
+          },
+          "disease": "DMD"
+        },
+        {
+          "participants": 184,
+          "responders": 176,
+          "no_informative_response": 8,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 18,
+              "pct_of_responders": 10.2
+            },
+            {
+              "label": "Medicare",
+              "count": 67,
+              "pct_of_responders": 38.1
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 100,
+              "pct_of_responders": 56.8
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 14,
+              "pct_of_responders": 8.0,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 18,
+              "pct_of_responders": 10.2,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 67,
+              "pct_of_responders": 38.1,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 83,
+              "pct_of_responders": 47.2,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 100,
+              "pct_of_responders": 56.8,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 4,
+              "pct_of_responders": 2.3,
+              "suppressed": true
+            },
+            "uninsured_self_pay": {
+              "count": 1,
+              "pct_of_responders": 0.6,
+              "suppressed": true
+            }
+          },
+          "disease": "FSHD"
+        },
+        {
+          "participants": 210,
+          "responders": 198,
+          "no_informative_response": 12,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 47,
+              "pct_of_responders": 23.7
+            },
+            {
+              "label": "Medicare",
+              "count": 66,
+              "pct_of_responders": 33.3
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 89,
+              "pct_of_responders": 44.9
+            },
+            {
+              "label": "Other",
+              "count": 16,
+              "pct_of_responders": 8.1
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 12,
+              "pct_of_responders": 6.1,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 47,
+              "pct_of_responders": 23.7,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 66,
+              "pct_of_responders": 33.3,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 107,
+              "pct_of_responders": 54.0,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 89,
+              "pct_of_responders": 44.9,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 11,
+              "pct_of_responders": 5.6,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 1,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            }
+          },
+          "disease": "LGMD"
+        },
+        {
+          "participants": 37,
+          "responders": 36,
+          "no_informative_response": 1,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 11,
+              "pct_of_responders": 30.6
+            },
+            {
+              "label": "Medicare",
+              "count": 11,
+              "pct_of_responders": 30.6
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 13,
+              "pct_of_responders": 36.1
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 4,
+              "pct_of_responders": 11.1,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 11,
+              "pct_of_responders": 30.6,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 11,
+              "pct_of_responders": 30.6,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 21,
+              "pct_of_responders": 58.3,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 13,
+              "pct_of_responders": 36.1,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 1,
+              "pct_of_responders": 2.8,
+              "suppressed": true
+            },
+            "uninsured_self_pay": {
+              "count": 0,
+              "pct_of_responders": 0.0,
+              "suppressed": true
+            }
+          },
+          "disease": "Pompe"
+        },
+        {
+          "participants": 524,
+          "responders": 495,
+          "no_informative_response": 29,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 225,
+              "pct_of_responders": 45.5
+            },
+            {
+              "label": "Medicare",
+              "count": 54,
+              "pct_of_responders": 10.9
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 231,
+              "pct_of_responders": 46.7
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 16,
+              "pct_of_responders": 3.2
+            },
+            {
+              "label": "Other",
+              "count": 30,
+              "pct_of_responders": 6.1
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 7,
+              "pct_of_responders": 1.4,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 225,
+              "pct_of_responders": 45.5,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 54,
+              "pct_of_responders": 10.9,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 264,
+              "pct_of_responders": 53.3,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 231,
+              "pct_of_responders": 46.7,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 21,
+              "pct_of_responders": 4.2,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 0,
+              "pct_of_responders": 0.0,
+              "suppressed": true
+            }
+          },
+          "disease": "SMA"
+        }
+      ],
+      "by_age_band": [
+        {
+          "participants": 1100,
+          "responders": 1053,
+          "no_informative_response": 47,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 496,
+              "pct_of_responders": 47.1
+            },
+            {
+              "label": "Medicare",
+              "count": 14,
+              "pct_of_responders": 1.3
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 477,
+              "pct_of_responders": 45.3
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 35,
+              "pct_of_responders": 3.3
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 13,
+              "pct_of_responders": 1.2
+            },
+            {
+              "label": "Other",
+              "count": 95,
+              "pct_of_responders": 9.0
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 5,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 496,
+              "pct_of_responders": 47.1,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 14,
+              "pct_of_responders": 1.3,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 517,
+              "pct_of_responders": 49.1,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 477,
+              "pct_of_responders": 45.3,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 5,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            },
+            "uninsured_self_pay": {
+              "count": 5,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            }
+          },
+          "band": "Under 19"
+        },
+        {
+          "participants": 1465,
+          "responders": 1390,
+          "no_informative_response": 75,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 206,
+              "pct_of_responders": 14.8
+            },
+            {
+              "label": "Medicare",
+              "count": 436,
+              "pct_of_responders": 31.4
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 732,
+              "pct_of_responders": 52.7
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 32,
+              "pct_of_responders": 2.3
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 23,
+              "pct_of_responders": 1.7
+            },
+            {
+              "label": "No Insurance/Self-pay",
+              "count": 16,
+              "pct_of_responders": 1.2
+            },
+            {
+              "label": "Other",
+              "count": 124,
+              "pct_of_responders": 8.9
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 206,
+              "pct_of_responders": 14.8,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 436,
+              "pct_of_responders": 31.4,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 605,
+              "pct_of_responders": 43.5,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 732,
+              "pct_of_responders": 52.7,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 58,
+              "pct_of_responders": 4.2,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 16,
+              "pct_of_responders": 1.2,
+              "suppressed": false
+            }
+          },
+          "band": "19-64"
+        },
+        {
+          "participants": 861,
+          "responders": 839,
+          "no_informative_response": 22,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 32,
+              "pct_of_responders": 3.8
+            },
+            {
+              "label": "Medicare",
+              "count": 708,
+              "pct_of_responders": 84.4
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 201,
+              "pct_of_responders": 24.0
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 14,
+              "pct_of_responders": 1.7
+            },
+            {
+              "label": "Other",
+              "count": 37,
+              "pct_of_responders": 4.4
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 5,
+              "pct_of_responders": 0.6,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 32,
+              "pct_of_responders": 3.8,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 708,
+              "pct_of_responders": 84.4,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 723,
+              "pct_of_responders": 86.2,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 201,
+              "pct_of_responders": 24.0,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 20,
+              "pct_of_responders": 2.4,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 3,
+              "pct_of_responders": 0.4,
+              "suppressed": true
+            }
+          },
+          "band": "65 and over"
+        },
+        {
+          "participants": 18,
+          "responders": 18,
+          "no_informative_response": 0,
+          "categories": [
+            {
+              "label": "Suppressed (n<11)",
+              "count": 20,
+              "pct_of_responders": 111.1,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 1,
+              "pct_of_responders": 5.6,
+              "suppressed": true
+            },
+            "medicare": {
+              "count": 9,
+              "pct_of_responders": 50.0,
+              "suppressed": true
+            },
+            "any_public": {
+              "count": 10,
+              "pct_of_responders": 55.6,
+              "suppressed": true
+            },
+            "private_or_group": {
+              "count": 10,
+              "pct_of_responders": 55.6,
+              "suppressed": true
+            },
+            "medicaid_and_medicare": {
+              "count": 0,
+              "pct_of_responders": 0.0,
+              "suppressed": true
+            },
+            "uninsured_self_pay": {
+              "count": 0,
+              "pct_of_responders": 0.0,
+              "suppressed": true
+            }
+          },
+          "band": "Age not available"
+        }
+      ],
+      "by_group": [
+        {
+          "participants": 3444,
+          "responders": 3300,
+          "no_informative_response": 144,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 735,
+              "pct_of_responders": 22.3
+            },
+            {
+              "label": "Medicare",
+              "count": 1167,
+              "pct_of_responders": 35.4
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 1420,
+              "pct_of_responders": 43.0
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 69,
+              "pct_of_responders": 2.1
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 50,
+              "pct_of_responders": 1.5
+            },
+            {
+              "label": "No Insurance/Self-pay",
+              "count": 24,
+              "pct_of_responders": 0.7
+            },
+            {
+              "label": "Other",
+              "count": 256,
+              "pct_of_responders": 7.8
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 735,
+              "pct_of_responders": 22.3,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 1167,
+              "pct_of_responders": 35.4,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 1855,
+              "pct_of_responders": 56.2,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 1420,
+              "pct_of_responders": 43.0,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 83,
+              "pct_of_responders": 2.5,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 24,
+              "pct_of_responders": 0.7,
+              "suppressed": false
+            }
+          },
+          "group": "All participants",
+          "definition": "Every participant in the cohort, all seven disease types"
+        },
+        {
+          "participants": 1792,
+          "responders": 1711,
+          "no_informative_response": 81,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 652,
+              "pct_of_responders": 38.1
+            },
+            {
+              "label": "Medicare",
+              "count": 248,
+              "pct_of_responders": 14.5
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 795,
+              "pct_of_responders": 46.5
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 47,
+              "pct_of_responders": 2.7
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 22,
+              "pct_of_responders": 1.3
+            },
+            {
+              "label": "Other",
+              "count": 135,
+              "pct_of_responders": 7.9
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 8,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 652,
+              "pct_of_responders": 38.1,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 248,
+              "pct_of_responders": 14.5,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 871,
+              "pct_of_responders": 50.9,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 795,
+              "pct_of_responders": 46.5,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 49,
+              "pct_of_responders": 2.9,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 8,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            }
+          },
+          "group": "Muscular dystrophies, SMA and Pompe disease",
+          "definition": "All disease types except ALS (DMD, BMD, LGMD, FSHD, SMA, Pompe)"
+        },
+        {
+          "participants": 1361,
+          "responders": 1301,
+          "no_informative_response": 60,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 576,
+              "pct_of_responders": 44.3
+            },
+            {
+              "label": "Medicare",
+              "count": 104,
+              "pct_of_responders": 8.0
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 593,
+              "pct_of_responders": 45.6
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 39,
+              "pct_of_responders": 3.0
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 14,
+              "pct_of_responders": 1.1
+            },
+            {
+              "label": "Other",
+              "count": 107,
+              "pct_of_responders": 8.2
+            },
+            {
+              "label": "Suppressed (n<11)",
+              "count": 6,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 576,
+              "pct_of_responders": 44.3,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 104,
+              "pct_of_responders": 8.0,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 660,
+              "pct_of_responders": 50.7,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 593,
+              "pct_of_responders": 45.6,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 33,
+              "pct_of_responders": 2.5,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 6,
+              "pct_of_responders": 0.5,
+              "suppressed": true
+            }
+          },
+          "group": "Duchenne, Becker and SMA",
+          "definition": "The predominantly pediatric-onset conditions (DMD, BMD, SMA)"
+        },
+        {
+          "participants": 1652,
+          "responders": 1589,
+          "no_informative_response": 63,
+          "categories": [
+            {
+              "label": "Medicaid",
+              "count": 83,
+              "pct_of_responders": 5.2
+            },
+            {
+              "label": "Medicare",
+              "count": 919,
+              "pct_of_responders": 57.8
+            },
+            {
+              "label": "Private or group health insurance",
+              "count": 625,
+              "pct_of_responders": 39.3
+            },
+            {
+              "label": "Employer-Sponsored Disability Insurance",
+              "count": 22,
+              "pct_of_responders": 1.4
+            },
+            {
+              "label": "Veteran's Administration Benefits / Military Insurance",
+              "count": 28,
+              "pct_of_responders": 1.8
+            },
+            {
+              "label": "No Insurance/Self-pay",
+              "count": 16,
+              "pct_of_responders": 1.0
+            },
+            {
+              "label": "Other",
+              "count": 121,
+              "pct_of_responders": 7.6
+            }
+          ],
+          "measures": {
+            "medicaid": {
+              "count": 83,
+              "pct_of_responders": 5.2,
+              "suppressed": false
+            },
+            "medicare": {
+              "count": 919,
+              "pct_of_responders": 57.8,
+              "suppressed": false
+            },
+            "any_public": {
+              "count": 984,
+              "pct_of_responders": 61.9,
+              "suppressed": false
+            },
+            "private_or_group": {
+              "count": 625,
+              "pct_of_responders": 39.3,
+              "suppressed": false
+            },
+            "medicaid_and_medicare": {
+              "count": 34,
+              "pct_of_responders": 2.1,
+              "suppressed": false
+            },
+            "uninsured_self_pay": {
+              "count": 16,
+              "pct_of_responders": 1.0,
+              "suppressed": false
+            }
+          },
+          "group": "ALS only",
+          "definition": "Amyotrophic lateral sclerosis"
+        }
+      ]
+    },
+    "diagnosis_minimum": {
+      "note": "Diagnosis elements collected comparably across disease types. Age at diagnosis is restricted to plausible values (0-110 years).",
+      "age_at_diagnosis": [
+        {
+          "disease": "ALS",
+          "n": 1616,
+          "mean": 62.9,
+          "median": 63.3,
+          "min": 20.9,
+          "max": 92.9
+        },
+        {
+          "disease": "BMD",
+          "n": 141,
+          "mean": 11.5,
+          "median": 8.1,
+          "min": 0.0,
+          "max": 57.5
+        },
+        {
+          "disease": "DMD",
+          "n": 649,
+          "mean": 5.4,
+          "median": 5.0,
+          "min": 0.0,
+          "max": 57.1
+        },
+        {
+          "disease": "FSHD",
+          "n": 164,
+          "mean": 36.1,
+          "median": 34.0,
+          "min": 0.0,
+          "max": 83.4
+        },
+        {
+          "disease": "LGMD",
+          "n": 195,
+          "mean": 31.6,
+          "median": 30.6,
+          "min": 0.0,
+          "max": 79.7
+        },
+        {
+          "disease": "SMA",
+          "n": 461,
+          "mean": 4.2,
+          "median": 1.0,
+          "min": 0.0,
+          "max": 61.0
+        }
+      ],
+      "genetic_confirmation": [
+        {
+          "disease": "DMD",
+          "field": "dmdgntcf",
+          "answered": 666,
+          "confirmed": 659,
+          "pct": 98.9
+        },
+        {
+          "disease": "BMD",
+          "field": "bmdgntcf",
+          "answered": 140,
+          "confirmed": 128,
+          "pct": 91.4
+        },
+        {
+          "disease": "SMA",
+          "field": "smadgcnf",
+          "answered": 509,
+          "confirmed": 493,
+          "pct": 96.9
+        },
+        {
+          "disease": "LGMD",
+          "field": "lggntcf",
+          "answered": 206,
+          "confirmed": 197,
+          "pct": 95.6
+        },
+        {
+          "disease": "Pompe",
+          "field": "pomgntcf",
+          "answered": 37,
+          "confirmed": 36,
+          "pct": 97.3
+        }
+      ]
     }
   }
 }

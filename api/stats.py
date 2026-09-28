@@ -100,6 +100,22 @@ class StatsAPI:
         return snapshot['metadata']
 
     @classmethod
+    def get_community_profile(cls) -> Dict[str, Any]:
+        """Get the study-wide community profile.
+
+        Contains demographics, health insurance (overall, by disease and by
+        age band) and the minimum diagnosis elements, aggregated across all
+        disease types.
+        """
+        snapshot = cls.load_snapshot()
+        return snapshot.get('community_profile', {})
+
+    @classmethod
+    def get_insurance_profile(cls) -> Dict[str, Any]:
+        """Get the study-wide health insurance breakdown."""
+        return cls.get_community_profile().get('health_insurance', {})
+
+    @classmethod
     def get_total_patients(cls) -> int:
         """Get total patient count."""
         snapshot = cls.load_snapshot()

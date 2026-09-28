@@ -34,7 +34,7 @@ Pages (UI) → API Layer (facade) → Snapshots OR Core Library (src/)
 ```
 
 - `app.py` - Main dashboard
-- `pages/` - 11 pages: Disease Explorer, Facility View, Data Dictionary, About, Sign the DUA, Site Analytics, Download Center, DMD Clinical Analytics, LGMD Clinical Analytics, ALS Clinical Analytics, SMA Clinical Analytics
+- `pages/` - 12 pages: Community Snapshot, Disease Explorer, Facility View, Data Dictionary, About, Sign the DUA, Site Analytics, Download Center, DMD Clinical Analytics, LGMD Clinical Analytics, ALS Clinical Analytics, SMA Clinical Analytics
 - `api/` - Data access facade (StatsAPI, CohortAPI, DMDAPI, LGMDAPI, ALSAPI, SMAAPI, DataDictionaryAPI)
 - `components/` - Shared UI (sidebar, clinical_summary renderers, charts, tables, filters)
 - `src/` - Core analytics library (cohort management, data loading)
@@ -120,7 +120,7 @@ streamlit run app.py
 | Purpose | Location |
 |---------|----------|
 | Main app | `app.py` |
-| Pages | `pages/*.py` (11 pages) |
+| Pages | `pages/*.py` (12 pages) |
 | API layer | `api/*.py` (stats, cohorts, dmd, lgmd, als, sma, data_dictionary, reports) |
 | Clinical summary renderers | `components/clinical_summary.py` |
 | Access control | `utils/access.py` |
