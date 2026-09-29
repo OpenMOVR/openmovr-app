@@ -113,12 +113,12 @@ python -c "from api import StatsAPI, CohortAPI, LGMDAPI, ALSAPI, SMAAPI; print('
 ## Gotchas
 
 - **Use `.venv/bin/python`.** System python has no pandas or streamlit.
-- **`get_base_cohort()` ignores `include_usndr` after the first call.**
-  `CohortManager.get_base_cohort` (`src/analytics/cohorts.py`) caches on
-  `self._base_cohort is None or force_refresh` and never re-checks the flag,
-  so a second call in the same process silently returns the first cohort.
-  For the MOVR+USNDR cut (n=6,021 vs MOVR-only n=3,444), use a fresh process
-  or pass `force_refresh=True`. **Still unfixed.**
+- **Cohort switching is safe, but know how it behaves.** `get_base_cohort()`
+  caches keyed on `include_usndr`, so switching between MOVR-only (n=3,444)
+  and MOVR+USNDR (n=6,021) rebuilds and clears the derived disease caches.
+  Internal helpers use `_current_base_cohort()`, which keeps working against
+  whichever cohort you loaded rather than reverting to the default. Switching
+  back and forth in a loop will reload the data each time.
 - **`pgeocode` is not installed and is not in `requirements.txt`.** Snapshot
   regeneration falls back to coordinates already in the committed snapshot
   (56/60 sites). If you ever regenerate with an empty `stats/`, the site map

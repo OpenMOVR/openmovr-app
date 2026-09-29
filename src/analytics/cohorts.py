@@ -81,6 +81,7 @@ class MOVRCohortManager:
     def __init__(self):
         self.loader = get_loader()
         self._base_cohort = None
+        self._base_cohort_include_usndr = None
         self._disease_cohorts = {}
         self._disease_counts = None
         self._available_diseases = None
@@ -108,7 +109,23 @@ class MOVRCohortManager:
             }
         """
         
-        if self._base_cohort is None or force_refresh:
+        # The cache must key on include_usndr. MOVR-only and MOVR + USNDR are
+        # different cohorts, so serving a cached cohort built under the other
+        # flag silently changes every downstream number.
+        rebuild = (
+            self._base_cohort is None
+            or force_refresh
+            or self._base_cohort_include_usndr != include_usndr
+        )
+
+        if rebuild:
+            if self._base_cohort is not None:
+                # Disease counts and disease cohorts are derived from the base
+                # cohort, so they are stale the moment it is rebuilt.
+                self._disease_cohorts = {}
+                self._disease_counts = None
+                self._available_diseases = None
+
             cohort_type = "enrollment validated + MOVR + USNDR" if include_usndr else "enrollment validated + MOVR study"
             print(f"🔄 Loading MOVR base cohort ({cohort_type})...")
             
@@ -175,6 +192,7 @@ class MOVRCohortManager:
                 'count': len(cohort_patient_ids),
                 'include_usndr': include_usndr  # Track whether USNDR is included
             }
+            self._base_cohort_include_usndr = include_usndr
             
             cohort_label = "patients (MOVR + USNDR)" if include_usndr else "MOVR patients"
             print(f"✅ Base cohort ready: {len(cohort_patient_ids):,} {cohort_label}")
@@ -199,6 +217,18 @@ class MOVRCohortManager:
         
         return self._base_cohort
     
+    def _current_base_cohort(self) -> Dict[str, Any]:
+        """Return the base cohort already loaded, or build the default one.
+
+        Internal callers use this rather than ``get_base_cohort()`` so that a
+        caller who deliberately loaded the MOVR + USNDR cohort keeps working
+        against it. Calling ``get_base_cohort()`` with no argument would pin
+        them back to the MOVR-only default and rebuild the cache each time.
+        """
+        if self._base_cohort is not None:
+            return self._base_cohort
+        return self.get_base_cohort()
+
     def get_disease_counts(self, base_cohort: Optional[Dict] = None) -> pd.DataFrame:
         """
         Get patient counts for all available diseases in the cohort.
@@ -213,7 +243,7 @@ class MOVRCohortManager:
         """
         
         if base_cohort is None:
-            base_cohort = self.get_base_cohort()
+            base_cohort = self._current_base_cohort()
             
         if self._disease_counts is None:
             print("🔍 Analyzing disease distribution in base cohort...")
@@ -266,7 +296,7 @@ class MOVRCohortManager:
         """
         
         if base_cohort is None:
-            base_cohort = self.get_base_cohort()
+            base_cohort = self._current_base_cohort()
             
         cache_key = disease.upper()
         
@@ -333,7 +363,7 @@ class MOVRCohortManager:
         """
         
         if base_cohort is None:
-            base_cohort = self.get_base_cohort()
+            base_cohort = self._current_base_cohort()
         
         patient_set = set(patient_ids)
         original_count = base_cohort['count']
@@ -514,7 +544,7 @@ class MOVRCohortManager:
         """
         
         if base_cohort is None:
-            base_cohort = self.get_base_cohort()
+            base_cohort = self._current_base_cohort()
             
         demographics_df = base_cohort['demographics'].copy()
         diagnosis_df = base_cohort['diagnosis'].copy() 
